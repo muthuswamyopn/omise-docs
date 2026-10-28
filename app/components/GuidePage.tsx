@@ -102,7 +102,7 @@ function CodeBlock({ examples, locale }: { examples: CodeExample[]; locale: Loca
             margin: 0,
             fontSize: '13px',
             lineHeight: 1.6,
-            color: '#e6ebf1',
+            color: '#67e8f9',
             overflow: 'auto',
             fontFamily: "'SF Mono', Monaco, monospace",
           }}

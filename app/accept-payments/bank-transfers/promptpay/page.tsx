@@ -39,7 +39,7 @@ export default function PromptPayPage() {
             </p>
             <div style={{ padding: '20px', background: '#fff', border: '1px solid #e3e8ee', borderRadius: '8px' }}>
               <pre style={{ background: '#1a2332', padding: '16px', borderRadius: '6px', overflow: 'auto', margin: 0 }}>
-                <code style={{ color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>
+                <code style={{ color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>
 {`// Response contains QR code URL
 {
   "object": "charge",

@@ -358,7 +358,7 @@ export default function RabbitLINEPayPage() {
                 <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a3a5c', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ color: '#8da4bf', fontSize: '12px' }}>JavaScript</span>
                 </div>
-                <pre style={{ margin: 0, padding: '20px', color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`Omise.setPublicKey("pkey_test_...");
+                <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`Omise.setPublicKey("pkey_test_...");
 
 Omise.createSource('rabbit_linepay', {
   "amount": 400000,
@@ -377,7 +377,7 @@ Omise.createSource('rabbit_linepay', {
                 <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a3a5c' }}>
                   <span style={{ color: '#8da4bf', fontSize: '12px' }}>Bash</span>
                 </div>
-                <pre style={{ margin: 0, padding: '20px', color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/sources \\
+                <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/sources \\
   -u $OMISE_PUBLIC_KEY: \\
   -d "amount=400000" \\
   -d "currency=THB" \\
@@ -392,7 +392,7 @@ Omise.createSource('rabbit_linepay', {
                 <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a3a5c' }}>
                   <span style={{ color: '#8da4bf', fontSize: '12px' }}>JSON</span>
                 </div>
-                <pre style={{ margin: 0, padding: '20px', color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`{
+                <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`{
   "object": "source",
   "id": "src_test_5ywn47nqbwz3gxqmxph",
   "livemode": false,
@@ -452,7 +452,7 @@ Omise.createSource('rabbit_linepay', {
                 <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a3a5c' }}>
                   <span style={{ color: '#8da4bf', fontSize: '12px' }}>Bash</span>
                 </div>
-                <pre style={{ margin: 0, padding: '20px', color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges \\
+                <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges \\
   -u $OMISE_SECRET_KEY: \\
   -d "amount=400000" \\
   -d "currency=THB" \\
@@ -468,7 +468,7 @@ Omise.createSource('rabbit_linepay', {
                 <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a3a5c' }}>
                   <span style={{ color: '#8da4bf', fontSize: '12px' }}>JSON</span>
                 </div>
-                <pre style={{ margin: 0, padding: '20px', color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`{
+                <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`{
   "object": "charge",
   "id": "chrg_test_5ywnabcdef123456789",
   "livemode": false,
@@ -506,7 +506,7 @@ Omise.createSource('rabbit_linepay', {
               <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a3a5c' }}>
                 <span style={{ color: '#8da4bf', fontSize: '12px' }}>Bash</span>
               </div>
-              <pre style={{ margin: 0, padding: '20px', color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges \\
+              <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges \\
   -u $OMISE_SECRET_KEY: \\
   -d "amount=400000" \\
   -d "currency=THB" \\
@@ -545,7 +545,7 @@ Omise.createSource('rabbit_linepay', {
               <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a3a5c' }}>
                 <span style={{ color: '#8da4bf', fontSize: '12px' }}>Webhook Event</span>
               </div>
-              <pre style={{ margin: 0, padding: '20px', color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`{
+              <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`{
   "object": "event",
   "key": "charge.complete",
   "data": {
@@ -569,7 +569,7 @@ Omise.createSource('rabbit_linepay', {
               <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a3a5c' }}>
                 <span style={{ color: '#8da4bf', fontSize: '12px' }}>Bash</span>
               </div>
-              <pre style={{ margin: 0, padding: '20px', color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges/chrg_test_5ywnabcdef123456789 \\
+              <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges/chrg_test_5ywnabcdef123456789 \\
   -u $OMISE_SECRET_KEY:`}</pre>
             </div>
           </div>
@@ -670,7 +670,7 @@ Omise.createSource('rabbit_linepay', {
             <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a3a5c' }}>
               <span style={{ color: '#8da4bf', fontSize: '12px' }}>Bash</span>
             </div>
-            <pre style={{ margin: 0, padding: '20px', color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges/chrg_test_5ywnabcdef123456789/refunds \\
+            <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges/chrg_test_5ywnabcdef123456789/refunds \\
   -u $OMISE_SECRET_KEY: \\
   -d "amount=200000"`}</pre>
           </div>

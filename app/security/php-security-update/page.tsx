@@ -316,7 +316,7 @@ export default function PHPSecurityUpdatePage() {
                 }}>
                   <code style={{
                     fontSize: '14px',
-                    color: '#e6ebf1',
+                    color: '#67e8f9',
                     fontFamily: "'SF Mono', Monaco, monospace",
                   }}>
                     php -v

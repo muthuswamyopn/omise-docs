@@ -263,7 +263,7 @@ export default function ErrorsPage() {
             padding: '16px',
             margin: 0,
             fontSize: '13px',
-            color: '#e6ebf1',
+            color: '#67e8f9',
             fontFamily: "'SF Mono', Monaco, monospace",
             overflow: 'auto'
           }}>
@@ -345,7 +345,7 @@ export default function ErrorsPage() {
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <span style={{ fontSize: '12px', fontWeight: 600, color: '#ff6b6b' }}>401 Unauthorized</span>
             </div>
-            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#e6ebf1', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
 {`{
   "object": "error",
   "location": "https://api.omise.co",
@@ -364,7 +364,7 @@ export default function ErrorsPage() {
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <span style={{ fontSize: '12px', fontWeight: 600, color: '#ff6b6b' }}>404 Not Found</span>
             </div>
-            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#e6ebf1', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
 {`{
   "object": "error",
   "location": "https://api.omise.co/charges/chrg_test_invalid",
@@ -383,7 +383,7 @@ export default function ErrorsPage() {
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <span style={{ fontSize: '12px', fontWeight: 600, color: '#ff6b6b' }}>400 Bad Request</span>
             </div>
-            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#e6ebf1', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
 {`{
   "object": "error",
   "location": "https://api.omise.co/charges/chrg_test_.../capture",
@@ -402,7 +402,7 @@ export default function ErrorsPage() {
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <span style={{ fontSize: '12px', fontWeight: 600, color: '#ff6b6b' }}>402 Payment Required</span>
             </div>
-            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#e6ebf1', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
 {`{
   "object": "charge",
   "id": "chrg_test_no1t4tnemucod0e51mo",
@@ -422,7 +422,7 @@ export default function ErrorsPage() {
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <span style={{ fontSize: '12px', fontWeight: 600, color: '#ff6b6b' }}>400 Bad Request</span>
             </div>
-            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#e6ebf1', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
 {`{
   "object": "error",
   "location": "https://api.omise.co/charges",

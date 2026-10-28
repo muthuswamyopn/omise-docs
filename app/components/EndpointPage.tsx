@@ -162,7 +162,7 @@ function TryItForm({ endpoint, config }: TryItFormProps) {
               {response.includes('"error"') || response.includes('"code"') ? 'Error' : '200 OK'}
             </span>
           </div>
-          <pre className="scrollbar-visible" style={{ padding: '16px', margin: 0, fontSize: '13px', color: '#e6ebf1', overflow: 'auto', maxHeight: '350px', fontFamily: "'SF Mono', Monaco, monospace" }}>
+          <pre className="scrollbar-visible" style={{ padding: '16px', margin: 0, fontSize: '13px', color: '#67e8f9', overflow: 'auto', maxHeight: '350px', fontFamily: "'SF Mono', Monaco, monospace" }}>
             {response}
           </pre>
         </div>
@@ -336,7 +336,7 @@ export default function EndpointPage({ endpointKey, currentPage }: EndpointPageP
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '12px', color: '#b8c7d9' }}>
               {languages.find(l => l.id === activeLang)?.name}
             </div>
-            <pre style={{ padding: '16px', margin: 0, fontSize: '13px', lineHeight: 1.6, color: '#e6ebf1', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '13px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
               {codeExamples[endpointKey]?.[activeLang] || '// Example not available'}
             </pre>
           </div>
@@ -348,7 +348,7 @@ export default function EndpointPage({ endpointKey, currentPage }: EndpointPageP
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <span style={{ fontSize: '12px', fontWeight: 600, color: '#3ecf8e' }}>200 OK</span>
             </div>
-            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#e6ebf1', overflow: 'auto', maxHeight: '500px', fontFamily: "'SF Mono', Monaco, monospace" }}>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', maxHeight: '500px', fontFamily: "'SF Mono', Monaco, monospace" }}>
               {responseExamples[endpointKey] || '{}'}
             </pre>
           </div>

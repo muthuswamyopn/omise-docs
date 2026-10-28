@@ -109,7 +109,7 @@ export default function AlipayHKPage() {
         <section style={{ marginBottom: '40px' }}>
           <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#1a1a1a', marginBottom: '16px' }}>Create a Source</h2>
           <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
-            <pre style={{ margin: 0, color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`curl https://api.omise.co/sources \\
+            <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`curl https://api.omise.co/sources \\
   -u $OMISE_SECRET_KEY: \\
   -d "type=alipay_hk" \\
   -d "amount=100000" \\

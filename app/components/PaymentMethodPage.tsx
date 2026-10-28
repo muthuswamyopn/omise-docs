@@ -311,7 +311,7 @@ export default function PaymentMethodPage({
               <span style={{ padding: '2px 6px', background: '#dbeafe', color: '#1e40af', fontSize: '10px', fontWeight: 600, borderRadius: '3px' }}>RECOMMENDED</span>
             </div>
             <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
-              <pre style={{ margin: 0, color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{codeExamples?.createSource || `Omise.setPublicKey("pkey_test_...");
+              <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{codeExamples?.createSource || `Omise.setPublicKey("pkey_test_...");
 
 Omise.createSource("${method.sourceType}", {
   "amount": 100000,
@@ -327,7 +327,7 @@ Omise.createSource("${method.sourceType}", {
           <div style={{ marginBottom: '16px' }}>
             <div style={{ fontSize: '12px', fontWeight: 600, color: '#697386', textTransform: 'uppercase', marginBottom: '8px' }}>Using cURL</div>
             <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
-              <pre style={{ margin: 0, color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{generateSourceExample()}</pre>
+              <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{generateSourceExample()}</pre>
             </div>
           </div>
 
@@ -335,7 +335,7 @@ Omise.createSource("${method.sourceType}", {
           <div>
             <div style={{ fontSize: '12px', fontWeight: 600, color: '#697386', textTransform: 'uppercase', marginBottom: '8px' }}>Response</div>
             <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
-              <pre style={{ margin: 0, color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`{
+              <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`{
   "object": "source",
   "id": "src_test_5ywn47nqbwz3gxqmxph",
   "livemode": false,
@@ -362,7 +362,7 @@ Omise.createSource("${method.sourceType}", {
           <div style={{ marginBottom: '16px' }}>
             <div style={{ fontSize: '12px', fontWeight: 600, color: '#697386', textTransform: 'uppercase', marginBottom: '8px' }}>Using cURL</div>
             <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
-              <pre style={{ margin: 0, color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{codeExamples?.createCharge || generateChargeExample()}</pre>
+              <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{codeExamples?.createCharge || generateChargeExample()}</pre>
             </div>
           </div>
 
@@ -370,7 +370,7 @@ Omise.createSource("${method.sourceType}", {
           <div>
             <div style={{ fontSize: '12px', fontWeight: 600, color: '#697386', textTransform: 'uppercase', marginBottom: '8px' }}>Response</div>
             <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
-              <pre style={{ margin: 0, color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`{
+              <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`{
   "object": "charge",
   "id": "chrg_test_5ywnabcdef123456789",
   "livemode": false,
@@ -408,7 +408,7 @@ Omise.createSource("${method.sourceType}", {
           </p>
 
           <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
-            <pre style={{ margin: 0, color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{generateCombinedExample()}</pre>
+            <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{generateCombinedExample()}</pre>
           </div>
         </section>
 
@@ -561,7 +561,7 @@ Omise.createSource("${method.sourceType}", {
           </p>
 
           <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
-            <pre style={{ margin: 0, color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`curl https://api.omise.co/charges/chrg_test_5ywnabcdef123456789 \\
+            <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`curl https://api.omise.co/charges/chrg_test_5ywnabcdef123456789 \\
   -u $OMISE_SECRET_KEY:`}</pre>
           </div>
         </section>
@@ -635,7 +635,7 @@ Omise.createSource("${method.sourceType}", {
             <div style={{ marginTop: '16px' }}>
               <div style={{ fontSize: '12px', fontWeight: 600, color: '#697386', textTransform: 'uppercase', marginBottom: '8px' }}>Create a Refund</div>
               <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
-                <pre style={{ margin: 0, color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`curl https://api.omise.co/charges/chrg_test_5ywnabcdef123456789/refunds \\
+                <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`curl https://api.omise.co/charges/chrg_test_5ywnabcdef123456789/refunds \\
   -u $OMISE_SECRET_KEY: \\
   -d "amount=50000"`}</pre>
               </div>

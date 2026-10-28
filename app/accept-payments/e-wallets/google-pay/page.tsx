@@ -101,7 +101,7 @@ export default function GooglePayPage() {
         <section style={{ marginBottom: '40px' }}>
           <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#1a1a1a', marginBottom: '16px' }}>Google Pay Configuration</h2>
           <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
-            <pre style={{ margin: 0, color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`const tokenizationSpecification = {
+            <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`const tokenizationSpecification = {
   type: 'PAYMENT_GATEWAY',
   parameters: {
     'gateway': 'omise',
@@ -127,7 +127,7 @@ const cardPaymentMethod = {
             After receiving the payment data from Google Pay, create an Omise token:
           </p>
           <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
-            <pre style={{ margin: 0, color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`curl https://vault.omise.co/tokens \\
+            <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`curl https://vault.omise.co/tokens \\
   -u $OMISE_PUBLIC_KEY: \\
   -d "card[method]=googlepay" \\
   -d "card[data]=GOOGLE_PAY_PAYMENT_DATA"`}</pre>
@@ -144,7 +144,7 @@ const cardPaymentMethod = {
             Use the token to create a charge on your server:
           </p>
           <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
-            <pre style={{ margin: 0, color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`curl https://api.omise.co/charges \\
+            <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`curl https://api.omise.co/charges \\
   -u $OMISE_SECRET_KEY: \\
   -d "amount=100000" \\
   -d "currency=THB" \\

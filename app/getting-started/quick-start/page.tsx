@@ -223,7 +223,7 @@ export default function QuickStartPage() {
             <div style={{ fontSize: '12px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Include Omise.js in your HTML:</div>
             <div style={{ background: '#1a2332', borderRadius: '8px', overflow: 'hidden', marginBottom: '16px' }}>
               <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '12px', color: '#b8c7d9' }}>HTML</div>
-              <pre style={{ padding: '16px', margin: 0, fontSize: '13px', lineHeight: 1.6, color: '#e6ebf1', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+              <pre style={{ padding: '16px', margin: 0, fontSize: '13px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
 {`<script src="https://cdn.omise.co/omise.js"></script>`}
               </pre>
             </div>
@@ -231,7 +231,7 @@ export default function QuickStartPage() {
             <div style={{ fontSize: '12px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Create a token from card details:</div>
             <div style={{ background: '#1a2332', borderRadius: '8px', overflow: 'hidden' }}>
               <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '12px', color: '#b8c7d9' }}>JavaScript</div>
-              <pre style={{ padding: '16px', margin: 0, fontSize: '13px', lineHeight: 1.6, color: '#e6ebf1', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+              <pre style={{ padding: '16px', margin: 0, fontSize: '13px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
 {`Omise.setPublicKey("pkey_test_...");
 
 Omise.createToken("card", {
@@ -266,7 +266,7 @@ Omise.createToken("card", {
 
           <div style={{ background: '#1a2332', borderRadius: '8px', overflow: 'hidden', marginBottom: '20px' }}>
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '12px', color: '#b8c7d9' }}>cURL</div>
-            <pre style={{ padding: '16px', margin: 0, fontSize: '13px', lineHeight: 1.6, color: '#e6ebf1', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '13px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
 {`curl https://api.omise.co/charges \\
   -u skey_test_...: \\
   -d "amount=10000" \\
@@ -281,7 +281,7 @@ Omise.createToken("card", {
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <span style={{ fontSize: '12px', fontWeight: 600, color: '#3ecf8e' }}>200 OK</span>
             </div>
-            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#e6ebf1', overflow: 'auto', maxHeight: '300px', fontFamily: "'SF Mono', Monaco, monospace" }}>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', maxHeight: '300px', fontFamily: "'SF Mono', Monaco, monospace" }}>
 {`{
   "object": "charge",
   "id": "chrg_test_no1t4tnemucod0e51mo",

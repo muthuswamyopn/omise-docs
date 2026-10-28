@@ -235,7 +235,7 @@ export default function TrueMoneyQRPage() {
               <div style={{ padding: '12px 16px', borderBottom: '1px solid #1A2A3A' }}>
                 <span style={{ color: '#8da4bf', fontSize: '12px' }}>Request</span>
               </div>
-              <pre style={{ margin: 0, padding: '20px', color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/sources \\
+              <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/sources \\
   -u $OMISE_PUBLIC_KEY: \\
   -d "amount=500000" \\
   -d "currency=THB" \\
@@ -246,7 +246,7 @@ export default function TrueMoneyQRPage() {
               <div style={{ padding: '12px 16px', borderBottom: '1px solid #1A2A3A' }}>
                 <span style={{ color: '#8da4bf', fontSize: '12px' }}>Response</span>
               </div>
-              <pre style={{ margin: 0, padding: '20px', color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`{
+              <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`{
   "object": "source",
   "id": "src_test_616e6qe9duz2cthauum",
   "livemode": false,
@@ -269,7 +269,7 @@ export default function TrueMoneyQRPage() {
               <div style={{ padding: '12px 16px', borderBottom: '1px solid #1A2A3A' }}>
                 <span style={{ color: '#8da4bf', fontSize: '12px' }}>Request</span>
               </div>
-              <pre style={{ margin: 0, padding: '20px', color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges \\
+              <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges \\
   -u $OMISE_SECRET_KEY: \\
   -d "amount=500000" \\
   -d "currency=THB" \\
@@ -280,7 +280,7 @@ export default function TrueMoneyQRPage() {
               <div style={{ padding: '12px 16px', borderBottom: '1px solid #1A2A3A' }}>
                 <span style={{ color: '#8da4bf', fontSize: '12px' }}>Response</span>
               </div>
-              <pre style={{ margin: 0, padding: '20px', color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`{
+              <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`{
   "object": "charge",
   "id": "chrg_test_616e6qhdvp3gv5hb31y",
   "amount": 500000,
@@ -347,7 +347,7 @@ export default function TrueMoneyQRPage() {
               <div style={{ padding: '12px 16px', borderBottom: '1px solid #1A2A3A' }}>
                 <span style={{ color: '#8da4bf', fontSize: '12px' }}>Bash</span>
               </div>
-              <pre style={{ margin: 0, padding: '20px', color: '#e6ebf1', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges/chrg_test_... \\
+              <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges/chrg_test_... \\
   -u $OMISE_SECRET_KEY:`}</pre>
             </div>
           </div>

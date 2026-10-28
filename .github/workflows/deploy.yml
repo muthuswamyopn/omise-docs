@@ -27,10 +27,11 @@ jobs:
 
       - name: Prepare deployment package
         run: |
-          mkdir -p deploy/.next
-          cp -r .next/standalone/* deploy/
+          cp -r .next/standalone deploy
           cp -r .next/static deploy/.next/static
           cp -r public deploy/public 2>/dev/null || true
+          ls -la deploy/
+          ls -la deploy/.next/
 
       - name: Deploy to server
         uses: appleboy/scp-action@v0.1.7
@@ -50,9 +51,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /root/omise-docs-new
-            # Stop existing process
-            pm2 stop omise-docs 2>/dev/null || true
-            pm2 delete omise-docs 2>/dev/null || true
+            # Stop all existing processes on port 3000
+            pm2 stop all 2>/dev/null || true
+            pm2 delete all 2>/dev/null || true
             # Start new process
             PORT=3000 pm2 start server.js --name omise-docs
             pm2 save

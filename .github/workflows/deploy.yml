@@ -51,6 +51,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /root/omise-docs-new
+            # Clear cache to ensure fresh content
+            rm -rf .next/cache .next/server/route-cache/* 2>/dev/null || true
             # Stop all existing processes on port 3000
             pm2 stop all 2>/dev/null || true
             pm2 delete all 2>/dev/null || true

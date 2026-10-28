@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import SidebarNew from '../../components/SidebarNew';
+import MermaidDiagram from '../../components/MermaidDiagram';
 
 const captureTypes = [
   {
@@ -217,7 +218,7 @@ export default function CapturePage() {
               </pre>
             </div>
 
-            <div>
+            <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Step 2: Capture the full amount</div>
               <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges/chrg_test_5jb3h99olf7xmcsqex/capture \\
@@ -225,6 +226,15 @@ export default function CapturePage() {
   -u $OMISE_SECRET_KEY:`}
               </pre>
             </div>
+
+            <MermaidDiagram
+              title="Full Manual Capture Flow"
+              chart={`graph TD
+    A["Merchant initiates card authorization"] --> B{"Is authorization successful?"}
+    B -->|"No"| D["Stop"]
+    B -->|"Yes"| C["Deliver Goods"]
+    C --> E["Capture complete authorized amount"]`}
+            />
           </div>
 
           {/* Single Partial Capture */}
@@ -250,7 +260,7 @@ export default function CapturePage() {
               </pre>
             </div>
 
-            <div>
+            <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Step 2: Capture a partial amount</div>
               <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges/chrg_test_5jb3h99olf7xmcsqex/capture \\
@@ -259,6 +269,16 @@ export default function CapturePage() {
   -d "capture_amount=75000"`}
               </pre>
             </div>
+
+            <MermaidDiagram
+              title="Single Partial Capture Flow"
+              chart={`graph TD
+    A["Merchant initiates card authorization"] --> B{"Is authorization successful?"}
+    B -->|"No"| D["Stop"]
+    B -->|"Yes"| C["Deliver some goods"]
+    C --> E["Charge card partially"]
+    E --> F["System releases remainder of authorized amount"]`}
+            />
           </div>
         </section>
 

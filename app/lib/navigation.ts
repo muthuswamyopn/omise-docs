@@ -35,6 +35,7 @@ export const navigation: NavigationSection[] = [
     href: '/accept-payments',
     items: [
       { name: lc('Overview', 'ภาพรวม', '概要'), href: '/accept-payments' },
+      { name: lc('Capture', 'การจับ', 'キャプチャ'), href: '/accept-payments/capture' },
       {
         name: lc('Cards', 'บัตร', 'カード'),
         href: '/accept-payments/cards',

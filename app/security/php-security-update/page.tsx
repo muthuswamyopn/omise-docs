@@ -351,7 +351,8 @@ export default function PHPSecurityUpdatePage() {
                   Test Your Integration
                 </div>
                 <ul style={{ margin: '8px 0 0', paddingLeft: '20px', fontSize: '14px', color: '#697386', lineHeight: 1.8 }}>
-                  <li>Checkout flow</li>
+                  <li>Complete checkout flow</li>
+                  <li>3D Secure authentication</li>
                   <li>Order status updates</li>
                   <li>Refunds</li>
                   <li>Error logs</li>
@@ -400,8 +401,99 @@ export default function PHPSecurityUpdatePage() {
           </div>
         </section>
 
+        {/* Omise Library and Plugin Versions */}
+        <section style={{ marginBottom: '40px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#1a1a1a', marginBottom: '16px' }}>
+            Omise Library and Plugin Versions
+          </h2>
+
+          <p style={{ fontSize: '14px', color: '#697386', marginBottom: '16px', lineHeight: 1.6 }}>
+            Check your platform's requirements to ensure compatibility after updating PHP:
+          </p>
+
+          <div style={{ display: 'grid', gap: '8px' }}>
+            {[
+              { name: 'WooCommerce', url: 'https://woocommerce.com/document/server-requirements/' },
+              { name: 'Magento', url: 'https://experienceleague.adobe.com/docs/commerce-operations/installation-guide/system-requirements.html' },
+              { name: 'PrestaShop', url: 'https://devdocs.prestashop-project.org/8/basics/installation/system-requirements/' },
+              { name: 'EC-CUBE', url: 'https://doc.ec-cube.net/quickstart/requirement' },
+              { name: 'OpenCart', url: 'https://docs.opencart.com/en-gb/requirements/' },
+            ].map((platform) => (
+              <a
+                key={platform.name}
+                href={platform.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '14px 18px',
+                  background: '#fff',
+                  border: '1px solid #e3e8ee',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                }}
+              >
+                <span style={{ color: '#1a1a1a', fontWeight: 500 }}>{platform.name} System Requirements</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A1F71" strokeWidth="2">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                  <polyline points="15 3 21 3 21 9"/>
+                  <line x1="10" y1="14" x2="21" y2="3"/>
+                </svg>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section style={{ marginBottom: '40px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#1a1a1a', marginBottom: '16px' }}>
+            FAQ
+          </h2>
+
+          <div style={{ display: 'grid', gap: '16px' }}>
+            {[
+              {
+                q: 'Why do I need to update PHP if the vulnerability is not in Omise software?',
+                a: 'The vulnerabilities (CVE-2026-109618 and CVE-2026-109619) exist in PHP itself. Any PHP application, including those using Omise plugins, can be exploited if running on an unpatched PHP version.',
+              },
+              {
+                q: 'Do I need to update the Omise library or plugin?',
+                a: 'No. If you are running PHP 8.2, 8.3, or 8.4, no Omise library or plugin updates are required. Simply update PHP to the latest patched version within your branch.',
+              },
+              {
+                q: 'I use a hosting provider. What do I do?',
+                a: 'Contact your hosting provider and ask them to update PHP to a patched version. Most managed hosting providers will apply security patches automatically, but you should verify.',
+              },
+              {
+                q: 'I\'m seeing deprecation warnings after upgrading PHP. Is this a problem?',
+                a: 'Deprecation warnings are typically not critical and do not affect functionality. They indicate code that will need to be updated in future PHP versions. Monitor your error logs, but these warnings alone should not prevent your store from operating.',
+              },
+              {
+                q: 'What if I\'m still on PHP 8.1 or earlier?',
+                a: 'PHP 8.1 and earlier versions have reached end-of-life and will not receive security patches. You must upgrade to PHP 8.2, 8.3, or 8.4 immediately.',
+              },
+            ].map((faq, index) => (
+              <div key={index} style={{
+                padding: '20px',
+                background: '#fff',
+                border: '1px solid #e3e8ee',
+                borderRadius: '8px',
+              }}>
+                <div style={{ fontWeight: 600, color: '#1a1a1a', marginBottom: '8px', fontSize: '15px' }}>
+                  {faq.q}
+                </div>
+                <p style={{ fontSize: '14px', color: '#697386', margin: 0, lineHeight: 1.7 }}>
+                  {faq.a}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* References */}
-        <section>
+        <section style={{ marginBottom: '40px' }}>
           <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#1a1a1a', marginBottom: '16px' }}>
             References
           </h2>
@@ -478,8 +570,108 @@ export default function PHPSecurityUpdatePage() {
           </div>
         </section>
 
+        {/* Related Content */}
+        <section style={{ marginBottom: '40px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#1a1a1a', marginBottom: '16px' }}>
+            Related Content
+          </h2>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '12px' }}>
+            <Link
+              href="/integrations/ecommerce-plugins/woocommerce"
+              style={{
+                padding: '16px 20px',
+                background: '#f6f9fc',
+                border: '1px solid #e3e8ee',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                color: '#1A1F71',
+                fontWeight: 500,
+                fontSize: '14px',
+              }}
+            >
+              WooCommerce Integration →
+            </Link>
+            <Link
+              href="/integrations/ecommerce-plugins/magento"
+              style={{
+                padding: '16px 20px',
+                background: '#f6f9fc',
+                border: '1px solid #e3e8ee',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                color: '#1A1F71',
+                fontWeight: 500,
+                fontSize: '14px',
+              }}
+            >
+              Magento Integration →
+            </Link>
+            <Link
+              href="/integrations/ecommerce-plugins/prestashop"
+              style={{
+                padding: '16px 20px',
+                background: '#f6f9fc',
+                border: '1px solid #e3e8ee',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                color: '#1A1F71',
+                fontWeight: 500,
+                fontSize: '14px',
+              }}
+            >
+              PrestaShop Integration →
+            </Link>
+            <Link
+              href="/integrations/ecommerce-plugins/opencart"
+              style={{
+                padding: '16px 20px',
+                background: '#f6f9fc',
+                border: '1px solid #e3e8ee',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                color: '#1A1F71',
+                fontWeight: 500,
+                fontSize: '14px',
+              }}
+            >
+              OpenCart Integration →
+            </Link>
+            <Link
+              href="/integrations/ecommerce-plugins/ec-cube"
+              style={{
+                padding: '16px 20px',
+                background: '#f6f9fc',
+                border: '1px solid #e3e8ee',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                color: '#1A1F71',
+                fontWeight: 500,
+                fontSize: '14px',
+              }}
+            >
+              EC-CUBE Integration →
+            </Link>
+            <Link
+              href="/security"
+              style={{
+                padding: '16px 20px',
+                background: '#f6f9fc',
+                border: '1px solid #e3e8ee',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                color: '#1A1F71',
+                fontWeight: 500,
+                fontSize: '14px',
+              }}
+            >
+              Security Overview →
+            </Link>
+          </div>
+        </section>
+
         {/* Need Help */}
-        <section style={{ marginTop: '40px' }}>
+        <section>
           <div style={{
             padding: '24px',
             background: '#f6f9fc',

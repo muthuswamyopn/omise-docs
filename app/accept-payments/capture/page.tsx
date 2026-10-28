@@ -208,7 +208,7 @@ export default function CapturePage() {
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Authorize a Full Manual Capture charge</div>
               <p style={{ fontSize: '14px', color: '#3c4257', lineHeight: 1.7, marginBottom: '12px' }}>
-                The authorized amount is final. Use this for general manual capture; you can capture the charge only once, in full.
+                The following example authorizes a THB 70 charge using a card token. Since Full Manual Capture always captures the full amount, this example explicitly sets <code style={{ fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", color: '#1A1F71', background: '#f6f9fc', padding: '2px 6px', borderRadius: '4px' }}>authorization_type=final_auth</code> (the default):
               </p>
               <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges \\
@@ -224,7 +224,7 @@ export default function CapturePage() {
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Capture a Full Manual Capture charge</div>
               <p style={{ fontSize: '14px', color: '#3c4257', lineHeight: 1.7, marginBottom: '12px' }}>
-                Once goods are delivered, trigger capture of the previously authorized amount using the charge ID.
+                The following example demonstrates a full capture of THB 70.
               </p>
               <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges/$FULL_UNCAPTURED_CHARGE_ID/capture \\
@@ -256,7 +256,7 @@ export default function CapturePage() {
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Authorize a Single Partial Capture charge</div>
               <p style={{ fontSize: '14px', color: '#3c4257', lineHeight: 1.7, marginBottom: '12px' }}>
-                The authorized amount is an estimate that may be higher than what you intend to capture.
+                The following example authorizes a THB 70 charge using a card token. Because the merchant expects to capture only part of this amount, the example sets <code style={{ fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", color: '#1A1F71', background: '#f6f9fc', padding: '2px 6px', borderRadius: '4px' }}>authorization_type=pre_auth</code>:
               </p>
               <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges \\
@@ -272,7 +272,7 @@ export default function CapturePage() {
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Capture a Single Partial Capture charge</div>
               <p style={{ fontSize: '14px', color: '#3c4257', lineHeight: 1.7, marginBottom: '12px' }}>
-                The system automatically unblocks and releases the remaining hold after a partial capture.
+                The following example demonstrates a Single Partial Capture of THB 40.
               </p>
               <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges/$PARTIAL_UNCAPTURED_CHARGE_ID/capture \\

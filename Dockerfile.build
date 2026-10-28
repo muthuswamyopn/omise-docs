@@ -1,0 +1,18 @@
+# Build stage for Linux-compatible Next.js output
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev)
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Build the application
+RUN npm run build
+
+# The .next folder will be extracted from this container

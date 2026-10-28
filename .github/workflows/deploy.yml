@@ -1,0 +1,58 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Next.js
+        run: npm run build
+
+      - name: Prepare deployment package
+        run: |
+          mkdir -p deploy
+          cp -r .next/standalone/* deploy/
+          cp -r .next/static deploy/.next/static
+          cp -r public deploy/public 2>/dev/null || true
+
+      - name: Deploy to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 172.233.83.61
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "deploy/*"
+          target: "/root/omise-docs-new"
+          strip_components: 1
+
+      - name: Restart application
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 172.233.83.61
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /root/omise-docs-new
+            # Stop existing process
+            pm2 stop omise-docs 2>/dev/null || true
+            pm2 delete omise-docs 2>/dev/null || true
+            # Start new process
+            PORT=3000 pm2 start server.js --name omise-docs
+            pm2 save

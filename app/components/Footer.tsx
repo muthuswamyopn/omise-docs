@@ -1,7 +1,8 @@
 'use client';
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+  // Using static year to avoid build issues with unstable Date values
+  const currentYear = 2026;
 
   return (
     <footer style={{

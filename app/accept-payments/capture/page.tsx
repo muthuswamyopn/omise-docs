@@ -205,8 +205,11 @@ export default function CapturePage() {
               Create a charge with <code style={{ fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", color: '#1A1F71', background: '#f6f9fc', padding: '2px 6px', borderRadius: '4px' }}>capture=false</code> to authorize without capturing. You must then explicitly capture the full amount before the authorization expires.
             </p>
 
-            <div style={{ marginBottom: '16px' }}>
+            <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Step 1: Authorize the charge</div>
+              <p style={{ fontSize: '14px', color: '#3c4257', lineHeight: 1.7, marginBottom: '12px' }}>
+                Authorize the full amount you intend to capture. Setting <code style={{ fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", color: '#1A1F71', background: '#f6f9fc', padding: '2px 6px', borderRadius: '4px' }}>authorization_type=final_auth</code> indicates that the authorized amount is final. You can capture the charge only once, in full.
+              </p>
               <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges \\
   -u $OMISE_SECRET_KEY: \\
@@ -220,6 +223,9 @@ export default function CapturePage() {
 
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Step 2: Capture the full amount</div>
+              <p style={{ fontSize: '14px', color: '#3c4257', lineHeight: 1.7, marginBottom: '12px' }}>
+                Once you have delivered the goods or services, trigger the capture using the charge ID from the authorization response. The <code style={{ fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", color: '#1A1F71', background: '#f6f9fc', padding: '2px 6px', borderRadius: '4px' }}>capture_amount</code> must equal the originally authorized amount.
+              </p>
               <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges/$CHARGE_ID/capture \\
   -u $OMISE_SECRET_KEY: \\
@@ -247,8 +253,11 @@ export default function CapturePage() {
               Capture less than the authorized amount. Requires <code style={{ fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", color: '#1A1F71', background: '#f6f9fc', padding: '2px 6px', borderRadius: '4px' }}>authorization_type=pre_auth</code> when creating the charge. The uncaptured amount is automatically released.
             </p>
 
-            <div style={{ marginBottom: '16px' }}>
+            <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Step 1: Authorize with pre_auth</div>
+              <p style={{ fontSize: '14px', color: '#3c4257', lineHeight: 1.7, marginBottom: '12px' }}>
+                For merchants expecting to charge less than the authorized amount, setting <code style={{ fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", color: '#1A1F71', background: '#f6f9fc', padding: '2px 6px', borderRadius: '4px' }}>authorization_type=pre_auth</code> indicates that the authorized amount is an estimate that may be higher than what you intend to capture.
+              </p>
               <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges \\
   -u $OMISE_SECRET_KEY: \\
@@ -262,6 +271,9 @@ export default function CapturePage() {
 
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Step 2: Capture a partial amount</div>
+              <p style={{ fontSize: '14px', color: '#3c4257', lineHeight: 1.7, marginBottom: '12px' }}>
+                Capture only the amount you need. In this example, we authorized 70.00 THB but only capture 40.00 THB. The system automatically releases the uncaptured balance (30.00 THB) back to the customer's available credit—no manual release action is needed.
+              </p>
               <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges/$CHARGE_ID/capture \\
   -u $OMISE_SECRET_KEY: \\

@@ -264,8 +264,12 @@ export default function HomePage() {
             </div>
             <code style={{
               fontSize: '14px',
-              color: '#e6ebf1',
+              color: '#67e8f9',
               fontFamily: "'SF Mono', Monaco, monospace",
+              background: 'rgba(103, 232, 249, 0.1)',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              border: '1px solid rgba(103, 232, 249, 0.3)',
             }}>
               https://api.omise.co
             </code>
@@ -286,8 +290,12 @@ export default function HomePage() {
             </div>
             <code style={{
               fontSize: '14px',
-              color: '#e6ebf1',
+              color: '#67e8f9',
               fontFamily: "'SF Mono', Monaco, monospace",
+              background: 'rgba(103, 232, 249, 0.1)',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              border: '1px solid rgba(103, 232, 249, 0.3)',
             }}>
               2019-05-29
             </code>

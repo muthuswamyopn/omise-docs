@@ -189,9 +189,9 @@ export default function CapturePage() {
             <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges \\
   -u $OMISE_SECRET_KEY: \\
-  -d "amount=100000" \\
+  -d "amount=10000" \\
   -d "currency=THB" \\
-  -d "card=tokn_test_5jb3h77oldf7xmcsqex" \\
+  -d "card=$TOKEN_ID" \\
   -d "capture=true"`}
             </pre>
           </div>
@@ -210,10 +210,10 @@ export default function CapturePage() {
               <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges \\
   -u $OMISE_SECRET_KEY: \\
-  -d "amount=100000" \\
+  -d "amount=7000" \\
   -d "currency=THB" \\
-  -d "card=tokn_test_5jb3h77oldf7xmcsqex" \\
   -d "capture=false" \\
+  -d "card=$TOKEN_ID" \\
   -d "authorization_type=final_auth"`}
               </pre>
             </div>
@@ -221,9 +221,9 @@ export default function CapturePage() {
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Step 2: Capture the full amount</div>
               <pre style={codeBlockStyle}>
-{`curl https://api.omise.co/charges/chrg_test_5jb3h99olf7xmcsqex/capture \\
-  -X POST \\
-  -u $OMISE_SECRET_KEY:`}
+{`curl https://api.omise.co/charges/$CHARGE_ID/capture \\
+  -u $OMISE_SECRET_KEY: \\
+  -d "capture_amount=7000"`}
               </pre>
             </div>
 
@@ -252,10 +252,10 @@ export default function CapturePage() {
               <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges \\
   -u $OMISE_SECRET_KEY: \\
-  -d "amount=100000" \\
+  -d "amount=7000" \\
   -d "currency=THB" \\
-  -d "card=tokn_test_5jb3h77oldf7xmcsqex" \\
   -d "capture=false" \\
+  -d "card=$TOKEN_ID" \\
   -d "authorization_type=pre_auth"`}
               </pre>
             </div>
@@ -263,10 +263,9 @@ export default function CapturePage() {
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Step 2: Capture a partial amount</div>
               <pre style={codeBlockStyle}>
-{`curl https://api.omise.co/charges/chrg_test_5jb3h99olf7xmcsqex/capture \\
-  -X POST \\
+{`curl https://api.omise.co/charges/$CHARGE_ID/capture \\
   -u $OMISE_SECRET_KEY: \\
-  -d "capture_amount=75000"`}
+  -d "capture_amount=4000"`}
               </pre>
             </div>
 

@@ -206,9 +206,9 @@ export default function CapturePage() {
             </p>
 
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Step 1: Authorize the charge</div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Authorize a Full Manual Capture charge</div>
               <p style={{ fontSize: '14px', color: '#3c4257', lineHeight: 1.7, marginBottom: '12px' }}>
-                Authorize the full amount you intend to capture. Setting <code style={{ fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", color: '#1A1F71', background: '#f6f9fc', padding: '2px 6px', borderRadius: '4px' }}>authorization_type=final_auth</code> indicates that the authorized amount is final. You can capture the charge only once, in full.
+                The authorized amount is final. Use this for general manual capture; you can capture the charge only once, in full.
               </p>
               <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges \\
@@ -222,12 +222,12 @@ export default function CapturePage() {
             </div>
 
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Step 2: Capture the full amount</div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Capture a Full Manual Capture charge</div>
               <p style={{ fontSize: '14px', color: '#3c4257', lineHeight: 1.7, marginBottom: '12px' }}>
-                Once you have delivered the goods or services, trigger the capture using the charge ID from the authorization response. The <code style={{ fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", color: '#1A1F71', background: '#f6f9fc', padding: '2px 6px', borderRadius: '4px' }}>capture_amount</code> must equal the originally authorized amount.
+                Once goods are delivered, trigger capture of the previously authorized amount using the charge ID.
               </p>
               <pre style={codeBlockStyle}>
-{`curl https://api.omise.co/charges/$CHARGE_ID/capture \\
+{`curl https://api.omise.co/charges/$FULL_UNCAPTURED_CHARGE_ID/capture \\
   -u $OMISE_SECRET_KEY: \\
   -d "capture_amount=7000"`}
               </pre>
@@ -254,9 +254,9 @@ export default function CapturePage() {
             </p>
 
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Step 1: Authorize with pre_auth</div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Authorize a Single Partial Capture charge</div>
               <p style={{ fontSize: '14px', color: '#3c4257', lineHeight: 1.7, marginBottom: '12px' }}>
-                For merchants expecting to charge less than the authorized amount, setting <code style={{ fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", color: '#1A1F71', background: '#f6f9fc', padding: '2px 6px', borderRadius: '4px' }}>authorization_type=pre_auth</code> indicates that the authorized amount is an estimate that may be higher than what you intend to capture.
+                The authorized amount is an estimate that may be higher than what you intend to capture.
               </p>
               <pre style={codeBlockStyle}>
 {`curl https://api.omise.co/charges \\
@@ -270,12 +270,12 @@ export default function CapturePage() {
             </div>
 
             <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Step 2: Capture a partial amount</div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '8px' }}>Capture a Single Partial Capture charge</div>
               <p style={{ fontSize: '14px', color: '#3c4257', lineHeight: 1.7, marginBottom: '12px' }}>
-                Capture only the amount you need. In this example, we authorized 70.00 THB but only capture 40.00 THB. The system automatically releases the uncaptured balance (30.00 THB) back to the customer's available credit—no manual release action is needed.
+                The system automatically unblocks and releases the remaining hold after a partial capture.
               </p>
               <pre style={codeBlockStyle}>
-{`curl https://api.omise.co/charges/$CHARGE_ID/capture \\
+{`curl https://api.omise.co/charges/$PARTIAL_UNCAPTURED_CHARGE_ID/capture \\
   -u $OMISE_SECRET_KEY: \\
   -d "capture_amount=4000"`}
               </pre>

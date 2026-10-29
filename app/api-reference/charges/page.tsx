@@ -53,6 +53,18 @@ export default function ChargesOverviewPage() {
           workflows.
         </p>
 
+        {/* Related APIs */}
+        <div style={{ background: '#f6f9fc', border: '1px solid #e3e8ee', borderRadius: '8px', padding: '20px', marginBottom: '32px' }}>
+          <div style={{ fontWeight: 600, color: '#1a1a1a', marginBottom: '12px' }}>Related APIs</div>
+          <div style={{ display: 'flex', gap: '16px', fontSize: '14px' }}>
+            <Link href="/api-reference/account" style={{ color: '#1A1F71', textDecoration: 'none' }}>Account</Link>
+            <span style={{ color: '#e3e8ee' }}>|</span>
+            <Link href="/api-reference/balance" style={{ color: '#1A1F71', textDecoration: 'none' }}>Balance</Link>
+            <span style={{ color: '#e3e8ee' }}>|</span>
+            <Link href="/api-reference/capabilities" style={{ color: '#1A1F71', textDecoration: 'none' }}>Capabilities</Link>
+          </div>
+        </div>
+
         {/* Charge Lifecycle */}
         <div style={{ background: '#f6f9fc', border: '1px solid #e3e8ee', borderRadius: '8px', padding: '20px', marginBottom: '32px' }}>
           <div style={{ fontWeight: 600, color: '#1a1a1a', marginBottom: '12px' }}>Charge Lifecycle</div>

@@ -18,6 +18,25 @@ export interface EndpointConfig {
   internalNote?: string;
 }
 
+// Balance API endpoints
+export const balanceEndpoints: Record<string, EndpointConfig> = {
+  retrieve: {
+    method: 'GET',
+    path: 'https://api.omise.co/balance',
+    title: 'Retrieve balance',
+    description: 'Retrieves the current balance of your Omise account.',
+    longDescription: `Returns the current balance for your account. The balance includes several components:
+
+• total - Total balance after fees have been deducted
+• transferable - Amount available for immediate transfer to your bank account
+• reserve - Funds held in reserve as a security buffer
+• on_hold - Funds temporarily held due to pending disputes or reviews
+
+All monetary values are returned in the smallest currency unit (e.g., satang for THB).`,
+    params: []
+  },
+};
+
 // Account API endpoints
 export const accountEndpoints: Record<string, EndpointConfig> = {
   retrieve: {

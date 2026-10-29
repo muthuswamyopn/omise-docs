@@ -47,14 +47,6 @@ export default function Footer() {
           >
             Privacy Policy
           </a>
-          <a
-            href="https://status.omise.co"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#697386', textDecoration: 'none' }}
-          >
-            System Status
-          </a>
         </div>
 
         {/* Right side - Social Links */}

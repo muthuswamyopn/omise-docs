@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import SidebarNew from '../../../components/SidebarNew';
+import { useVersion } from '../../../context/VersionContext';
 
 interface ErrorCode {
   code: string;
@@ -9,6 +10,27 @@ interface ErrorCode {
   description: string;
   whenOccurs: string;
   resolution?: string;
+  addedIn?: string; // Version codename when this error was added
+}
+
+// Version order for comparison
+const VERSION_ORDER = ['aegaeon', 'bestla', 'cordelia', 'deimos'];
+
+function isAvailableInVersion(errorAddedIn: string | undefined, currentVersion: string): boolean {
+  if (!errorAddedIn) return true; // No version info means available in all
+  const addedIndex = VERSION_ORDER.indexOf(errorAddedIn);
+  const currentIndex = VERSION_ORDER.indexOf(currentVersion);
+  return currentIndex >= addedIndex;
+}
+
+function getVersionLabel(codename: string): string {
+  const labels: Record<string, string> = {
+    aegaeon: 'Aegaeon (2014-07-27)',
+    bestla: 'Bestla (2015-11-17)',
+    cordelia: 'Cordelia (2017-11-02)',
+    deimos: 'Deimos (2019-05-29)',
+  };
+  return labels[codename] || codename;
 }
 
 const apiErrors: ErrorCode[] = [
@@ -18,6 +40,7 @@ const apiErrors: ErrorCode[] = [
     description: 'The API key is invalid or missing.',
     whenOccurs: 'The Authorization header is missing, malformed, or contains an invalid secret key.',
     resolution: 'Verify your API key is correct and properly formatted. Use HTTP Basic Auth with your secret key as the username and an empty password.',
+    addedIn: 'aegaeon',
   },
   {
     code: 'not_found',
@@ -25,6 +48,7 @@ const apiErrors: ErrorCode[] = [
     description: 'The resource does not exist.',
     whenOccurs: 'You attempt to retrieve, update, or act on a charge, token, customer, or source that does not exist.',
     resolution: 'Verify the resource ID is correct. Confirm the resource exists on the same account (test/live mode) you are currently using.',
+    addedIn: 'aegaeon',
   },
   {
     code: 'invalid_card',
@@ -32,6 +56,7 @@ const apiErrors: ErrorCode[] = [
     description: 'The card information is invalid.',
     whenOccurs: 'You create a charge with invalid card details, an expired card, or a malformed card token.',
     resolution: 'Verify the card token is valid and not expired. Card tokens can only be used once and expire after a short period.',
+    addedIn: 'deimos',
   },
   {
     code: 'invalid_card_token',
@@ -39,6 +64,7 @@ const apiErrors: ErrorCode[] = [
     description: 'The card token is invalid or already used.',
     whenOccurs: 'The token has expired, another charge already used it, or it does not exist.',
     resolution: 'Generate a new card token using Omise.js. Tokens are single-use and expire quickly.',
+    addedIn: 'deimos',
   },
   {
     code: 'missing_card',
@@ -46,6 +72,7 @@ const apiErrors: ErrorCode[] = [
     description: 'The request is missing a payment method.',
     whenOccurs: 'You create a charge without specifying a card, source, or customer parameter.',
     resolution: 'Provide exactly one payment method: a card token, a payment source, or a customer ID with a saved card.',
+    addedIn: 'deimos',
   },
   {
     code: 'invalid_source',
@@ -53,6 +80,7 @@ const apiErrors: ErrorCode[] = [
     description: 'The payment source is invalid or unusable.',
     whenOccurs: 'The source token is invalid, expired, or incompatible with the charge parameters.',
     resolution: 'Create a new source with valid parameters. Ensure the source type matches the currency and amount requirements.',
+    addedIn: 'deimos',
   },
   {
     code: 'used_token',
@@ -60,6 +88,7 @@ const apiErrors: ErrorCode[] = [
     description: 'Another charge already used this token.',
     whenOccurs: 'You attempt to create a charge with a token that another charge already used.',
     resolution: 'Generate a new token for each charge. Tokens are single-use by design for security.',
+    addedIn: 'deimos',
   },
 ];
 
@@ -70,6 +99,7 @@ const chargeErrors: ErrorCode[] = [
     description: 'The request is malformed or contains invalid parameters.',
     whenOccurs: 'Required parameters are missing, parameter types are incorrect, or values are out of valid range.',
     resolution: 'Check the request body for missing or invalid parameters. Refer to the endpoint documentation for required fields.',
+    addedIn: 'aegaeon',
   },
   {
     code: 'failed_capture',
@@ -77,6 +107,7 @@ const chargeErrors: ErrorCode[] = [
     description: 'The system cannot capture this charge.',
     whenOccurs: 'You attempt to capture a charge that is already captured, not authorized, or expired.',
     resolution: 'Verify the charge status is "pending" with authorized=true and captured=false. You must capture within 7 days of authorization.',
+    addedIn: 'aegaeon',
   },
   {
     code: 'failed_reverse',
@@ -84,6 +115,7 @@ const chargeErrors: ErrorCode[] = [
     description: 'The system cannot reverse this charge.',
     whenOccurs: 'You attempt to reverse a charge that is already captured, failed, or expired.',
     resolution: 'You can only reverse uncaptured authorized charges. For captured charges, use a refund instead.',
+    addedIn: 'aegaeon',
   },
   {
     code: 'failed_expire',
@@ -91,6 +123,7 @@ const chargeErrors: ErrorCode[] = [
     description: 'The system cannot expire this charge.',
     whenOccurs: 'You attempt to expire a charge that is not in pending status.',
     resolution: 'You can only manually expire pending charges awaiting customer action.',
+    addedIn: 'bestla',
   },
   {
     code: 'processed_charge',
@@ -98,37 +131,27 @@ const chargeErrors: ErrorCode[] = [
     description: 'The system already processed this charge.',
     whenOccurs: 'You call mark_as_paid or mark_as_failed on a charge that is not in pending status.',
     resolution: 'These test endpoints only work on pending charges. Create a new pending charge to test.',
+    addedIn: 'cordelia',
   },
 ];
 
 const paymentFailures: ErrorCode[] = [
+  // aegaeon (2014-07-27) - Original failure codes
+  {
+    code: 'failed_processing',
+    httpStatus: 402,
+    description: 'The system encountered a general processing failure.',
+    whenOccurs: 'The system cannot process the payment for unspecified reasons.',
+    resolution: 'Retry the payment or ask the customer to use a different payment method.',
+    addedIn: 'aegaeon',
+  },
   {
     code: 'insufficient_fund',
     httpStatus: 402,
     description: 'The card has insufficient funds or reached its credit limit.',
     whenOccurs: 'The cardholder\'s account does not have enough available balance or credit.',
     resolution: 'Ask the customer to use a different payment method or contact their bank.',
-  },
-  {
-    code: 'payment_rejected',
-    httpStatus: 402,
-    description: 'The payment provider rejected the payment.',
-    whenOccurs: 'The bank or payment provider declines the transaction for various reasons.',
-    resolution: 'Ask the customer to contact their bank for details or try a different payment method.',
-  },
-  {
-    code: 'stolen_or_lost_card',
-    httpStatus: 402,
-    description: 'The card issuer reported this card as stolen or lost.',
-    whenOccurs: 'The card issuer flagged the card as compromised.',
-    resolution: 'The customer must contact their bank and use a different payment method.',
-  },
-  {
-    code: 'failed_fraud_check',
-    httpStatus: 402,
-    description: 'The transaction failed fraud detection checks.',
-    whenOccurs: 'The payment triggers fraud prevention rules at the bank or Omise.',
-    resolution: 'Ask the customer to verify their identity with their bank or try a different payment method.',
+    addedIn: 'aegaeon',
   },
   {
     code: 'invalid_account_number',
@@ -136,6 +159,40 @@ const paymentFailures: ErrorCode[] = [
     description: 'The card account number is invalid.',
     whenOccurs: 'The card number does not correspond to a valid account.',
     resolution: 'Verify the card number is correct or use a different card.',
+    addedIn: 'aegaeon',
+  },
+  {
+    code: 'payment_rejected',
+    httpStatus: 402,
+    description: 'The payment provider rejected the payment.',
+    whenOccurs: 'The bank or payment provider declines the transaction for various reasons.',
+    resolution: 'Ask the customer to contact their bank for details or try a different payment method.',
+    addedIn: 'aegaeon',
+  },
+  {
+    code: 'timeout',
+    httpStatus: 402,
+    description: 'The payment request timed out.',
+    whenOccurs: 'The payment processor did not respond within the allowed time.',
+    resolution: 'Retry the payment. If the issue persists, the customer should try a different payment method.',
+    addedIn: 'aegaeon',
+  },
+  // bestla (2015-11-17) - Added failure codes
+  {
+    code: 'failed_fraud_check',
+    httpStatus: 402,
+    description: 'The transaction failed fraud detection checks.',
+    whenOccurs: 'The payment triggers fraud prevention rules at the bank or Omise.',
+    resolution: 'Ask the customer to verify their identity with their bank or try a different payment method.',
+    addedIn: 'bestla',
+  },
+  {
+    code: 'insufficient_balance',
+    httpStatus: 402,
+    description: 'The account has insufficient balance.',
+    whenOccurs: 'The payment source account does not have enough balance to complete the transaction.',
+    resolution: 'Ask the customer to top up their account or use a different payment method.',
+    addedIn: 'bestla',
   },
   {
     code: 'invalid_security_code',
@@ -143,6 +200,15 @@ const paymentFailures: ErrorCode[] = [
     description: 'The security code (CVV/CVC) is incorrect.',
     whenOccurs: 'The CVV/CVC does not match the card.',
     resolution: 'Ask the customer to verify and re-enter their security code.',
+    addedIn: 'bestla',
+  },
+  {
+    code: 'payment_cancelled',
+    httpStatus: 402,
+    description: 'The customer cancelled the payment.',
+    whenOccurs: 'The customer cancelled the payment during authorization or on the payment page.',
+    resolution: 'Ask the customer to retry the payment if they wish to continue.',
+    addedIn: 'bestla',
   },
   {
     code: 'expired_card',
@@ -150,13 +216,24 @@ const paymentFailures: ErrorCode[] = [
     description: 'The card has expired.',
     whenOccurs: 'The card\'s expiration date has passed.',
     resolution: 'Ask the customer to use a valid, non-expired card.',
+    addedIn: 'bestla',
+  },
+  // deimos (2019-05-29) - Added failure codes
+  {
+    code: 'stolen_or_lost_card',
+    httpStatus: 402,
+    description: 'The card issuer reported this card as stolen or lost.',
+    whenOccurs: 'The card issuer flagged the card as compromised.',
+    resolution: 'The customer must contact their bank and use a different payment method.',
+    addedIn: 'deimos',
   },
   {
-    code: 'failed_processing',
+    code: 'blocked_card',
     httpStatus: 402,
-    description: 'The system encountered a general processing failure.',
-    whenOccurs: 'The system cannot process the payment for unspecified reasons.',
-    resolution: 'Retry the payment or ask the customer to use a different payment method.',
+    description: 'The card has been blocked by the issuer.',
+    whenOccurs: 'The card issuer has blocked the card from making transactions.',
+    resolution: 'The customer should contact their bank to unblock the card or use a different payment method.',
+    addedIn: 'deimos',
   },
 ];
 
@@ -171,16 +248,31 @@ const httpStatusCodes = [
   { code: 500, name: 'Internal Server Error', description: 'An error occurred on Omise\'s servers.' },
 ];
 
-function ErrorSection({ title, errors }: { title: string; errors: ErrorCode[] }) {
+function ErrorSection({ title, errors, currentVersion, showVersionBadges = false }: {
+  title: string;
+  errors: ErrorCode[];
+  currentVersion: string;
+  showVersionBadges?: boolean;
+}) {
+  // Filter errors based on current version
+  const filteredErrors = errors.filter(error => isAvailableInVersion(error.addedIn, currentVersion));
+
+  if (filteredErrors.length === 0) {
+    return null;
+  }
+
   return (
     <div style={{ marginBottom: '48px' }}>
       <h2 style={{ fontSize: '20px', fontWeight: 600, color: '#1a1a1a', marginBottom: '20px', paddingTop: '24px', borderTop: '1px solid #e3e8ee' }}>
         {title}
+        <span style={{ fontSize: '13px', fontWeight: 400, color: '#697386', marginLeft: '12px' }}>
+          ({filteredErrors.length} error{filteredErrors.length !== 1 ? 's' : ''})
+        </span>
       </h2>
       <div style={{ display: 'grid', gap: '16px' }}>
-        {errors.map((error) => (
+        {filteredErrors.map((error) => (
           <div key={error.code} style={{ background: '#fff', border: '1px solid #e3e8ee', borderRadius: '8px', padding: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
               <code style={{
                 fontSize: '14px',
                 fontWeight: 600,
@@ -202,6 +294,19 @@ function ErrorSection({ title, errors }: { title: string; errors: ErrorCode[] })
               }}>
                 HTTP {error.httpStatus}
               </span>
+              {showVersionBadges && error.addedIn && (
+                <span style={{
+                  fontSize: '11px',
+                  fontWeight: 500,
+                  color: error.addedIn === currentVersion ? '#1A1F71' : '#697386',
+                  background: error.addedIn === currentVersion ? '#e0e7ff' : '#f6f9fc',
+                  padding: '3px 8px',
+                  borderRadius: '4px',
+                  border: error.addedIn === currentVersion ? '1px solid #c7d2fe' : '1px solid #e3e8ee'
+                }}>
+                  Added in {error.addedIn.charAt(0).toUpperCase() + error.addedIn.slice(1)}
+                </span>
+              )}
             </div>
             <p style={{ fontSize: '15px', color: '#1a1a1a', fontWeight: 500, marginBottom: '8px' }}>
               {error.description}
@@ -222,6 +327,14 @@ function ErrorSection({ title, errors }: { title: string; errors: ErrorCode[] })
 }
 
 export default function ErrorsPage() {
+  const { currentVersion } = useVersion();
+
+  // Count total errors available in current version
+  const availableApiErrors = apiErrors.filter(e => isAvailableInVersion(e.addedIn, currentVersion));
+  const availableChargeErrors = chargeErrors.filter(e => isAvailableInVersion(e.addedIn, currentVersion));
+  const availablePaymentFailures = paymentFailures.filter(e => isAvailableInVersion(e.addedIn, currentVersion));
+  const totalErrors = availableApiErrors.length + availableChargeErrors.length + availablePaymentFailures.length;
+
   return (
     <div className="docs-layout">
       <SidebarNew />
@@ -243,6 +356,28 @@ export default function ErrorsPage() {
         <p style={{ fontSize: '16px', color: '#697386', marginBottom: '24px' }}>
           Comprehensive reference for all error codes returned by Charges API endpoints.
         </p>
+
+        {/* Version indicator */}
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '8px 14px',
+          background: '#f0f9ff',
+          border: '1px solid #bae6fd',
+          borderRadius: '6px',
+          marginBottom: '24px',
+          fontSize: '13px',
+          color: '#0369a1'
+        }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
+          </svg>
+          <span>
+            Showing <strong>{totalErrors}</strong> error codes for API version <strong>{getVersionLabel(currentVersion)}</strong>
+          </span>
+        </div>
 
         <p style={{ fontSize: '15px', color: '#3c4257', lineHeight: 1.7, marginBottom: '32px' }}>
           When a Charges API request fails, Omise returns an error response with a specific error code and message.
@@ -311,9 +446,9 @@ export default function ErrorsPage() {
           ))}
         </div>
 
-        <ErrorSection title="Authentication & Resource Errors" errors={apiErrors} />
-        <ErrorSection title="Charge Operation Errors" errors={chargeErrors} />
-        <ErrorSection title="Payment Failure Codes" errors={paymentFailures} />
+        <ErrorSection title="Authentication & Resource Errors" errors={apiErrors} currentVersion={currentVersion} showVersionBadges />
+        <ErrorSection title="Charge Operation Errors" errors={chargeErrors} currentVersion={currentVersion} showVersionBadges />
+        <ErrorSection title="Payment Failure Codes" errors={paymentFailures} currentVersion={currentVersion} showVersionBadges />
 
         {/* Best Practices */}
         <div style={{ marginTop: '48px', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '8px', padding: '24px' }}>

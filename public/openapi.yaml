@@ -25,6 +25,8 @@ security:
 tags:
   - name: Account
     description: Retrieve and update account configuration
+  - name: Balance
+    description: Retrieve your account balance
   - name: Charges
     description: Create, capture, and manage payment charges
 
@@ -103,6 +105,47 @@ paths:
                 $ref: '#/components/schemas/Account'
         '401':
           $ref: '#/components/responses/AuthenticationFailure'
+
+  /balance:
+    get:
+      summary: Retrieve balance
+      description: |
+        Retrieve the current balance of your Omise account.
+
+        The balance includes several components:
+        - **total** - Total balance after fees have been deducted
+        - **transferable** - Amount available for immediate transfer to your bank account
+        - **reserve** - Funds held in reserve as a security buffer
+        - **on_hold** - Funds temporarily held due to pending disputes or reviews
+
+        All monetary values are returned in the smallest currency unit (e.g., satang for THB).
+
+        The balance returned depends on the API key used. Test mode keys return test balances, while live mode keys return actual balances.
+      operationId: getBalance
+      tags: [Balance]
+      responses:
+        '200':
+          description: Current balance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Balance'
+              example:
+                object: balance
+                livemode: false
+                location: /balance
+                currency: THB
+                total: 1656795
+                transferable: 1656795
+                reserve: 0
+                on_hold: 0
+                created_at: "2024-01-15T10:30:00Z"
+        '400':
+          $ref: '#/components/responses/InvalidAccount'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
+        '429':
+          $ref: '#/components/responses/RateLimitExceeded'
 
   /charges:
     post:
@@ -403,6 +446,46 @@ components:
       example: chrg_test_000000000000000
 
   schemas:
+    Balance:
+      type: object
+      description: Represents the current balance of your Omise account
+      properties:
+        object:
+          type: string
+          enum: [balance]
+          description: Object type, always "balance"
+        livemode:
+          type: boolean
+          description: Whether this is live mode balance (true) or test mode (false)
+        location:
+          type: string
+          description: API path to retrieve the balance
+          example: /balance
+        currency:
+          type: string
+          description: Three-letter ISO 4217 currency code
+          example: THB
+        total:
+          type: integer
+          description: Total balance in smallest currency unit (after fees deducted)
+          example: 1656795
+        transferable:
+          type: integer
+          description: Amount available for immediate transfer to your bank account
+          example: 1656795
+        reserve:
+          type: integer
+          description: Funds held in reserve as a security buffer
+          example: 0
+        on_hold:
+          type: integer
+          description: Funds temporarily held due to pending disputes or reviews
+          example: 0
+        created_at:
+          type: string
+          format: date-time
+          description: Balance record creation timestamp (ISO 8601)
+
     Account:
       type: object
       properties:
@@ -834,3 +917,27 @@ components:
                 location: "https://www.omise.co/api-errors#invalid-account"
                 code: invalid_account
                 message: "account is invalid"
+
+    RateLimitExceeded:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            location: "https://www.omise.co/api-errors#too-many-requests"
+            code: too_many_requests
+            message: "rate limit exceeded"
+
+    ServiceNotFound:
+      description: Service not available for this account
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            location: "https://www.omise.co/api-errors#service-not-found"
+            code: service_not_found
+            message: "service is not available for this account"

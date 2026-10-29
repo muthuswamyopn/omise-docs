@@ -7,7 +7,7 @@ import {
   API_VERSIONS,
   getFieldsForVersion,
   getPaymentMethodsForVersion,
-  getFailureCodesForVersion
+  PAYMENT_FAILURE_CODES
 } from '../../../lib/apiVersions';
 import { methodColors } from '../../../lib/chargeData';
 import { useVersion } from '../../../context/VersionContext';
@@ -60,7 +60,7 @@ export default function VersionedChargesPage() {
   const fields = getFieldsForVersion(currentVersion);
   const endpoints = getEndpointsForVersion(currentVersion);
   const paymentMethods = getPaymentMethodsForVersion(currentVersion);
-  const failureCodes = getFailureCodesForVersion(currentVersion);
+  const failureCodes = PAYMENT_FAILURE_CODES; // Error codes are NOT version-specific
   const versionInfo = API_VERSIONS.find(v => v.codename === currentVersion);
 
   return (

@@ -441,165 +441,649 @@ Console.WriteLine(charge.Status); // "failed"`,
   },
 };
 
-export const responseExamples: Record<string, string> = {
-  create: `{
-  "object": "charge",
-  "id": "chrg_test_no1t4tnemucod0e51mo",
-  "location": "/charges/chrg_test_no1t4tnemucod0e51mo",
-  "amount": 100000,
-  "net": 96350,
-  "fee": 3650,
-  "fee_vat": 256,
-  "interest": 0,
-  "interest_vat": 0,
-  "funding_amount": 100000,
-  "refunded_amount": 0,
-  "currency": "thb",
-  "funding_currency": "thb",
-  "description": null,
-  "metadata": {},
-  "status": "successful",
-  "authorized": true,
-  "reversed": false,
-  "captured": true,
-  "capture": true,
-  "disputable": true,
-  "capturable": false,
-  "reversible": false,
-  "refundable": true,
-  "expired": false,
-  "expires_at": "2024-01-22T10:30:00Z",
-  "paid": true,
-  "transaction": "trxn_test_no1t4tnemucod0e51mo",
-  "card": {
-    "object": "card",
-    "id": "card_test_no1t4tnemucod0e51mo",
-    "livemode": false,
-    "location": null,
-    "deleted": false,
-    "brand": "Visa",
-    "financing": "credit",
-    "last_digits": "4242",
-    "name": "JOHN DOE",
-    "expiration_month": 12,
-    "expiration_year": 2025
-  },
-  "source": null,
-  "schedule": null,
-  "customer": null,
-  "created_at": "2024-01-15T10:30:00Z",
-  "paid_at": "2024-01-15T10:30:01Z"
-}`,
-  retrieve: `{
-  "object": "charge",
-  "id": "chrg_test_no1t4tnemucod0e51mo",
-  "location": "/charges/chrg_test_no1t4tnemucod0e51mo",
-  "amount": 100000,
-  "currency": "thb",
-  "status": "successful",
-  "authorized": true,
-  "captured": true,
-  "paid": true,
-  "card": {
-    "object": "card",
-    "id": "card_test_no1t4tnemucod0e51mo",
-    "brand": "Visa",
-    "last_digits": "4242"
-  },
-  "created_at": "2024-01-15T10:30:00Z"
-}`,
-  list: `{
-  "object": "list",
-  "location": "/charges",
-  "offset": 0,
-  "limit": 20,
-  "total": 156,
-  "order": "chronological",
-  "data": [
-    {
-      "object": "charge",
-      "id": "chrg_test_no1t4tnemucod0e51mo",
-      "amount": 100000,
-      "currency": "thb",
-      "status": "successful"
+// Version-aware response examples
+export function getVersionedResponse(endpoint: string, version: string): string {
+  const responses: Record<string, Record<string, object>> = {
+    create: {
+      aegaeon: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        location: "/charges/chrg_test_no1t4tnemucod0e51mo",
+        livemode: false,
+        amount: 100000,
+        currency: "thb",
+        description: null,
+        metadata: {},
+        status: "successful",
+        authorized: true,
+        captured: true,
+        capture: true,
+        capturable: false,
+        reversible: false,
+        reversed: false,
+        refundable: true,
+        refunded: 0,
+        card: {
+          object: "card",
+          id: "card_test_no1t4tnemucod0e51mo",
+          brand: "Visa",
+          last_digits: "4242"
+        },
+        customer: null,
+        ip: null,
+        failure_code: null,
+        failure_message: null,
+        created_at: "2024-01-15T10:30:00Z",
+        paid_at: "2024-01-15T10:30:01Z",
+        expires_at: null,
+        offsite: null,
+        return_uri: null,
+        authorize_uri: null
+      },
+      bestla: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        location: "/charges/chrg_test_no1t4tnemucod0e51mo",
+        livemode: false,
+        amount: 100000,
+        currency: "thb",
+        description: null,
+        metadata: {},
+        status: "successful",
+        authorized: true,
+        captured: true,
+        capture: true,
+        capturable: false,
+        reversible: false,
+        reversed: false,
+        refundable: true,
+        refunded: 0,
+        card: {
+          object: "card",
+          id: "card_test_no1t4tnemucod0e51mo",
+          brand: "Visa",
+          last_digits: "4242"
+        },
+        customer: null,
+        ip: null,
+        failure_code: null,
+        failure_message: null,
+        created_at: "2024-01-15T10:30:00Z",
+        paid_at: "2024-01-15T10:30:01Z",
+        expires_at: null,
+        offsite: null,
+        return_uri: null,
+        authorize_uri: null,
+        // Bestla additions
+        dispute: null,
+        transaction: "trxn_test_no1t4tnemucod0e51mo",
+        refunds: { object: "list", data: [] },
+        source_of_fund: "card",
+        disputable: true,
+        voided: false,
+        expired: false
+      },
+      cordelia: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        location: "/charges/chrg_test_no1t4tnemucod0e51mo",
+        livemode: false,
+        amount: 100000,
+        currency: "thb",
+        description: null,
+        metadata: {},
+        status: "successful",
+        authorized: true,
+        captured: true,
+        capture: true,
+        capturable: false,
+        reversible: false,
+        reversed: false,
+        refundable: true,
+        refunded: 0,
+        card: {
+          object: "card",
+          id: "card_test_no1t4tnemucod0e51mo",
+          brand: "Visa",
+          last_digits: "4242"
+        },
+        customer: null,
+        ip: null,
+        failure_code: null,
+        failure_message: null,
+        created_at: "2024-01-15T10:30:00Z",
+        paid_at: "2024-01-15T10:30:01Z",
+        expires_at: null,
+        return_uri: null,
+        authorize_uri: null,
+        // Bestla fields
+        dispute: null,
+        transaction: "trxn_test_no1t4tnemucod0e51mo",
+        refunds: { object: "list", data: [] },
+        source_of_fund: "card",
+        disputable: true,
+        voided: false,
+        expired: false,
+        // Cordelia additions
+        source: null,
+        platform_fee: null,
+        linked_account: null,
+        zero_interest_installments: false,
+        authorization_type: null,
+        authorized_amount: 100000,
+        captured_amount: 100000,
+        funding_amount: 100000,
+        funding_currency: "thb",
+        net: 96350,
+        fee: 3650,
+        fee_vat: 256,
+        interest: 0,
+        interest_vat: 0,
+        partially_refundable: true,
+        schedule: null,
+        link: null,
+        statement_descriptor: null,
+        approval_code: "123456"
+      },
+      deimos: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        location: "/charges/chrg_test_no1t4tnemucod0e51mo",
+        livemode: false,
+        amount: 100000,
+        currency: "thb",
+        description: null,
+        metadata: {},
+        status: "successful",
+        authorized: true,
+        captured: true,
+        capture: true,
+        capturable: false,
+        reversible: false,
+        reversed: false,
+        refundable: true,
+        refunded: 0,
+        card: {
+          object: "card",
+          id: "card_test_no1t4tnemucod0e51mo",
+          brand: "Visa",
+          last_digits: "4242",
+          financing: "credit"
+        },
+        customer: null,
+        ip: null,
+        failure_code: null,
+        failure_message: null,
+        created_at: "2024-01-15T10:30:00Z",
+        paid_at: "2024-01-15T10:30:01Z",
+        expires_at: null,
+        return_uri: null,
+        authorize_uri: null,
+        // Bestla fields
+        dispute: null,
+        transaction: "trxn_test_no1t4tnemucod0e51mo",
+        refunds: { object: "list", data: [] },
+        source_of_fund: "card",
+        disputable: true,
+        voided: false,
+        expired: false,
+        // Cordelia fields
+        source: null,
+        platform_fee: null,
+        linked_account: null,
+        zero_interest_installments: false,
+        authorization_type: null,
+        authorized_amount: 100000,
+        captured_amount: 100000,
+        funding_amount: 100000,
+        funding_currency: "thb",
+        net: 96350,
+        fee: 3650,
+        fee_vat: 256,
+        interest: 0,
+        interest_vat: 0,
+        partially_refundable: true,
+        schedule: null,
+        link: null,
+        statement_descriptor: null,
+        approval_code: "123456",
+        // Deimos additions
+        three_ds_info: null,
+        unmanaged_payment: null,
+        transaction_fees: { object: "list", data: [] },
+        multi_capture: false,
+        merchant_advice: null,
+        merchant_advice_code: null,
+        authenticated_by: null,
+        authorized_at: "2024-01-15T10:30:00Z",
+        reversed_at: null,
+        expired_at: null,
+        can_perform_void: false,
+        acquirer_reference_number: null,
+        ref_id: null,
+        first_charge: true,
+        transaction_indicator: null,
+        recurring_reason: null,
+        missing_3ds_fields: [],
+        merchant_name: "Test Merchant",
+        merchant_uid: "acct_test_no1t4tnemucod0e51mo"
+      }
     },
-    {
-      "object": "charge",
-      "id": "chrg_test_no1t4tnemucod0e51mo",
-      "amount": 250000,
-      "currency": "thb",
-      "status": "successful"
+    retrieve: {
+      aegaeon: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        location: "/charges/chrg_test_no1t4tnemucod0e51mo",
+        livemode: false,
+        amount: 100000,
+        currency: "thb",
+        status: "successful",
+        authorized: true,
+        captured: true,
+        card: {
+          object: "card",
+          id: "card_test_no1t4tnemucod0e51mo",
+          brand: "Visa",
+          last_digits: "4242"
+        },
+        created_at: "2024-01-15T10:30:00Z"
+      },
+      bestla: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        location: "/charges/chrg_test_no1t4tnemucod0e51mo",
+        livemode: false,
+        amount: 100000,
+        currency: "thb",
+        status: "successful",
+        authorized: true,
+        captured: true,
+        card: {
+          object: "card",
+          id: "card_test_no1t4tnemucod0e51mo",
+          brand: "Visa",
+          last_digits: "4242"
+        },
+        created_at: "2024-01-15T10:30:00Z",
+        transaction: "trxn_test_no1t4tnemucod0e51mo",
+        refunds: { object: "list", data: [] },
+        source_of_fund: "card",
+        disputable: true,
+        expired: false
+      },
+      cordelia: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        location: "/charges/chrg_test_no1t4tnemucod0e51mo",
+        livemode: false,
+        amount: 100000,
+        currency: "thb",
+        status: "successful",
+        authorized: true,
+        captured: true,
+        card: {
+          object: "card",
+          id: "card_test_no1t4tnemucod0e51mo",
+          brand: "Visa",
+          last_digits: "4242"
+        },
+        created_at: "2024-01-15T10:30:00Z",
+        transaction: "trxn_test_no1t4tnemucod0e51mo",
+        refunds: { object: "list", data: [] },
+        source_of_fund: "card",
+        disputable: true,
+        expired: false,
+        net: 96350,
+        fee: 3650,
+        fee_vat: 256,
+        source: null
+      },
+      deimos: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        location: "/charges/chrg_test_no1t4tnemucod0e51mo",
+        livemode: false,
+        amount: 100000,
+        currency: "thb",
+        status: "successful",
+        authorized: true,
+        captured: true,
+        card: {
+          object: "card",
+          id: "card_test_no1t4tnemucod0e51mo",
+          brand: "Visa",
+          last_digits: "4242",
+          financing: "credit"
+        },
+        created_at: "2024-01-15T10:30:00Z",
+        transaction: "trxn_test_no1t4tnemucod0e51mo",
+        refunds: { object: "list", data: [] },
+        source_of_fund: "card",
+        disputable: true,
+        expired: false,
+        net: 96350,
+        fee: 3650,
+        fee_vat: 256,
+        source: null,
+        three_ds_info: null,
+        multi_capture: false,
+        authorized_at: "2024-01-15T10:30:00Z"
+      }
+    },
+    reverse: {
+      aegaeon: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        status: "reversed",
+        authorized: true,
+        captured: false,
+        reversed: true,
+        reversible: false
+      },
+      bestla: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        status: "reversed",
+        authorized: true,
+        captured: false,
+        reversed: true,
+        reversible: false,
+        voided: true,
+        transaction: null,
+        source_of_fund: "card"
+      },
+      cordelia: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        status: "reversed",
+        authorized: true,
+        captured: false,
+        reversed: true,
+        reversible: false,
+        voided: true,
+        transaction: null,
+        source_of_fund: "card",
+        net: 0,
+        fee: 0,
+        fee_vat: 0
+      },
+      deimos: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        status: "reversed",
+        authorized: true,
+        captured: false,
+        reversed: true,
+        reversible: false,
+        voided: true,
+        transaction: null,
+        source_of_fund: "card",
+        net: 0,
+        fee: 0,
+        fee_vat: 0,
+        reversed_at: "2024-01-15T11:00:00Z",
+        can_perform_void: false
+      }
+    },
+    capture: {
+      aegaeon: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        status: "successful",
+        authorized: true,
+        captured: true,
+        capturable: false,
+        paid_at: "2024-01-15T11:45:00Z"
+      },
+      bestla: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        status: "successful",
+        authorized: true,
+        captured: true,
+        capturable: false,
+        paid_at: "2024-01-15T11:45:00Z",
+        transaction: "trxn_test_no1t4tnemucod0e51mo",
+        source_of_fund: "card"
+      },
+      cordelia: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        status: "successful",
+        authorized: true,
+        captured: true,
+        capturable: false,
+        paid_at: "2024-01-15T11:45:00Z",
+        transaction: "trxn_test_no1t4tnemucod0e51mo",
+        source_of_fund: "card",
+        authorized_amount: 100000,
+        captured_amount: 100000,
+        net: 96350,
+        fee: 3650,
+        fee_vat: 256
+      },
+      deimos: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        status: "successful",
+        authorized: true,
+        captured: true,
+        capturable: false,
+        paid_at: "2024-01-15T11:45:00Z",
+        transaction: "trxn_test_no1t4tnemucod0e51mo",
+        source_of_fund: "card",
+        authorized_amount: 100000,
+        captured_amount: 100000,
+        net: 96350,
+        fee: 3650,
+        fee_vat: 256,
+        multi_capture: false,
+        can_perform_void: false
+      }
+    },
+    expire: {
+      cordelia: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        status: "expired",
+        expired: true,
+        source_of_fund: "card",
+        net: 0,
+        fee: 0,
+        fee_vat: 0
+      },
+      deimos: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        status: "expired",
+        expired: true,
+        source_of_fund: "card",
+        net: 0,
+        fee: 0,
+        fee_vat: 0,
+        expired_at: "2024-01-15T12:00:00Z",
+        can_perform_void: false
+      }
+    },
+    update: {
+      aegaeon: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        description: "Order #12345",
+        metadata: { order_id: "12345" },
+        status: "successful"
+      },
+      bestla: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        description: "Order #12345",
+        metadata: { order_id: "12345" },
+        status: "successful",
+        transaction: "trxn_test_no1t4tnemucod0e51mo"
+      },
+      cordelia: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        description: "Order #12345",
+        metadata: { order_id: "12345" },
+        status: "successful",
+        transaction: "trxn_test_no1t4tnemucod0e51mo",
+        net: 96350,
+        fee: 3650
+      },
+      deimos: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        description: "Order #12345",
+        metadata: { order_id: "12345" },
+        status: "successful",
+        transaction: "trxn_test_no1t4tnemucod0e51mo",
+        net: 96350,
+        fee: 3650,
+        ref_id: null
+      }
+    },
+    list: {
+      aegaeon: {
+        object: "list",
+        location: "/charges",
+        offset: 0,
+        limit: 20,
+        total: 156,
+        data: [
+          { object: "charge", id: "chrg_test_no1t4tnemucod0e51mo", amount: 100000, currency: "thb", status: "successful" },
+          { object: "charge", id: "chrg_test_abc123def456", amount: 250000, currency: "thb", status: "successful" }
+        ]
+      },
+      bestla: {
+        object: "list",
+        location: "/charges",
+        offset: 0,
+        limit: 20,
+        total: 156,
+        order: "chronological",
+        data: [
+          { object: "charge", id: "chrg_test_no1t4tnemucod0e51mo", amount: 100000, currency: "thb", status: "successful", source_of_fund: "card" },
+          { object: "charge", id: "chrg_test_abc123def456", amount: 250000, currency: "thb", status: "successful", source_of_fund: "offsite" }
+        ]
+      },
+      cordelia: {
+        object: "list",
+        location: "/charges",
+        offset: 0,
+        limit: 20,
+        total: 156,
+        order: "chronological",
+        data: [
+          { object: "charge", id: "chrg_test_no1t4tnemucod0e51mo", amount: 100000, currency: "thb", status: "successful", source_of_fund: "card", net: 96350 },
+          { object: "charge", id: "chrg_test_abc123def456", amount: 250000, currency: "thb", status: "successful", source_of_fund: "card", net: 240875 }
+        ]
+      },
+      deimos: {
+        object: "list",
+        location: "/charges",
+        offset: 0,
+        limit: 20,
+        total: 156,
+        order: "chronological",
+        data: [
+          { object: "charge", id: "chrg_test_no1t4tnemucod0e51mo", amount: 100000, currency: "thb", status: "successful", source_of_fund: "card", net: 96350, multi_capture: false },
+          { object: "charge", id: "chrg_test_abc123def456", amount: 250000, currency: "thb", status: "successful", source_of_fund: "card", net: 240875, multi_capture: false }
+        ]
+      }
+    },
+    'mark-as-paid': {
+      deimos: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        status: "successful",
+        authorized: true,
+        captured: true,
+        livemode: false,
+        paid_at: "2024-01-15T12:00:00Z",
+        net: 96350,
+        fee: 3650,
+        fee_vat: 256,
+        multi_capture: false
+      }
+    },
+    'mark-as-failed': {
+      deimos: {
+        object: "charge",
+        id: "chrg_test_no1t4tnemucod0e51mo",
+        amount: 100000,
+        currency: "thb",
+        status: "failed",
+        authorized: false,
+        captured: false,
+        livemode: false,
+        failure_code: "failed_processing",
+        failure_message: "Charge was marked as failed (test mode)",
+        net: 0,
+        fee: 0,
+        fee_vat: 0
+      }
     }
-  ]
-}`,
-  capture: `{
-  "object": "charge",
-  "id": "chrg_test_no1t4tnemucod0e51mo",
-  "amount": 100000,
-  "currency": "thb",
-  "status": "successful",
-  "authorized": true,
-  "captured": true,
-  "capturable": false,
-  "paid": true,
-  "paid_at": "2024-01-15T11:45:00Z"
-}`,
-  reverse: `{
-  "object": "charge",
-  "id": "chrg_test_no1t4tnemucod0e51mo",
-  "amount": 100000,
-  "currency": "thb",
-  "status": "reversed",
-  "authorized": true,
-  "captured": false,
-  "reversed": true,
-  "reversible": false
-}`,
-  expire: `{
-  "object": "charge",
-  "id": "chrg_test_no1t4tnemucod0e51mo",
-  "amount": 100000,
-  "currency": "thb",
-  "status": "expired",
-  "expired": true,
-  "expired_at": "2024-01-15T12:00:00Z"
-}`,
-  update: `{
-  "object": "charge",
-  "id": "chrg_test_no1t4tnemucod0e51mo",
-  "amount": 100000,
-  "currency": "thb",
-  "description": "Order #12345",
-  "metadata": {
-    "order_id": "12345"
-  },
-  "status": "successful"
-}`,
-  'mark-as-paid': `{
-  "object": "charge",
-  "id": "chrg_test_no1t4tnemucod0e51mo",
-  "amount": 100000,
-  "currency": "thb",
-  "status": "successful",
-  "authorized": true,
-  "captured": true,
-  "paid": true,
-  "livemode": false,
-  "paid_at": "2024-01-15T12:00:00Z"
-}`,
-  'mark-as-failed': `{
-  "object": "charge",
-  "id": "chrg_test_no1t4tnemucod0e51mo",
-  "amount": 100000,
-  "currency": "thb",
-  "status": "failed",
-  "authorized": false,
-  "captured": false,
-  "paid": false,
-  "livemode": false,
-  "failure_code": "failed_processing",
-  "failure_message": "Charge was marked as failed (test mode)"
-}`,
+  };
+
+  const endpointResponses = responses[endpoint];
+  if (!endpointResponses) return '{}';
+
+  // Get response for specific version, or fall back to closest available
+  const versionOrder = ['aegaeon', 'bestla', 'cordelia', 'deimos'];
+  const currentIndex = versionOrder.indexOf(version);
+
+  // Find the closest available version response
+  for (let i = currentIndex; i >= 0; i--) {
+    if (endpointResponses[versionOrder[i]]) {
+      return JSON.stringify(endpointResponses[versionOrder[i]], null, 2);
+    }
+  }
+
+  return '{}';
+}
+
+// Legacy static responses (kept for backward compatibility)
+export const responseExamples: Record<string, string> = {
+  create: getVersionedResponse('create', 'deimos'),
+  retrieve: getVersionedResponse('retrieve', 'deimos'),
+  list: getVersionedResponse('list', 'deimos'),
+  capture: getVersionedResponse('capture', 'deimos'),
+  reverse: getVersionedResponse('reverse', 'deimos'),
+  expire: getVersionedResponse('expire', 'deimos'),
+  update: getVersionedResponse('update', 'deimos'),
+  'mark-as-paid': getVersionedResponse('mark-as-paid', 'deimos'),
+  'mark-as-failed': getVersionedResponse('mark-as-failed', 'deimos'),
 };
 
 export const languages = [

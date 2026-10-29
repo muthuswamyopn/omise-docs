@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SidebarNew from './SidebarNew';
 import VersionSelector from './VersionSelector';
-import { endpoints, codeExamples, responseExamples, languages, methodColors, EndpointConfig } from '../lib/chargeData';
+import { endpoints, codeExamples, getVersionedResponse, languages, methodColors, EndpointConfig } from '../lib/chargeData';
 import { API_VERSIONS, ApiVersion } from '../lib/apiVersions';
 import { useVersion } from '../context/VersionContext';
 
@@ -507,7 +507,7 @@ export default function EndpointPage({ endpointKey, currentPage }: EndpointPageP
               </span>
             </div>
             <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', maxHeight: '500px', fontFamily: "'SF Mono', Monaco, monospace" }}>
-              {endpointAvailable ? (responseExamples[endpointKey] || '{}') : `// This endpoint is not available in ${currentVersion}\n// Upgrade to ${ENDPOINT_VERSIONS[endpointKey]} or later`}
+              {endpointAvailable ? getVersionedResponse(endpointKey, currentVersion) : `// This endpoint is not available in ${currentVersion}\n// Upgrade to ${ENDPOINT_VERSIONS[endpointKey]} or later`}
             </pre>
           </div>
         </div>

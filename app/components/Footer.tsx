@@ -55,14 +55,6 @@ export default function Footer() {
           >
             System Status
           </a>
-          <a
-            href="https://www.omise.co/security"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#697386', textDecoration: 'none' }}
-          >
-            Security
-          </a>
         </div>
 
         {/* Right side - Social Links */}

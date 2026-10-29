@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import SidebarNew from '../../../components/SidebarNew';
+import Notice from '../../../components/Notice';
 
 const errorCodes = [
   {
@@ -147,11 +148,11 @@ export default function AccountErrorsPage() {
         </div>
 
         {/* Authentication Note */}
-        <div style={{ marginTop: '32px', padding: '16px 20px', background: '#fff', border: '1px solid #e3e8ee', borderLeft: '4px solid #1A1F71', borderRadius: '8px' }}>
-          <p style={{ fontSize: '14px', color: '#3c4257', margin: 0, lineHeight: 1.6 }}>
-            <strong>Important:</strong> The Account API requires authentication with your <strong>secret key</strong> (skey_...).
+        <div style={{ marginTop: '32px' }}>
+          <Notice type="note" title="Important">
+            The Account API requires authentication with your <strong>secret key</strong> (skey_...).
             Using a public key (pkey_...) will result in an <code style={{ background: '#f6f9fc', padding: '1px 4px', borderRadius: '3px', fontSize: '12px' }}>authentication_failure</code> error.
-          </p>
+          </Notice>
         </div>
 
         {/* Navigation */}

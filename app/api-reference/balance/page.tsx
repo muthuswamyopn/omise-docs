@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import SidebarNew from '../../components/SidebarNew';
+import Notice from '../../components/Notice';
 import {
   balanceAttributes,
   balanceCodeExamples,
@@ -37,10 +38,10 @@ export default function BalancePage() {
         </p>
 
         {/* Important Note */}
-        <div style={{ padding: '16px 20px', background: '#fff', border: '1px solid #e3e8ee', borderLeft: '4px solid #1A1F71', borderRadius: '8px', marginBottom: '32px' }}>
-          <p style={{ fontSize: '14px', color: '#3c4257', margin: 0, lineHeight: 1.6 }}>
-            <strong>Note:</strong> The balance returned depends on the API key used. Test mode keys return test balances, while live mode keys return actual balances.
-          </p>
+        <div style={{ marginBottom: '32px' }}>
+          <Notice type="note">
+            The balance returned depends on the API key used. Test mode keys return test balances, while live mode keys return actual balances.
+          </Notice>
         </div>
 
         {/* Endpoint */}

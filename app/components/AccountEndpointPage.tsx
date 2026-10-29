@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SidebarNew from './SidebarNew';
+import Notice from './Notice';
 import { accountEndpoints, accountCodeExamples, accountResponseExamples, languages, methodColors, EndpointConfig } from '../lib/accountData';
 
 interface TryItFormProps {
@@ -201,11 +202,7 @@ export default function AccountEndpointPage({ endpointKey }: AccountEndpointPage
 
         {/* Internal Note */}
         {config.internalNote && (
-          <div style={{ padding: '16px 20px', background: '#f6f9fc', border: '1px solid #e3e8ee', borderRadius: '8px', marginBottom: '32px' }}>
-            <p style={{ fontSize: '14px', color: '#697386', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>
-              <strong>Note:</strong> {config.internalNote}
-            </p>
-          </div>
+          <Notice type="note">{config.internalNote}</Notice>
         )}
 
         {/* Parameters */}
@@ -232,11 +229,11 @@ export default function AccountEndpointPage({ endpointKey }: AccountEndpointPage
         )}
 
         {/* Error Handling Notice */}
-        <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '8px', padding: '16px 20px', marginTop: '24px' }}>
-          <div style={{ fontSize: '14px', color: '#78350f', lineHeight: 1.6 }}>
-            <strong style={{ color: '#92400e' }}>Error Handling:</strong> When a request fails, the API returns an error response with a specific error code.
+        <div style={{ marginTop: '24px' }}>
+          <Notice type="warning" title="Error Handling">
+            When a request fails, the API returns an error response with a specific error code.
             See <Link href="/api-reference/account/errors" style={{ color: '#1A1F71', fontWeight: 600 }}>Account API Error Codes</Link> for a complete reference.
-          </div>
+          </Notice>
         </div>
 
         {/* Try It Button */}

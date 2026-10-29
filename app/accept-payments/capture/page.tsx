@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import SidebarNew from '../../components/SidebarNew';
 import MermaidDiagram from '../../components/MermaidDiagram';
+import Notice from '../../components/Notice';
 
 const captureTypes = [
   {
@@ -155,21 +156,9 @@ export default function CapturePage() {
             </div>
           </div>
 
-          <div style={{ padding: '16px 20px', background: '#fef9c3', border: '1px solid #fde047', borderRadius: '8px' }}>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" strokeWidth="2" style={{ flexShrink: 0, marginTop: '2px' }}>
-                <path d="M12 9v4" />
-                <path d="M12 17h.01" />
-                <circle cx="12" cy="12" r="10" />
-              </svg>
-              <div>
-                <div style={{ fontWeight: 600, color: '#854d0e', marginBottom: '4px', fontSize: '14px' }}>Authorization Period</div>
-                <p style={{ fontSize: '13px', color: '#854d0e', margin: 0, lineHeight: 1.6 }}>
-                  Authorizations have a limited validity period (typically 7 days, up to 29 days for Japan merchants). After this period, uncaptured charges automatically expire and the held funds are released back to the customer.
-                </p>
-              </div>
-            </div>
-          </div>
+          <Notice type="warning" title="Authorization Period">
+            Authorizations have a limited validity period (typically 7 days, up to 29 days for Japan merchants). After this period, uncaptured charges automatically expire and the held funds are released back to the customer.
+          </Notice>
         </section>
 
         {/* Types of Capture */}
@@ -319,21 +308,9 @@ export default function CapturePage() {
 
         {/* Warning Box */}
         <section style={{ marginBottom: '48px' }}>
-          <div style={{ padding: '16px 20px', background: '#fff', border: '1px solid #e3e8ee', borderLeft: '4px solid #dc2626', borderRadius: '8px' }}>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2" style={{ flexShrink: 0, marginTop: '2px' }}>
-                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                <line x1="12" y1="9" x2="12" y2="13" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-              <div>
-                <div style={{ fontWeight: 600, color: '#1a1a1a', marginBottom: '4px', fontSize: '14px' }}>Warning: capture_amount=0 captures the full amount</div>
-                <p style={{ fontSize: '13px', color: '#3c4257', margin: 0, lineHeight: 1.6 }}>
-                  Sending <code style={{ fontFamily: "'SF Mono', Monaco, monospace", background: '#f6f9fc', padding: '1px 4px', borderRadius: '3px' }}>capture_amount=0</code> captures the full authorized amount instead of nothing. If you want to release funds without capturing, allow the charge to expire naturally rather than attempting a zero-amount capture.
-                </p>
-              </div>
-            </div>
-          </div>
+          <Notice type="error" title="Warning: capture_amount=0 captures the full amount">
+            Sending <code style={{ fontFamily: "'SF Mono', Monaco, monospace", background: '#f6f9fc', padding: '1px 4px', borderRadius: '3px' }}>capture_amount=0</code> captures the full authorized amount instead of nothing. If you want to release funds without capturing, allow the charge to expire naturally rather than attempting a zero-amount capture.
+          </Notice>
         </section>
 
         {/* FAQ */}

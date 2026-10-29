@@ -3,14 +3,18 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SidebarNew from './SidebarNew';
+import VersionSelector, { VersionBadge } from './VersionSelector';
 import { endpoints, codeExamples, responseExamples, languages, methodColors, EndpointConfig } from '../lib/chargeData';
+import { API_VERSIONS, DEFAULT_VERSION, ApiVersion } from '../lib/apiVersions';
 
 interface TryItFormProps {
   endpoint: string;
   config: EndpointConfig;
+  version: string;
+  versionDate: string;
 }
 
-function TryItForm({ endpoint, config }: TryItFormProps) {
+function TryItForm({ endpoint, config, version, versionDate }: TryItFormProps) {
   const [secretKey, setSecretKey] = useState('skey_test_');
   const [values, setValues] = useState<Record<string, string>>(
     Object.fromEntries(config.params.map(p => [p.name, p.default || '']))
@@ -66,6 +70,7 @@ function TryItForm({ endpoint, config }: TryItFormProps) {
           method: config.method,
           secretKey,
           params: bodyParams,
+          version: versionDate, // Pass version to proxy
         }),
       });
 
@@ -98,6 +103,23 @@ function TryItForm({ endpoint, config }: TryItFormProps) {
             <span style={{ color: '#8792a2' }}>Remaining:</span> <span style={{ color: rateLimit.remaining < 20 ? '#cd3d64' : '#0e6245', fontWeight: 600 }}>{rateLimit.remaining}</span>
           </div>
         )}
+      </div>
+
+      {/* Version Badge */}
+      <div style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '8px',
+        padding: '8px 12px',
+        background: '#e0f2fe',
+        borderRadius: '6px',
+        marginBottom: '16px',
+        fontSize: '13px',
+        color: '#0369a1'
+      }}>
+        <strong>API Version:</strong>
+        <code style={{ background: '#fff', padding: '2px 8px', borderRadius: '4px' }}>{versionDate}</code>
+        <span style={{ color: '#0ea5e9' }}>({version})</span>
       </div>
 
       {/* Test Key Warning */}
@@ -171,6 +193,72 @@ function TryItForm({ endpoint, config }: TryItFormProps) {
   );
 }
 
+// Parameter availability by version
+const PARAM_VERSIONS: Record<string, string> = {
+  // Params available from aegaeon (all versions)
+  'amount': 'aegaeon',
+  'currency': 'aegaeon',
+  'card': 'aegaeon',
+  'customer': 'aegaeon',
+  'description': 'aegaeon',
+  'metadata': 'aegaeon',
+  'capture': 'aegaeon',
+  'return_uri': 'aegaeon',
+  'ip': 'aegaeon',
+  'id': 'aegaeon',
+  'limit': 'aegaeon',
+  'offset': 'aegaeon',
+  'from': 'aegaeon',
+  'to': 'aegaeon',
+  'order': 'aegaeon',
+  // Params added in bestla
+  'offsite': 'bestla',
+  // Params added in cordelia
+  'source': 'cordelia',
+  'platform_fee': 'cordelia',
+  'zero_interest_installments': 'cordelia',
+  'authorization_type': 'cordelia',
+  'capture_amount': 'cordelia',
+  'expires_at': 'cordelia',
+  'webhook_endpoints': 'cordelia',
+  // Params added in deimos
+  'idempotency_key': 'deimos',
+  'first_charge': 'deimos',
+  'transaction_indicator': 'deimos',
+  'recurring_reason': 'deimos',
+  'ref_id': 'deimos',
+  'statement_descriptor': 'deimos',
+};
+
+function isParamAvailable(paramName: string, version: string): boolean {
+  const versionOrder = ['aegaeon', 'bestla', 'cordelia', 'deimos'];
+  const currentIndex = versionOrder.indexOf(version);
+  const paramVersion = PARAM_VERSIONS[paramName] || 'aegaeon';
+  const paramIndex = versionOrder.indexOf(paramVersion);
+  return currentIndex >= paramIndex;
+}
+
+// Endpoint availability by version
+const ENDPOINT_VERSIONS: Record<string, string> = {
+  'create': 'aegaeon',
+  'retrieve': 'aegaeon',
+  'list': 'aegaeon',
+  'update': 'aegaeon',
+  'capture': 'aegaeon',
+  'reverse': 'aegaeon',
+  'expire': 'cordelia',
+  'mark-as-paid': 'deimos',
+  'mark-as-failed': 'deimos',
+};
+
+function isEndpointAvailable(endpointKey: string, version: string): boolean {
+  const versionOrder = ['aegaeon', 'bestla', 'cordelia', 'deimos'];
+  const currentIndex = versionOrder.indexOf(version);
+  const endpointVersion = ENDPOINT_VERSIONS[endpointKey] || 'aegaeon';
+  const endpointIndex = versionOrder.indexOf(endpointVersion);
+  return currentIndex >= endpointIndex;
+}
+
 interface EndpointPageProps {
   endpointKey: string;
   currentPage: string;
@@ -179,12 +267,21 @@ interface EndpointPageProps {
 export default function EndpointPage({ endpointKey, currentPage }: EndpointPageProps) {
   const [activeLang, setActiveLang] = useState('curl');
   const [showTryIt, setShowTryIt] = useState(false);
+  const [currentVersion, setCurrentVersion] = useState(DEFAULT_VERSION);
 
   const config = endpoints[endpointKey];
   const methodStyle = methodColors[config.method];
+  const versionInfo = API_VERSIONS.find(v => v.codename === currentVersion);
 
-  // Navigation links for related endpoints
+  // Filter params based on version
+  const availableParams = config.params.filter(p => isParamAvailable(p.name, currentVersion));
+
+  // Navigation links for related endpoints (filtered by version)
   const allEndpoints = ['create', 'retrieve', 'list', 'update', 'capture', 'reverse', 'expire', 'mark-as-paid', 'mark-as-failed'];
+  const availableEndpoints = allEndpoints.filter(e => isEndpointAvailable(e, currentVersion));
+
+  // Check if current endpoint is available in selected version
+  const endpointAvailable = isEndpointAvailable(endpointKey, currentVersion);
 
   return (
     <div className="docs-layout">
@@ -223,8 +320,25 @@ export default function EndpointPage({ endpointKey, currentPage }: EndpointPageP
         </div>
         <p className="subtitle">{config.description}</p>
 
+        {/* Version Selector */}
+        <VersionSelector
+          currentVersion={currentVersion}
+          onVersionChange={setCurrentVersion}
+        />
+
+        {/* Endpoint Not Available Warning */}
+        {!endpointAvailable && (
+          <div style={{ background: '#fde2dd', border: '1px solid #cd3d64', borderRadius: '8px', padding: '16px 20px', marginBottom: '24px' }}>
+            <div style={{ fontWeight: 600, color: '#cd3d64', marginBottom: '4px' }}>Endpoint Not Available</div>
+            <div style={{ fontSize: '14px', color: '#9f1239', lineHeight: 1.6 }}>
+              This endpoint was added in <strong>{ENDPOINT_VERSIONS[endpointKey]}</strong> and is not available in <strong>{currentVersion}</strong>.
+              Select a newer API version to use this endpoint.
+            </div>
+          </div>
+        )}
+
         {/* Test Mode Warning */}
-        {config.testModeOnly && (
+        {config.testModeOnly && endpointAvailable && (
           <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '8px', padding: '16px 20px', marginBottom: '24px' }}>
             <div style={{ fontWeight: 600, color: '#92400e', marginBottom: '4px' }}>Test Mode Only</div>
             <div style={{ fontSize: '14px', color: '#78350f', lineHeight: 1.6 }}>
@@ -235,7 +349,7 @@ export default function EndpointPage({ endpointKey, currentPage }: EndpointPageP
         )}
 
         {/* Endpoint Badge */}
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', background: '#f6f9fc', borderRadius: '6px', padding: '12px 16px', fontFamily: "'SF Mono', Monaco, monospace", fontSize: '14px', border: '1px solid #e3e8ee', marginBottom: '24px' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', background: '#f6f9fc', borderRadius: '6px', padding: '12px 16px', fontFamily: "'SF Mono', Monaco, monospace", fontSize: '14px', border: '1px solid #e3e8ee', marginBottom: '24px', opacity: endpointAvailable ? 1 : 0.5 }}>
           <span style={{ fontWeight: 700, fontSize: '12px', padding: '4px 8px', borderRadius: '4px', background: methodStyle.bg, color: methodStyle.color }}>
             {config.method}
           </span>
@@ -243,67 +357,90 @@ export default function EndpointPage({ endpointKey, currentPage }: EndpointPageP
         </div>
 
         {/* Long Description */}
-        {config.longDescription && (
+        {config.longDescription && endpointAvailable && (
           <div style={{ fontSize: '15px', color: '#3c4257', lineHeight: 1.7, marginBottom: '32px', whiteSpace: 'pre-line' }}>
             {config.longDescription}
           </div>
         )}
 
         {/* Conditional Requirements for Create */}
-        {endpointKey === 'create' && (
+        {endpointKey === 'create' && endpointAvailable && (
           <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
             <div style={{ fontWeight: 600, color: '#92400e', marginBottom: '4px' }}>Conditional Requirements</div>
             <div style={{ fontSize: '14px', color: '#78350f', lineHeight: 1.6 }}>
-              Provide exactly one payment method: <code style={{ background: '#fde68a', padding: '2px 6px', borderRadius: '4px' }}>card</code>, <code style={{ background: '#fde68a', padding: '2px 6px', borderRadius: '4px' }}>source</code>, or <code style={{ background: '#fde68a', padding: '2px 6px', borderRadius: '4px' }}>customer</code>.
+              {currentVersion === 'aegaeon' || currentVersion === 'bestla' ? (
+                <>Provide exactly one payment method: <code style={{ background: '#fde68a', padding: '2px 6px', borderRadius: '4px' }}>card</code>, <code style={{ background: '#fde68a', padding: '2px 6px', borderRadius: '4px' }}>offsite</code>, or <code style={{ background: '#fde68a', padding: '2px 6px', borderRadius: '4px' }}>customer</code>.</>
+              ) : (
+                <>Provide exactly one payment method: <code style={{ background: '#fde68a', padding: '2px 6px', borderRadius: '4px' }}>card</code>, <code style={{ background: '#fde68a', padding: '2px 6px', borderRadius: '4px' }}>source</code>, or <code style={{ background: '#fde68a', padding: '2px 6px', borderRadius: '4px' }}>customer</code>.</>
+              )}
             </div>
           </div>
         )}
 
         {/* Parameters */}
-        <h2>Parameters</h2>
-        <div className="params-section">
-          {config.params.map((param) => (
-            <div key={param.name} className="param-row">
-              <div className="param-header">
-                <span className="param-name">{param.name}</span>
-                <span className="param-type">{param.type}</span>
-                {param.required === true && <span className="param-required">required</span>}
-                {param.required === 'conditional' && <span style={{ fontSize: '11px', fontWeight: 600, color: '#9c6f19', textTransform: 'uppercase' }}>conditional</span>}
-                {param.required === false && <span className="param-optional">optional</span>}
-              </div>
-              <div className="param-desc">{param.desc}</div>
-              {param.options && (
-                <div className="enum-values">
-                  {param.options.map(opt => <span key={opt} className="enum-value">{opt}</span>)}
-                </div>
-              )}
+        {endpointAvailable && (
+          <>
+            <h2>Parameters <span style={{ fontSize: '14px', fontWeight: 400, color: '#697386' }}>({availableParams.length} in {currentVersion})</span></h2>
+            <div className="params-section">
+              {availableParams.map((param) => {
+                const paramVersion = PARAM_VERSIONS[param.name] || 'aegaeon';
+                const isNew = paramVersion === currentVersion && currentVersion !== 'aegaeon';
+
+                return (
+                  <div key={param.name} className="param-row" style={{ background: isNew ? '#f0fdf4' : undefined, border: isNew ? '1px solid #86efac' : undefined, borderRadius: isNew ? '8px' : undefined, padding: isNew ? '16px' : undefined, marginBottom: isNew ? '12px' : undefined }}>
+                    <div className="param-header">
+                      <span className="param-name">{param.name}</span>
+                      {paramVersion !== 'aegaeon' && <VersionBadge addedIn={paramVersion} small />}
+                      <span className="param-type">{param.type}</span>
+                      {param.required === true && <span className="param-required">required</span>}
+                      {param.required === 'conditional' && <span style={{ fontSize: '11px', fontWeight: 600, color: '#9c6f19', textTransform: 'uppercase' }}>conditional</span>}
+                      {param.required === false && <span className="param-optional">optional</span>}
+                    </div>
+                    <div className="param-desc">{param.desc}</div>
+                    {param.options && (
+                      <div className="enum-values">
+                        {param.options.map(opt => <span key={opt} className="enum-value">{opt}</span>)}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-          ))}
-        </div>
 
-        {/* Error Handling Notice */}
-        <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '8px', padding: '16px 20px', marginTop: '24px' }}>
-          <div style={{ fontSize: '14px', color: '#78350f', lineHeight: 1.6 }}>
-            <strong style={{ color: '#92400e' }}>Error Handling:</strong> When a request fails, the API returns an error response with a specific error code.
-            See <Link href="/api-reference/charges/errors" style={{ color: '#1A1F71', fontWeight: 600 }}>Charges API Error Codes</Link> for a complete reference.
-          </div>
-        </div>
+            {/* Error Handling Notice */}
+            <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '8px', padding: '16px 20px', marginTop: '24px' }}>
+              <div style={{ fontSize: '14px', color: '#78350f', lineHeight: 1.6 }}>
+                <strong style={{ color: '#92400e' }}>Error Handling:</strong> When a request fails, the API returns an error response with a specific error code.
+                See <Link href="/api-reference/charges/errors" style={{ color: '#1A1F71', fontWeight: 600 }}>Charges API Error Codes</Link> for a complete reference.
+              </div>
+            </div>
 
-        {/* Try It Button */}
-        <button
-          onClick={() => setShowTryIt(!showTryIt)}
-          style={{ padding: '14px 28px', background: showTryIt ? '#1A1F71' : '#fff', color: showTryIt ? '#fff' : '#1A1F71', border: '2px solid #1A1F71', borderRadius: '6px', cursor: 'pointer', fontSize: '15px', fontWeight: 600, marginTop: '24px' }}
-        >
-          {showTryIt ? 'Hide API Tester' : 'Try it out'}
-        </button>
+            {/* Try It Button */}
+            <button
+              onClick={() => setShowTryIt(!showTryIt)}
+              style={{ padding: '14px 28px', background: showTryIt ? '#1A1F71' : '#fff', color: showTryIt ? '#fff' : '#1A1F71', border: '2px solid #1A1F71', borderRadius: '6px', cursor: 'pointer', fontSize: '15px', fontWeight: 600, marginTop: '24px' }}
+            >
+              {showTryIt ? 'Hide API Tester' : 'Try it out'}
+            </button>
 
-        {showTryIt && <TryItForm endpoint={endpointKey} config={config} />}
+            {showTryIt && (
+              <TryItForm
+                endpoint={endpointKey}
+                config={{ ...config, params: availableParams }}
+                version={currentVersion}
+                versionDate={versionInfo?.date || '2019-05-29'}
+              />
+            )}
+          </>
+        )}
 
         {/* Navigation to other endpoints */}
         <div style={{ marginTop: '48px', paddingTop: '24px', borderTop: '1px solid #e3e8ee' }}>
-          <div style={{ fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', color: '#697386', marginBottom: '16px' }}>Other Charge Endpoints</div>
+          <div style={{ fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', color: '#697386', marginBottom: '16px' }}>
+            Other Charge Endpoints <span style={{ fontWeight: 400 }}>({availableEndpoints.length - 1} in {currentVersion})</span>
+          </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-            {allEndpoints.filter(e => e !== endpointKey).map(e => (
+            {availableEndpoints.filter(e => e !== endpointKey).map(e => (
               <Link
                 key={e}
                 href={`/api-reference/charges/${e}`}
@@ -318,6 +455,30 @@ export default function EndpointPage({ endpointKey, currentPage }: EndpointPageP
 
       {/* Right Panel - Code Examples */}
       <aside className="code-panel">
+        {/* Version Badge */}
+        <div style={{ marginBottom: '16px' }}>
+          <div style={{
+            fontSize: '11px',
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            color: '#b8c7d9',
+            marginBottom: '8px'
+          }}>
+            API Version
+          </div>
+          <div style={{
+            padding: '8px 12px',
+            background: 'rgba(255,255,255,0.1)',
+            borderRadius: '6px',
+            fontSize: '14px',
+            color: '#fff',
+          }}>
+            <span style={{ color: '#3ecf8e', fontWeight: 600 }}>{currentVersion}</span>
+            <span style={{ color: '#8792a2', marginLeft: '8px' }}>{versionInfo?.date}</span>
+          </div>
+        </div>
+
         <div style={{ marginBottom: '24px' }}>
           <select
             value={activeLang}
@@ -337,7 +498,10 @@ export default function EndpointPage({ endpointKey, currentPage }: EndpointPageP
               {languages.find(l => l.id === activeLang)?.name}
             </div>
             <pre style={{ padding: '16px', margin: 0, fontSize: '13px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
-              {codeExamples[endpointKey]?.[activeLang] || '// Example not available'}
+              {activeLang === 'curl'
+                ? `${codeExamples[endpointKey]?.curl || '# Example not available'}\n  -H "Omise-Version: ${versionInfo?.date}"`
+                : codeExamples[endpointKey]?.[activeLang] || '// Example not available'
+              }
             </pre>
           </div>
         </div>
@@ -346,10 +510,12 @@ export default function EndpointPage({ endpointKey, currentPage }: EndpointPageP
           <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px' }}>Response</div>
           <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden' }}>
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: '#3ecf8e' }}>200 OK</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: endpointAvailable ? '#3ecf8e' : '#ff6b6b' }}>
+                {endpointAvailable ? '200 OK' : 'Not Available'}
+              </span>
             </div>
             <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', maxHeight: '500px', fontFamily: "'SF Mono', Monaco, monospace" }}>
-              {responseExamples[endpointKey] || '{}'}
+              {endpointAvailable ? (responseExamples[endpointKey] || '{}') : `// This endpoint is not available in ${currentVersion}\n// Upgrade to ${ENDPOINT_VERSIONS[endpointKey]} or later`}
             </pre>
           </div>
         </div>

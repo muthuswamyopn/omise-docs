@@ -218,8 +218,7 @@ export function VersionDiff({ currentVersion }: { currentVersion: string }) {
         <strong style={{ color: '#92400e' }}>Viewing older API version</strong>
         <br />
         You are viewing <strong>{currentVersion}</strong>. Newer versions ({newerVersions.join(', ')}) have additional features.
-        <br />
-        <a href="#" style={{ color: '#1A1F71', fontWeight: 600 }}>See what's new in the latest version</a>
+        Select the latest version from the dropdown above to see all available fields and endpoints.
       </div>
     </div>
   );

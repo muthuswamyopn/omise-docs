@@ -15,6 +15,7 @@ export interface EndpointConfig {
   description: string;
   longDescription?: string;
   params: EndpointParam[];
+  internalNote?: string;
 }
 
 // Account API endpoints
@@ -49,11 +50,12 @@ Only the fields you specify will be updated; other fields remain unchanged.`,
     method: 'PATCH',
     path: 'https://api.omise.co/account/api_version',
     title: 'Update API version',
-    description: 'Updates the account to use the latest API version.',
-    longDescription: `Update your account to use the latest Omise API version. This affects the default API version used for all requests that don't specify a version header.
+    description: 'Updates API version to the latest version.',
+    longDescription: `Updates your account's default API version to the latest version (currently 2019-05-29).
 
-This is typically used when you want to migrate to a newer API version after testing your integration.`,
-    params: []
+This endpoint is called automatically when you update your API version through the dashboard. For per-request version control, use the \`Omise-Version\` header instead.`,
+    params: [],
+    internalNote: 'This is an internal API used by the dashboard.'
   },
 };
 

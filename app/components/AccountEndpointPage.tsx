@@ -194,8 +194,17 @@ export default function AccountEndpointPage({ endpointKey }: AccountEndpointPage
 
         {/* Long Description */}
         {config.longDescription && (
-          <div style={{ fontSize: '15px', color: '#3c4257', lineHeight: 1.7, marginBottom: '32px', whiteSpace: 'pre-line' }}>
+          <div style={{ fontSize: '15px', color: '#3c4257', lineHeight: 1.7, marginBottom: '24px', whiteSpace: 'pre-line' }}>
             {config.longDescription}
+          </div>
+        )}
+
+        {/* Internal Note */}
+        {config.internalNote && (
+          <div style={{ padding: '16px 20px', background: '#f6f9fc', border: '1px solid #e3e8ee', borderRadius: '8px', marginBottom: '32px' }}>
+            <p style={{ fontSize: '14px', color: '#697386', margin: 0, lineHeight: 1.6, fontStyle: 'italic' }}>
+              <strong>Note:</strong> {config.internalNote}
+            </p>
           </div>
         )}
 

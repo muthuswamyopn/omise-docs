@@ -40,6 +40,7 @@ export const navigation: NavigationSection[] = [
         name: lc('Cards', 'บัตร', 'カード'),
         href: '/accept-payments/cards',
         items: [
+          { name: lc('Collecting Cards', 'การรวบรวมบัตร', 'カード情報の収集'), href: '/accept-payments/cards/collecting-cards' },
           { name: lc('Credit & Debit Cards', 'บัตรเครดิตและเดบิต', 'クレジット＆デビットカード'), href: '/accept-payments/cards/credit-debit' },
           { name: lc('3D Secure', '3D Secure', '3Dセキュア'), href: '/accept-payments/cards/3d-secure' },
           { name: lc('Apple Pay', 'Apple Pay', 'Apple Pay'), href: '/accept-payments/cards/apple-pay' },

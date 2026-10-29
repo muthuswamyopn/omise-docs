@@ -206,6 +206,10 @@ components:
           type: object
         ip:
           type: string
+        offsite:
+          type: string
+          enum: [internet_banking_bay, internet_banking_bbl, internet_banking_ktb, internet_banking_scb]
+          description: Offsite payment method for internet banking
 
     Charge:
       type: object
@@ -261,7 +265,7 @@ components:
         failure_message:
           type: string
           nullable: true
-        created:
+        created_at:
           type: string
           format: date-time
         paid_at:

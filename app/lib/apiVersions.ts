@@ -69,7 +69,7 @@ export const CHARGE_FIELDS_BY_VERSION: Record<string, ChargeFieldInfo[]> = {
     { name: 'ip', type: 'string', description: 'Customer IP address', addedIn: 'aegaeon', nullable: true },
     { name: 'failure_code', type: 'string', description: 'Error code if charge failed', addedIn: 'aegaeon', nullable: true },
     { name: 'failure_message', type: 'string', description: 'Human-readable failure message', addedIn: 'aegaeon', nullable: true },
-    { name: 'created', type: 'datetime', description: 'Charge creation timestamp', addedIn: 'aegaeon' },
+    { name: 'created_at', type: 'datetime', description: 'Charge creation timestamp', addedIn: 'aegaeon' },
     { name: 'paid_at', type: 'datetime', description: 'Payment completion timestamp', addedIn: 'aegaeon', nullable: true },
     { name: 'expires_at', type: 'datetime', description: 'Charge expiration timestamp', addedIn: 'aegaeon', nullable: true },
     { name: 'offsite', type: 'string', description: 'Offsite payment method (alipay, internet_banking_*)', addedIn: 'aegaeon', nullable: true },

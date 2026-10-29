@@ -407,7 +407,7 @@ components:
         failure_message:
           type: string
           nullable: true
-        created:
+        created_at:
           type: string
           format: date-time
         paid_at:

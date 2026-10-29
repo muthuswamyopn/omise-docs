@@ -1,19 +1,6 @@
-'use client';
-
 import Link from 'next/link';
-import { useState } from 'react';
-
-const apiVersions = [
-  '2019-05-29',
-  '2017-11-02',
-  '2015-11-17',
-  '2014-07-27',
-];
 
 export default function Header() {
-  const [selectedVersion, setSelectedVersion] = useState('2019-05-29');
-  const [isVersionOpen, setIsVersionOpen] = useState(false);
-
   return (
     <header style={{
       position: 'sticky',
@@ -27,71 +14,6 @@ export default function Header() {
       background: '#fff',
       borderBottom: '1px solid #e3e8ee',
     }}>
-      {/* API Version Selector */}
-      <div style={{ position: 'relative' }}>
-        <button
-          onClick={() => setIsVersionOpen(!isVersionOpen)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '6px 12px',
-            background: '#f6f9fc',
-            border: '1px solid #e3e8ee',
-            borderRadius: '6px',
-            fontSize: '13px',
-            color: '#3c4257',
-            cursor: 'pointer',
-          }}
-        >
-          <span style={{ color: '#697386' }}>API</span>
-          <span style={{ fontWeight: 500 }}>{selectedVersion}</span>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M3 5l3 3 3-3" />
-          </svg>
-        </button>
-
-        {isVersionOpen && (
-          <div style={{
-            position: 'absolute',
-            top: '100%',
-            right: 0,
-            marginTop: '4px',
-            background: '#fff',
-            border: '1px solid #e3e8ee',
-            borderRadius: '8px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-            overflow: 'hidden',
-            minWidth: '140px',
-          }}>
-            {apiVersions.map((version) => (
-              <button
-                key={version}
-                onClick={() => {
-                  setSelectedVersion(version);
-                  setIsVersionOpen(false);
-                }}
-                style={{
-                  display: 'block',
-                  width: '100%',
-                  padding: '10px 14px',
-                  background: version === selectedVersion ? '#f6f9fc' : '#fff',
-                  border: 'none',
-                  borderBottom: '1px solid #f0f0f0',
-                  fontSize: '13px',
-                  color: version === selectedVersion ? '#1A1F71' : '#3c4257',
-                  fontWeight: version === selectedVersion ? 600 : 400,
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                }}
-              >
-                {version}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
       {/* Status */}
       <a
         href="https://status.omise.co"

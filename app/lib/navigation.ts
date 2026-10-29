@@ -280,7 +280,15 @@ export const navigation: NavigationSection[] = [
           { name: lc('Error Codes', 'รหัสข้อผิดพลาด', 'エラーコード'), href: '/api-reference/account/errors' },
         ],
       },
-      { name: lc('Balance', 'Balance', 'Balance'), href: '/api-reference/balance' },
+      {
+        name: lc('Balance', 'ยอดคงเหลือ', '残高'),
+        href: '/api-reference/balance',
+        items: [
+          { name: lc('Balance', 'Balance', 'Balance'), href: '/api-reference/balance' },
+          { name: lc('Retrieve Balance', 'ดึงข้อมูลยอดคงเหลือ', '残高を取得'), href: '/api-reference/balance/retrieve', method: 'GET' as const },
+          { name: lc('Error Codes', 'รหัสข้อผิดพลาด', 'エラーコード'), href: '/api-reference/balance/errors' },
+        ],
+      },
       { name: lc('Capabilities', 'Capabilities', 'Capability'), href: '/api-reference/capabilities' },
       {
         name: lc('Scheduling', 'การตั้งเวลา', 'スケジューリング'),

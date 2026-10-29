@@ -1,0 +1,888 @@
+openapi: 3.0.3
+info:
+  title: Omise API
+  version: '2019-05-29'
+  description: |
+    The Omise API enables you to create and manage payment transactions.
+
+    **API Version:** Deimos (2019-05-29) - Latest
+
+    ## What's New in Deimos
+    - **Mark as Paid/Failed**: Test mode simulation endpoints
+    - **3D Secure 2.0**: three_ds_info field with version and ECI
+    - **Multi-capture**: Partial captures for pre-auth
+    - **Merchant advice**: Processor recommendations
+    - **Regional wallets**: GrabPay, ShopeePay, Boost, TouchNGo, etc.
+    - **Additional error codes**: For 3DS and card validation
+
+    ## Authentication
+    Use HTTP Basic Auth with your secret key as the username and an empty password.
+
+servers:
+  - url: https://api.omise.co
+
+security:
+  - secretKey: []
+
+tags:
+  - name: Charges
+    description: Create, capture, and manage payment charges
+
+paths:
+  /charges:
+    post:
+      summary: Create a charge
+      description: |
+        Create a new charge to collect payment from a customer.
+
+        You can charge using:
+        - A **card token** (one-time use, from Omise.js)
+        - A **customer ID** (charges their default card)
+        - A **source** (PromptPay, GrabPay, ShopeePay, mobile banking, etc.)
+      operationId: createCharge
+      tags: [Charges]
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          description: Unique key to prevent duplicate charges
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateChargeRequest'
+      responses:
+        '200':
+          description: Charge created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charge'
+        '400':
+          $ref: '#/components/responses/InvalidCharge'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
+
+    get:
+      summary: List all charges
+      operationId: listCharges
+      tags: [Charges]
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: order
+          in: query
+          schema:
+            type: string
+            enum: [chronological, reverse_chronological]
+      responses:
+        '200':
+          description: List of charges
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChargeList'
+
+  /charges/{id}:
+    get:
+      summary: Retrieve a charge
+      operationId: getCharge
+      tags: [Charges]
+      parameters:
+        - $ref: '#/components/parameters/ChargeId'
+      responses:
+        '200':
+          description: Charge details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charge'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      summary: Update a charge
+      operationId: updateCharge
+      tags: [Charges]
+      parameters:
+        - $ref: '#/components/parameters/ChargeId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                metadata:
+                  type: object
+      responses:
+        '200':
+          description: Charge updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charge'
+
+  /charges/{id}/capture:
+    post:
+      summary: Capture a charge
+      description: |
+        Capture a previously authorized charge.
+
+        For **pre-authorized** charges, you can capture a partial amount.
+        **New in Deimos**: Multi-capture support for pre-auth.
+      operationId: captureCharge
+      tags: [Charges]
+      parameters:
+        - $ref: '#/components/parameters/ChargeId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                capture_amount:
+                  type: integer
+      responses:
+        '200':
+          description: Charge captured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charge'
+        '400':
+          $ref: '#/components/responses/FailedCapture'
+
+  /charges/{id}/reverse:
+    post:
+      summary: Reverse a charge
+      description: Reverse (void) an authorized but uncaptured charge.
+      operationId: reverseCharge
+      tags: [Charges]
+      parameters:
+        - $ref: '#/components/parameters/ChargeId'
+      responses:
+        '200':
+          description: Charge reversed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charge'
+        '400':
+          $ref: '#/components/responses/FailedReverse'
+
+  /charges/{id}/expire:
+    post:
+      summary: Expire a charge
+      description: Manually expire a pending charge.
+      operationId: expireCharge
+      tags: [Charges]
+      parameters:
+        - $ref: '#/components/parameters/ChargeId'
+      responses:
+        '200':
+          description: Charge expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charge'
+        '400':
+          $ref: '#/components/responses/FailedExpire'
+
+  /charges/{id}/mark_as_paid:
+    post:
+      summary: Mark as paid (test mode)
+      description: |
+        **New in Deimos - Test Mode Only**
+
+        Simulate a successful payment for testing purposes.
+        Only works with test mode charges.
+      operationId: markChargePaid
+      tags: [Charges]
+      parameters:
+        - $ref: '#/components/parameters/ChargeId'
+      responses:
+        '200':
+          description: Charge marked as paid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charge'
+        '400':
+          $ref: '#/components/responses/TestModeOnly'
+
+  /charges/{id}/mark_as_failed:
+    post:
+      summary: Mark as failed (test mode)
+      description: |
+        **New in Deimos - Test Mode Only**
+
+        Simulate a failed payment for testing purposes.
+        Only works with test mode charges.
+      operationId: markChargeFailed
+      tags: [Charges]
+      parameters:
+        - $ref: '#/components/parameters/ChargeId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                failure_code:
+                  type: string
+                  description: Error code to simulate
+                  enum: [insufficient_fund, stolen_or_lost_card, failed_processing, payment_rejected]
+      responses:
+        '200':
+          description: Charge marked as failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charge'
+        '400':
+          $ref: '#/components/responses/TestModeOnly'
+
+components:
+  securitySchemes:
+    secretKey:
+      type: http
+      scheme: basic
+
+  parameters:
+    ChargeId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: ^chrg_(test_)?[a-z0-9]+$
+
+  schemas:
+    CreateChargeRequest:
+      type: object
+      required: [amount, currency]
+      properties:
+        amount:
+          type: integer
+          minimum: 1
+        currency:
+          type: string
+          enum: [thb, jpy, usd, eur, gbp, sgd, myr, idr, php]
+        card:
+          type: string
+        customer:
+          type: string
+        source:
+          oneOf:
+            - type: string
+            - type: object
+              properties:
+                type:
+                  type: string
+                  enum: [promptpay, truemoney, rabbit_linepay, shopeepay, grabpay, boost, touch_n_go, duitnow_qr, fpx, paynow, mobile_banking_bay, mobile_banking_bbl, mobile_banking_kbank, mobile_banking_ktb, mobile_banking_scb, alipay_cn, alipay_hk, dana, gcash, kakaopay, wechat_pay, paypay, atome, installment_bay, installment_bbl, installment_kbank, installment_ktc, installment_scb, installment_first_choice]
+        capture:
+          type: boolean
+          default: true
+        authorization_type:
+          type: string
+          enum: [pre_auth, final_auth]
+        return_uri:
+          type: string
+          format: uri
+        description:
+          type: string
+        metadata:
+          type: object
+        ip:
+          type: string
+        platform_fee:
+          type: object
+          properties:
+            fixed:
+              type: integer
+            percentage:
+              type: number
+        zero_interest_installments:
+          type: boolean
+        expires_at:
+          type: string
+          format: date-time
+        webhook_endpoints:
+          type: array
+          items:
+            type: string
+        # New in Deimos
+        idempotency_key:
+          type: string
+          description: "New in Deimos: Prevent duplicate charges"
+        first_charge:
+          type: boolean
+          description: "New in Deimos: First in recurring series"
+        transaction_indicator:
+          type: string
+          description: "New in Deimos: MIT/CIT indicator"
+        recurring_reason:
+          type: string
+          description: "New in Deimos: Reason for recurring"
+        ref_id:
+          type: string
+          description: "New in Deimos: Merchant reference ID"
+        statement_descriptor:
+          type: string
+          description: "New in Deimos: Custom statement descriptor"
+
+    Charge:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [charge]
+        id:
+          type: string
+        location:
+          type: string
+        livemode:
+          type: boolean
+        amount:
+          type: integer
+        currency:
+          type: string
+        description:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+        status:
+          type: string
+          enum: [pending, successful, failed, expired, reversed]
+        authorized:
+          type: boolean
+        captured:
+          type: boolean
+        capture:
+          type: boolean
+        capturable:
+          type: boolean
+        reversible:
+          type: boolean
+        reversed:
+          type: boolean
+        refundable:
+          type: boolean
+        refunded:
+          type: integer
+        card:
+          $ref: '#/components/schemas/Card'
+        customer:
+          type: string
+          nullable: true
+        ip:
+          type: string
+          nullable: true
+        failure_code:
+          type: string
+          nullable: true
+        failure_message:
+          type: string
+          nullable: true
+        created:
+          type: string
+          format: date-time
+        paid_at:
+          type: string
+          format: date-time
+          nullable: true
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+        return_uri:
+          type: string
+          nullable: true
+        authorize_uri:
+          type: string
+          nullable: true
+        dispute:
+          $ref: '#/components/schemas/Dispute'
+          nullable: true
+        transaction:
+          type: string
+          nullable: true
+        refunds:
+          $ref: '#/components/schemas/RefundList'
+        source_of_fund:
+          type: string
+        disputable:
+          type: boolean
+        voided:
+          type: boolean
+        expired:
+          type: boolean
+        source:
+          $ref: '#/components/schemas/Source'
+          nullable: true
+        platform_fee:
+          type: object
+          nullable: true
+        linked_account:
+          type: object
+          nullable: true
+        zero_interest_installments:
+          type: boolean
+        authorization_type:
+          type: string
+          nullable: true
+        authorized_amount:
+          type: integer
+        captured_amount:
+          type: integer
+        funding_amount:
+          type: integer
+        funding_currency:
+          type: string
+        net:
+          type: integer
+        fee:
+          type: integer
+        fee_vat:
+          type: integer
+        interest:
+          type: integer
+        interest_vat:
+          type: integer
+        partially_refundable:
+          type: boolean
+        schedule:
+          type: object
+          nullable: true
+        link:
+          type: object
+          nullable: true
+        statement_descriptor:
+          type: string
+        approval_code:
+          type: string
+          nullable: true
+        # New in Deimos
+        three_ds_info:
+          type: object
+          nullable: true
+          description: "New in Deimos: 3D Secure authentication details"
+          properties:
+            three_ds_version:
+              type: string
+              description: "3DS version (1.0, 2.1.0, 2.2.0)"
+            eci:
+              type: string
+              description: "Electronic Commerce Indicator"
+        unmanaged_payment:
+          type: object
+          nullable: true
+          description: "New in Deimos: Unmanaged payment details"
+        transaction_fees:
+          type: object
+          nullable: true
+          description: "New in Deimos: Detailed fee breakdown"
+        multi_capture:
+          type: boolean
+          description: "New in Deimos: Multiple captures allowed"
+        merchant_advice:
+          type: string
+          nullable: true
+          description: "New in Deimos: Processor recommendation"
+        merchant_advice_code:
+          type: string
+          nullable: true
+          description: "New in Deimos: Advice code"
+        authenticated_by:
+          type: string
+          nullable: true
+          description: "New in Deimos: 3DS authentication method"
+        authorized_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: "New in Deimos: Authorization timestamp"
+        reversed_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: "New in Deimos: Reversal timestamp"
+        expired_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: "New in Deimos: Expiration timestamp"
+        can_perform_void:
+          type: boolean
+          description: "New in Deimos: Void available"
+        acquirer_reference_number:
+          type: string
+          nullable: true
+          description: "New in Deimos: ARN"
+        ref_id:
+          type: string
+          nullable: true
+          description: "New in Deimos: Merchant reference"
+        first_charge:
+          type: boolean
+          description: "New in Deimos: First in series"
+        transaction_indicator:
+          type: string
+          nullable: true
+          description: "New in Deimos: MIT/CIT"
+        recurring_reason:
+          type: string
+          nullable: true
+          description: "New in Deimos: Recurring reason"
+        missing_3ds_fields:
+          type: array
+          items:
+            type: string
+          description: "New in Deimos: Missing 3DS fields"
+        merchant_name:
+          type: string
+          description: "New in Deimos: Merchant name"
+        merchant_uid:
+          type: string
+          description: "New in Deimos: Merchant UID"
+        merchant_info:
+          type: object
+          nullable: true
+          description: "New in Deimos: Merchant info"
+        branch:
+          type: object
+          nullable: true
+          description: "New in Deimos: Branch info"
+        terminal:
+          type: object
+          nullable: true
+          description: "New in Deimos: Terminal info"
+        device:
+          type: object
+          nullable: true
+          description: "New in Deimos: Device info"
+
+    Source:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [source]
+        id:
+          type: string
+        type:
+          type: string
+        flow:
+          type: string
+          enum: [redirect, offline]
+        scannable_code:
+          type: object
+          nullable: true
+
+    Card:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [card]
+        id:
+          type: string
+        last_digits:
+          type: string
+        brand:
+          type: string
+        financing:
+          type: string
+          enum: [credit, debit]
+          nullable: true
+
+    Dispute:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [dispute]
+        id:
+          type: string
+        status:
+          type: string
+
+    RefundList:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [list]
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Refund'
+
+    Refund:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [refund]
+        id:
+          type: string
+        amount:
+          type: integer
+
+    ChargeList:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [list]
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Charge'
+        total:
+          type: integer
+        offset:
+          type: integer
+        limit:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [error]
+        code:
+          type: string
+        message:
+          type: string
+
+  responses:
+    InvalidCharge:
+      description: Invalid charge parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    AuthenticationFailure:
+      description: Invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: authentication_failure
+            message: authentication failed
+
+    NotFound:
+      description: Charge not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    FailedCapture:
+      description: Capture failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    FailedReverse:
+      description: Reverse failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    FailedExpire:
+      description: Expire failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    TestModeOnly:
+      description: "New in Deimos: Only available in test mode"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: invalid_charge
+            message: this operation is only available in test mode
+
+    # All failure codes
+    FailedProcessing:
+      description: General processing failure
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InsufficientFund:
+      description: Insufficient funds
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InvalidAccountNumber:
+      description: Invalid card number
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    PaymentRejected:
+      description: Payment rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Timeout:
+      description: Request timeout
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    FailedFraudCheck:
+      description: Failed fraud check
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InsufficientBalance:
+      description: Insufficient balance
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InvalidSecurityCode:
+      description: Invalid CVV/CVC
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    PaymentCancelled:
+      description: Payment cancelled
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ExpiredCard:
+      description: Card expired
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    # New in Deimos
+    StolenOrLostCard:
+      description: "New in Deimos: Card reported stolen or lost"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: stolen_or_lost_card
+            message: card has been reported stolen or lost
+
+    BlockedCard:
+      description: "New in Deimos: Card is blocked"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: blocked_card
+            message: card is blocked
+
+    InvalidCard:
+      description: "New in Deimos: Invalid card"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: invalid_card
+            message: invalid card information
+
+    InvalidCardToken:
+      description: "New in Deimos: Invalid or expired token"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: invalid_card_token
+            message: card token is invalid or expired
+
+    UsedToken:
+      description: "New in Deimos: Token already used"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: used_token
+            message: token has already been used
+
+    InvalidSource:
+      description: "New in Deimos: Invalid payment source"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: invalid_source
+            message: source is invalid or expired
+
+    MissingCard:
+      description: "New in Deimos: No payment method provided"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: missing_card
+            message: no card or source provided

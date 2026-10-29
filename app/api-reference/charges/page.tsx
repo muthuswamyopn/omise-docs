@@ -246,10 +246,10 @@ export default function ChargesOverviewPage() {
         </div>
 
         <div style={{ marginTop: '48px', padding: '16px', background: '#f6f9fc', borderRadius: '6px', fontSize: '13px', color: '#697386' }}>
-          Full API schema available at <Link href="/openapi.yaml" style={{ color: '#1A1F71' }}>openapi.yaml</Link>
+          Full API schema for <strong>{currentVersion}</strong>: <Link href={`/openapi-${currentVersion}.yaml`} style={{ color: '#1A1F71' }}>openapi-{currentVersion}.yaml</Link>
           <br />
           <span style={{ marginTop: '8px', display: 'inline-block' }}>
-            Fetch versioned schema: <code style={{ background: '#fff', padding: '2px 6px', borderRadius: '4px' }}>GET https://api.omise.co/schema?version={versionInfo?.date}</code>
+            Fetch from API: <code style={{ background: '#fff', padding: '2px 6px', borderRadius: '4px' }}>GET https://api.omise.co/schema?version={versionInfo?.date}</code>
           </span>
         </div>
       </main>

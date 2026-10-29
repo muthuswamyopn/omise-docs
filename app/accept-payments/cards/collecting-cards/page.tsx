@@ -105,7 +105,7 @@ export default function CollectingCardsPage() {
         <Script
           src="https://cdn.omise.co/omise.js"
           onLoad={() => {
-            window.Omise.setPublicKey('pkey_test_5yx6s4dmon2i23pwaxw');
+            window.Omise.setPublicKey('pkey_test_63mhuytgr8d72dozrf4');
             setOmiseLoaded(true);
           }}
         />

@@ -85,6 +85,25 @@ paths:
         '401':
           $ref: '#/components/responses/AuthenticationFailure'
 
+  /account/api_version:
+    patch:
+      summary: Update API version
+      description: |
+        Update your account to use the latest Omise API version.
+
+        This affects the default API version used for all requests that don't specify a version header.
+      operationId: updateApiVersion
+      tags: [Account]
+      responses:
+        '200':
+          description: API version updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
+
   /charges:
     post:
       summary: Create a charge

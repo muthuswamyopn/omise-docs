@@ -276,6 +276,7 @@ export const navigation: NavigationSection[] = [
           { name: lc('Account', 'Account', 'Account'), href: '/api-reference/account' },
           { name: lc('Retrieve Account', 'ดึงข้อมูลบัญชี', 'アカウントを取得'), href: '/api-reference/account/retrieve', method: 'GET' as const },
           { name: lc('Update Account', 'อัปเดตบัญชี', 'アカウントを更新'), href: '/api-reference/account/update', method: 'PATCH' as const },
+          { name: lc('Update API Version', 'อัปเดตเวอร์ชัน API', 'APIバージョンを更新'), href: '/api-reference/account/update-api-version', method: 'PATCH' as const },
           { name: lc('Error Codes', 'รหัสข้อผิดพลาด', 'エラーコード'), href: '/api-reference/account/errors' },
         ],
       },

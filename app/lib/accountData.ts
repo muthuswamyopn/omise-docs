@@ -45,6 +45,16 @@ Only the fields you specify will be updated; other fields remain unchanged.`,
       { name: 'metadata_export_keys', type: 'object', required: false, desc: 'Custom metadata keys to include in exports for charges, transfers, refunds, and disputes.' },
     ]
   },
+  'update-api-version': {
+    method: 'PATCH',
+    path: 'https://api.omise.co/account/api_version',
+    title: 'Update API version',
+    description: 'Updates the account to use the latest API version.',
+    longDescription: `Update your account to use the latest Omise API version. This affects the default API version used for all requests that don't specify a version header.
+
+This is typically used when you want to migrate to a newer API version after testing your integration.`,
+    params: []
+  },
 };
 
 // Account attributes
@@ -175,6 +185,25 @@ System.out.println(account.getWebhookUri());`,
 );
 Console.WriteLine(account.WebhookUri);`,
   },
+  'update-api-version': {
+    curl: `curl https://api.omise.co/account/api_version \\
+  -u $OMISE_SECRET_KEY: \\
+  -X PATCH`,
+    ruby: `account = Omise::Account.update_api_version
+puts account.api_version`,
+    python: `account = omise.Account.update_api_version()
+print(account.api_version)`,
+    node: `const account = await omise.account.updateApiVersion();
+console.log(account.api_version);`,
+    php: `$account = OmiseAccount::updateApiVersion();
+echo $account['api_version'];`,
+    go: `account, _ := client.Account.UpdateApiVersion()
+fmt.Println(account.ApiVersion)`,
+    java: `Account account = client.account().updateApiVersion();
+System.out.println(account.getApiVersion());`,
+    csharp: `var account = await client.Account.UpdateApiVersionAsync();
+Console.WriteLine(account.ApiVersion);`,
+  },
 };
 
 export const balanceCodeExamples: Record<string, Record<string, string>> = {
@@ -264,6 +293,18 @@ export const accountResponseExamples: Record<string, string> = {
   "webhook_uri": "https://example.com/webhooks",
   "chain_enabled": true,
   "zero_interest_installments": false
+}`,
+  'update-api-version': `{
+  "object": "account",
+  "id": "acct_test_no1t4tnemucod0e51mo",
+  "team": "team_test_no1t4tnemucod0e51mo",
+  "livemode": false,
+  "location": "/account",
+  "country": "TH",
+  "currency": "THB",
+  "email": "merchant@example.com",
+  "api_version": "2019-05-29",
+  "last_updated_api_version": "2024-01-15"
 }`,
 };
 

@@ -27,7 +27,7 @@ curl https://api.omise.co/charges \\
   -u $OMISE_SECRET_KEY: \\
   -d "amount=100000" \\
   -d "currency=THB" \\
-  -d "card=tokn_test_5jb3h77oldf7xmcsqex" \\
+  -d "card=tokn_test_no1t4tnemucod0e51mo" \\
   -d "capture=true"`,
 };
 

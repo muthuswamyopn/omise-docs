@@ -394,9 +394,9 @@ Omise.createSource('rabbit_linepay', {
                 </div>
                 <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`{
   "object": "source",
-  "id": "src_test_5ywn47nqbwz3gxqmxph",
+  "id": "src_test_no1t4tnemucod0e51mo",
   "livemode": false,
-  "location": "/sources/src_test_5ywn47nqbwz3gxqmxph",
+  "location": "/sources/src_test_no1t4tnemucod0e51mo",
   "amount": 400000,
   "currency": "THB",
   "type": "rabbit_linepay",
@@ -457,7 +457,7 @@ Omise.createSource('rabbit_linepay', {
   -d "amount=400000" \\
   -d "currency=THB" \\
   -d "return_uri=https://example.com/orders/345678/complete" \\
-  -d "source=src_test_5ywn47nqbwz3gxqmxph"`}</pre>
+  -d "source=src_test_no1t4tnemucod0e51mo"`}</pre>
               </div>
             </div>
 
@@ -470,7 +470,7 @@ Omise.createSource('rabbit_linepay', {
                 </div>
                 <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`{
   "object": "charge",
-  "id": "chrg_test_5ywnabcdef123456789",
+  "id": "chrg_test_no1t4tnemucod0e51mo",
   "livemode": false,
   "amount": 400000,
   "currency": "THB",
@@ -481,7 +481,7 @@ Omise.createSource('rabbit_linepay', {
   "expires_at": "2024-01-15T10:50:00Z",
   "source": {
     "object": "source",
-    "id": "src_test_5ywn47nqbwz3gxqmxph",
+    "id": "src_test_no1t4tnemucod0e51mo",
     "type": "rabbit_linepay",
     "flow": "redirect"
   },
@@ -550,7 +550,7 @@ Omise.createSource('rabbit_linepay', {
   "key": "charge.complete",
   "data": {
     "object": "charge",
-    "id": "chrg_test_5ywnabcdef123456789",
+    "id": "chrg_test_no1t4tnemucod0e51mo",
     "status": "successful",
     ...
   }
@@ -569,7 +569,7 @@ Omise.createSource('rabbit_linepay', {
               <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a3a5c' }}>
                 <span style={{ color: '#8da4bf', fontSize: '12px' }}>Bash</span>
               </div>
-              <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges/chrg_test_5ywnabcdef123456789 \\
+              <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges/chrg_test_no1t4tnemucod0e51mo \\
   -u $OMISE_SECRET_KEY:`}</pre>
             </div>
           </div>
@@ -670,7 +670,7 @@ Omise.createSource('rabbit_linepay', {
             <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a3a5c' }}>
               <span style={{ color: '#8da4bf', fontSize: '12px' }}>Bash</span>
             </div>
-            <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges/chrg_test_5ywnabcdef123456789/refunds \\
+            <pre style={{ margin: 0, padding: '20px', color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace", overflow: 'auto' }}>{`curl https://api.omise.co/charges/chrg_test_no1t4tnemucod0e51mo/refunds \\
   -u $OMISE_SECRET_KEY: \\
   -d "amount=200000"`}</pre>
           </div>

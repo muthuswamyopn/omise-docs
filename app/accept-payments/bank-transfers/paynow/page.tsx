@@ -19,7 +19,7 @@ curl https://api.omise.co/charges \\
   -u $OMISE_SECRET_KEY: \\
   -d "amount=400000" \\
   -d "currency=SGD" \\
-  -d "source=src_test_5jb3h6zcadqsuyxpz47"`,
+  -d "source=src_test_no1t4tnemucod0e51mo"`,
 };
 
 export default function PayNowPage() {
@@ -105,7 +105,7 @@ export default function PayNowPage() {
 {`// Charge response contains QR code URL
 {
   "object": "charge",
-  "id": "chrg_test_5jb3h77oldf7xmcsqex",
+  "id": "chrg_test_no1t4tnemucod0e51mo",
   "status": "pending",
   "source": {
     "object": "source",

@@ -19,7 +19,7 @@ curl https://api.omise.co/charges \\
   -u $OMISE_SECRET_KEY: \\
   -d "amount=5000" \\
   -d "currency=SGD" \\
-  -d "source=src_test_5jb3h6zcadqsuyxpz47" \\
+  -d "source=src_test_no1t4tnemucod0e51mo" \\
   -d "return_uri=https://yoursite.com/complete"`,
 };
 

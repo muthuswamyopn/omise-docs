@@ -337,7 +337,7 @@ Omise.createSource("${method.sourceType}", {
             <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
               <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`{
   "object": "source",
-  "id": "src_test_5ywn47nqbwz3gxqmxph",
+  "id": "src_test_no1t4tnemucod0e51mo",
   "livemode": false,
   "amount": 100000,
   "currency": "${method.currencies[0]}",
@@ -372,7 +372,7 @@ Omise.createSource("${method.sourceType}", {
             <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
               <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`{
   "object": "charge",
-  "id": "chrg_test_5ywnabcdef123456789",
+  "id": "chrg_test_no1t4tnemucod0e51mo",
   "livemode": false,
   "amount": 100000,
   "currency": "${method.currencies[0]}",
@@ -380,7 +380,7 @@ Omise.createSource("${method.sourceType}", {
   "return_uri": "https://example.com/complete",
   "source": {
     "object": "source",
-    "id": "src_test_5ywn47nqbwz3gxqmxph",
+    "id": "src_test_no1t4tnemucod0e51mo",
     "type": "${method.sourceType}",
     "flow": "${method.flow}"
   },
@@ -561,7 +561,7 @@ Omise.createSource("${method.sourceType}", {
           </p>
 
           <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
-            <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`curl https://api.omise.co/charges/chrg_test_5ywnabcdef123456789 \\
+            <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`curl https://api.omise.co/charges/chrg_test_no1t4tnemucod0e51mo \\
   -u $OMISE_SECRET_KEY:`}</pre>
           </div>
         </section>
@@ -635,7 +635,7 @@ Omise.createSource("${method.sourceType}", {
             <div style={{ marginTop: '16px' }}>
               <div style={{ fontSize: '12px', fontWeight: 600, color: '#697386', textTransform: 'uppercase', marginBottom: '8px' }}>Create a Refund</div>
               <div style={{ background: '#1a2332', borderRadius: '8px', padding: '20px', overflow: 'auto' }}>
-                <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`curl https://api.omise.co/charges/chrg_test_5ywnabcdef123456789/refunds \\
+                <pre style={{ margin: 0, color: '#67e8f9', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}>{`curl https://api.omise.co/charges/chrg_test_no1t4tnemucod0e51mo/refunds \\
   -u $OMISE_SECRET_KEY: \\
   -d "amount=50000"`}</pre>
               </div>

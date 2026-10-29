@@ -19,7 +19,7 @@ curl https://api.omise.co/charges \\
   -u $OMISE_SECRET_KEY: \\
   -d "amount=400000" \\
   -d "currency=THB" \\
-  -d "source=src_test_5jb3h6zcadqsuyxpz47"`,
+  -d "source=src_test_no1t4tnemucod0e51mo"`,
 };
 
 export default function PromptPayPage() {
@@ -43,7 +43,7 @@ export default function PromptPayPage() {
 {`// Response contains QR code URL
 {
   "object": "charge",
-  "id": "chrg_test_5jb3h77oldf7xmcsqex",
+  "id": "chrg_test_no1t4tnemucod0e51mo",
   "source": {
     "scannable_code": {
       "type": "promptpay",

@@ -250,8 +250,9 @@ const exampleErrorsByVersion: Record<string, Array<{
   response: string;
 }>> = {
   aegaeon: [
+    // API Errors (2)
     {
-      title: 'Authentication Error',
+      title: 'Authentication Failure',
       httpStatus: '401 Unauthorized',
       httpCode: 401,
       response: `{
@@ -262,7 +263,7 @@ const exampleErrorsByVersion: Record<string, Array<{
 }`,
     },
     {
-      title: 'Not Found Error',
+      title: 'Not Found',
       httpStatus: '404 Not Found',
       httpCode: 404,
       response: `{
@@ -272,8 +273,20 @@ const exampleErrorsByVersion: Record<string, Array<{
   "message": "charge chrg_test_invalid was not found"
 }`,
     },
+    // Charge Errors (3)
     {
-      title: 'Capture Failure',
+      title: 'Bad Request',
+      httpStatus: '400 Bad Request',
+      httpCode: 400,
+      response: `{
+  "object": "error",
+  "location": "https://api.omise.co/charges",
+  "code": "bad_request",
+  "message": "amount is required"
+}`,
+    },
+    {
+      title: 'Failed Capture',
       httpStatus: '400 Bad Request',
       httpCode: 400,
       response: `{
@@ -284,7 +297,31 @@ const exampleErrorsByVersion: Record<string, Array<{
 }`,
     },
     {
-      title: 'Payment Declined',
+      title: 'Failed Reverse',
+      httpStatus: '400 Bad Request',
+      httpCode: 400,
+      response: `{
+  "object": "error",
+  "location": "https://api.omise.co/charges/chrg_test_.../reverse",
+  "code": "failed_reverse",
+  "message": "charge was already captured"
+}`,
+    },
+    // Payment Failures (5)
+    {
+      title: 'Failed Processing',
+      httpStatus: '402 Payment Required',
+      httpCode: 402,
+      response: `{
+  "object": "charge",
+  "id": "chrg_test_no1t4tnemucod0e51mo",
+  "status": "failed",
+  "failure_code": "failed_processing",
+  "failure_message": "payment processing failed"
+}`,
+    },
+    {
+      title: 'Insufficient Fund',
       httpStatus: '402 Payment Required',
       httpCode: 402,
       response: `{
@@ -292,13 +329,50 @@ const exampleErrorsByVersion: Record<string, Array<{
   "id": "chrg_test_no1t4tnemucod0e51mo",
   "status": "failed",
   "failure_code": "insufficient_fund",
-  "failure_message": "insufficient funds in the account or the card has reached the credit limit"
+  "failure_message": "insufficient funds in the account"
+}`,
+    },
+    {
+      title: 'Invalid Account Number',
+      httpStatus: '402 Payment Required',
+      httpCode: 402,
+      response: `{
+  "object": "charge",
+  "id": "chrg_test_no1t4tnemucod0e51mo",
+  "status": "failed",
+  "failure_code": "invalid_account_number",
+  "failure_message": "card account number is invalid"
+}`,
+    },
+    {
+      title: 'Payment Rejected',
+      httpStatus: '402 Payment Required',
+      httpCode: 402,
+      response: `{
+  "object": "charge",
+  "id": "chrg_test_no1t4tnemucod0e51mo",
+  "status": "failed",
+  "failure_code": "payment_rejected",
+  "failure_message": "payment was rejected by the issuer"
+}`,
+    },
+    {
+      title: 'Timeout',
+      httpStatus: '402 Payment Required',
+      httpCode: 402,
+      response: `{
+  "object": "charge",
+  "id": "chrg_test_no1t4tnemucod0e51mo",
+  "status": "failed",
+  "failure_code": "timeout",
+  "failure_message": "payment request timed out"
 }`,
     },
   ],
   bestla: [
+    // Charge Errors (1)
     {
-      title: 'Expire Failure',
+      title: 'Failed Expire',
       httpStatus: '400 Bad Request',
       httpCode: 400,
       response: `{
@@ -308,8 +382,9 @@ const exampleErrorsByVersion: Record<string, Array<{
   "message": "charge is not in pending status"
 }`,
     },
+    // Payment Failures (5)
     {
-      title: 'Fraud Check Failed',
+      title: 'Failed Fraud Check',
       httpStatus: '402 Payment Required',
       httpCode: 402,
       response: `{
@@ -321,15 +396,27 @@ const exampleErrorsByVersion: Record<string, Array<{
 }`,
     },
     {
-      title: 'Expired Card',
+      title: 'Insufficient Balance',
       httpStatus: '402 Payment Required',
       httpCode: 402,
       response: `{
   "object": "charge",
   "id": "chrg_test_no1t4tnemucod0e51mo",
   "status": "failed",
-  "failure_code": "expired_card",
-  "failure_message": "card has expired"
+  "failure_code": "insufficient_balance",
+  "failure_message": "account has insufficient balance"
+}`,
+    },
+    {
+      title: 'Invalid Security Code',
+      httpStatus: '402 Payment Required',
+      httpCode: 402,
+      response: `{
+  "object": "charge",
+  "id": "chrg_test_no1t4tnemucod0e51mo",
+  "status": "failed",
+  "failure_code": "invalid_security_code",
+  "failure_message": "security code is incorrect"
 }`,
     },
     {
@@ -342,6 +429,18 @@ const exampleErrorsByVersion: Record<string, Array<{
   "status": "failed",
   "failure_code": "payment_cancelled",
   "failure_message": "customer cancelled the payment"
+}`,
+    },
+    {
+      title: 'Expired Card',
+      httpStatus: '402 Payment Required',
+      httpCode: 402,
+      response: `{
+  "object": "charge",
+  "id": "chrg_test_no1t4tnemucod0e51mo",
+  "status": "failed",
+  "failure_code": "expired_card",
+  "failure_message": "card has expired"
 }`,
     },
   ],
@@ -359,6 +458,17 @@ const exampleErrorsByVersion: Record<string, Array<{
     },
   ],
   deimos: [
+    {
+      title: 'Invalid Card',
+      httpStatus: '400 Bad Request',
+      httpCode: 400,
+      response: `{
+  "object": "error",
+  "location": "https://api.omise.co/charges",
+  "code": "invalid_card",
+  "message": "card is invalid or cannot be used"
+}`,
+    },
     {
       title: 'Invalid Card Token',
       httpStatus: '400 Bad Request',
@@ -393,7 +503,18 @@ const exampleErrorsByVersion: Record<string, Array<{
 }`,
     },
     {
-      title: 'Stolen Card',
+      title: 'Used Token',
+      httpStatus: '400 Bad Request',
+      httpCode: 400,
+      response: `{
+  "object": "error",
+  "location": "https://api.omise.co/charges",
+  "code": "used_token",
+  "message": "token was already used by another charge"
+}`,
+    },
+    {
+      title: 'Stolen or Lost Card',
       httpStatus: '402 Payment Required',
       httpCode: 402,
       response: `{
@@ -402,6 +523,18 @@ const exampleErrorsByVersion: Record<string, Array<{
   "status": "failed",
   "failure_code": "stolen_or_lost_card",
   "failure_message": "card was reported as stolen or lost"
+}`,
+    },
+    {
+      title: 'Blocked Card',
+      httpStatus: '402 Payment Required',
+      httpCode: 402,
+      response: `{
+  "object": "charge",
+  "id": "chrg_test_no1t4tnemucod0e51mo",
+  "status": "failed",
+  "failure_code": "blocked_card",
+  "failure_message": "card has been blocked by the issuer"
 }`,
     },
   ],

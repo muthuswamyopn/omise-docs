@@ -6,6 +6,34 @@ import { usePathname } from 'next/navigation';
 import { navigation, isPathActive, NavigationSection, NavigationItem } from '../lib/navigation';
 import { t, Locale, LocalizedContent, HTTPMethod, methodColors } from '../lib/types';
 import SearchDialog from './SearchDialog';
+import { useVersion } from '../context/VersionContext';
+
+// Charge endpoint availability by version
+const CHARGE_ENDPOINT_VERSIONS: Record<string, string> = {
+  '/api-reference/charges/create': 'aegaeon',
+  '/api-reference/charges/retrieve': 'aegaeon',
+  '/api-reference/charges/list': 'aegaeon',
+  '/api-reference/charges/update': 'aegaeon',
+  '/api-reference/charges/capture': 'aegaeon',
+  '/api-reference/charges/reverse': 'aegaeon',
+  '/api-reference/charges/expire': 'cordelia',
+  '/api-reference/charges/mark-as-paid': 'deimos',
+  '/api-reference/charges/mark-as-failed': 'deimos',
+  '/api-reference/charges/errors': 'aegaeon', // Always available
+  '/api-reference/charges': 'aegaeon', // Overview always available
+};
+
+function isChargeEndpointAvailable(href: string, version: string): boolean {
+  const versionOrder = ['aegaeon', 'bestla', 'cordelia', 'deimos'];
+  const currentIndex = versionOrder.indexOf(version);
+  const endpointVersion = CHARGE_ENDPOINT_VERSIONS[href];
+
+  // If not a charge endpoint, always available
+  if (!endpointVersion) return true;
+
+  const endpointIndex = versionOrder.indexOf(endpointVersion);
+  return currentIndex >= endpointIndex;
+}
 
 interface SidebarProps {
   locale?: Locale;
@@ -72,14 +100,21 @@ function NavItem({
   currentPath,
   locale,
   depth = 0,
+  currentVersion,
 }: {
   item: NavigationItem;
   currentPath: string;
   locale: Locale;
   depth?: number;
+  currentVersion: string;
 }) {
+  // Filter children based on version (for charge endpoints)
+  const filteredChildren = item.items?.filter(child =>
+    isChargeEndpointAvailable(child.href, currentVersion)
+  );
+
   const isActive = currentPath === item.href;
-  const isParentActive = item.items && item.items.some(child =>
+  const isParentActive = filteredChildren && filteredChildren.some(child =>
     isPathActive(currentPath, child.href) ||
     (child.items && child.items.some(grandchild => isPathActive(currentPath, grandchild.href)))
   );
@@ -91,7 +126,7 @@ function NavItem({
     }
   }, [isActive, isParentActive]);
 
-  const hasChildren = item.items && item.items.length > 0;
+  const hasChildren = filteredChildren && filteredChildren.length > 0;
   const paddingLeft = 12 + depth * 12;
 
   return (
@@ -185,13 +220,14 @@ function NavItem({
       </div>
       {hasChildren && isOpen && (
         <div>
-          {item.items!.map((child) => (
+          {filteredChildren!.map((child) => (
             <NavItem
               key={child.href}
               item={child}
               currentPath={currentPath}
               locale={locale}
               depth={depth + 1}
+              currentVersion={currentVersion}
             />
           ))}
         </div>
@@ -204,10 +240,12 @@ function NavSection({
   section,
   currentPath,
   locale,
+  currentVersion,
 }: {
   section: NavigationSection;
   currentPath: string;
   locale: Locale;
+  currentVersion: string;
 }) {
   const isActive = section.href && isPathActive(currentPath, section.href);
   const hasActiveChild = section.items.some(item =>
@@ -269,6 +307,7 @@ function NavSection({
               item={item}
               currentPath={currentPath}
               locale={locale}
+              currentVersion={currentVersion}
             />
           ))}
         </div>
@@ -279,6 +318,7 @@ function NavSection({
 
 export default function SidebarNew({ locale = 'en' }: SidebarProps) {
   const pathname = usePathname();
+  const { currentVersion } = useVersion();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // Global keyboard shortcut for search
@@ -374,6 +414,7 @@ export default function SidebarNew({ locale = 'en' }: SidebarProps) {
             section={section}
             currentPath={pathname}
             locale={locale}
+            currentVersion={currentVersion}
           />
         ))}
       </nav>

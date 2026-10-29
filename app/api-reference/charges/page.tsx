@@ -1,16 +1,15 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import SidebarNew from '../../components/SidebarNew';
 import VersionSelector, { VersionDiff } from '../../components/VersionSelector';
 import { endpoints, methodColors } from '../../lib/chargeData';
 import {
   API_VERSIONS,
-  DEFAULT_VERSION,
   getFieldsForVersion,
   getPaymentMethodsForVersion,
 } from '../../lib/apiVersions';
+import { useVersion } from '../../context/VersionContext';
 
 const endpointOrder = ['create', 'retrieve', 'list', 'update', 'capture', 'reverse', 'expire', 'mark-as-paid', 'mark-as-failed'];
 
@@ -37,7 +36,7 @@ function isEndpointAvailable(endpointKey: string, version: string): boolean {
 }
 
 export default function ChargesOverviewPage() {
-  const [currentVersion, setCurrentVersion] = useState(DEFAULT_VERSION);
+  const { currentVersion, setCurrentVersion } = useVersion();
 
   const fields = getFieldsForVersion(currentVersion);
   const paymentMethods = getPaymentMethodsForVersion(currentVersion);
@@ -56,13 +55,10 @@ export default function ChargesOverviewPage() {
         </p>
 
         {/* Version Selector */}
-        <VersionSelector
-          currentVersion={currentVersion}
-          onVersionChange={setCurrentVersion}
-        />
+        <VersionSelector />
 
         {/* Version Diff Warning */}
-        <VersionDiff currentVersion={currentVersion} />
+        <VersionDiff />
 
         <p style={{ fontSize: '15px', color: '#3c4257', lineHeight: 1.7, marginBottom: '24px' }}>
           Use charges to collect payments from customers via credit cards, debit cards, or alternative payment methods

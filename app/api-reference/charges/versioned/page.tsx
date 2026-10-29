@@ -1,17 +1,16 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import SidebarNew from '../../../components/SidebarNew';
 import VersionSelector, { VersionDiff } from '../../../components/VersionSelector';
 import {
   API_VERSIONS,
-  DEFAULT_VERSION,
   getFieldsForVersion,
   getPaymentMethodsForVersion,
   getFailureCodesForVersion
 } from '../../../lib/apiVersions';
 import { methodColors } from '../../../lib/chargeData';
+import { useVersion } from '../../../context/VersionContext';
 
 // Endpoints available in each version
 const ENDPOINTS_BY_VERSION: Record<string, { method: string; path: string; title: string; addedIn: string }[]> = {
@@ -56,7 +55,7 @@ function getEndpointsForVersion(codename: string) {
 }
 
 export default function VersionedChargesPage() {
-  const [currentVersion, setCurrentVersion] = useState(DEFAULT_VERSION);
+  const { currentVersion } = useVersion();
 
   const fields = getFieldsForVersion(currentVersion);
   const endpoints = getEndpointsForVersion(currentVersion);
@@ -84,13 +83,10 @@ export default function VersionedChargesPage() {
         </p>
 
         {/* Version Selector */}
-        <VersionSelector
-          currentVersion={currentVersion}
-          onVersionChange={setCurrentVersion}
-        />
+        <VersionSelector />
 
         {/* Version Diff Warning */}
-        <VersionDiff currentVersion={currentVersion} />
+        <VersionDiff />
 
         {/* Version Stats */}
         <div style={{

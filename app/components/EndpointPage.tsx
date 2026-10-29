@@ -5,7 +5,8 @@ import Link from 'next/link';
 import SidebarNew from './SidebarNew';
 import VersionSelector from './VersionSelector';
 import { endpoints, codeExamples, responseExamples, languages, methodColors, EndpointConfig } from '../lib/chargeData';
-import { API_VERSIONS, DEFAULT_VERSION, ApiVersion } from '../lib/apiVersions';
+import { API_VERSIONS, ApiVersion } from '../lib/apiVersions';
+import { useVersion } from '../context/VersionContext';
 
 interface TryItFormProps {
   endpoint: string;
@@ -267,7 +268,7 @@ interface EndpointPageProps {
 export default function EndpointPage({ endpointKey, currentPage }: EndpointPageProps) {
   const [activeLang, setActiveLang] = useState('curl');
   const [showTryIt, setShowTryIt] = useState(false);
-  const [currentVersion, setCurrentVersion] = useState(DEFAULT_VERSION);
+  const { currentVersion, setCurrentVersion } = useVersion();
 
   const config = endpoints[endpointKey];
   const methodStyle = methodColors[config.method];
@@ -321,10 +322,7 @@ export default function EndpointPage({ endpointKey, currentPage }: EndpointPageP
         <p className="subtitle">{config.description}</p>
 
         {/* Version Selector */}
-        <VersionSelector
-          currentVersion={currentVersion}
-          onVersionChange={setCurrentVersion}
-        />
+        <VersionSelector />
 
         {/* Endpoint Not Available Warning */}
         {!endpointAvailable && (

@@ -2,13 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { API_VERSIONS, DEFAULT_VERSION, ApiVersion } from '../lib/apiVersions';
+import { useVersion } from '../context/VersionContext';
 
-interface VersionSelectorProps {
-  currentVersion: string;
-  onVersionChange: (codename: string) => void;
-}
-
-export default function VersionSelector({ currentVersion, onVersionChange }: VersionSelectorProps) {
+export default function VersionSelector() {
+  const { currentVersion, setCurrentVersion } = useVersion();
   const [isOpen, setIsOpen] = useState(false);
   const current = API_VERSIONS.find(v => v.codename === currentVersion) || API_VERSIONS[0];
 
@@ -99,7 +96,7 @@ export default function VersionSelector({ currentVersion, onVersionChange }: Ver
             <button
               key={version.codename}
               onClick={() => {
-                onVersionChange(version.codename);
+                setCurrentVersion(version.codename);
                 setIsOpen(false);
               }}
               style={{
@@ -195,7 +192,8 @@ export function VersionBadge({ addedIn, small = false }: { addedIn: string; smal
 }
 
 // Component to show version differences
-export function VersionDiff({ currentVersion }: { currentVersion: string }) {
+export function VersionDiff() {
+  const { currentVersion } = useVersion();
   const versionOrder = ['aegaeon', 'bestla', 'cordelia', 'deimos'];
   const currentIndex = versionOrder.indexOf(currentVersion);
   const latestIndex = versionOrder.indexOf('deimos');

@@ -11,7 +11,7 @@ interface ErrorCode {
   resolution?: string;
 }
 
-const apiErrors: ErrorCode[] = [
+const authErrors: ErrorCode[] = [
   {
     code: 'authentication_failure',
     httpStatus: 401,
@@ -19,13 +19,50 @@ const apiErrors: ErrorCode[] = [
     whenOccurs: 'The Authorization header is missing, malformed, or contains an invalid secret key. The Balance API requires a secret key (skey_...), not a public key.',
     resolution: 'Verify your API key is correct and properly formatted. Use HTTP Basic Auth with your secret key as the username and an empty password.',
   },
+  {
+    code: 'not_found',
+    httpStatus: 404,
+    description: 'The requested resource does not exist.',
+    whenOccurs: 'You attempt to access an endpoint that does not exist or use an incorrect API path.',
+    resolution: 'Verify the endpoint path is correct: GET https://api.omise.co/balance',
+  },
+];
+
+const accountErrors: ErrorCode[] = [
+  {
+    code: 'invalid_account',
+    httpStatus: 400,
+    description: 'The account associated with this API key is in an invalid state.',
+    whenOccurs: 'The account has been suspended, is pending verification, or has restrictions that prevent balance access.',
+    resolution: 'Contact Omise support to verify your account status and resolve any issues.',
+  },
+  {
+    code: 'service_not_found',
+    httpStatus: 404,
+    description: 'The balance service is not available for this account.',
+    whenOccurs: 'Your account type does not support balance retrieval, or the account has not been fully activated.',
+    resolution: 'Ensure your account is fully activated and has completed the verification process.',
+  },
+];
+
+const rateLimitErrors: ErrorCode[] = [
+  {
+    code: 'too_many_requests',
+    httpStatus: 429,
+    description: 'You have exceeded the rate limit for API requests.',
+    whenOccurs: 'Too many requests have been made in a short period. The Balance API shares rate limits with other Omise APIs.',
+    resolution: 'Implement exponential backoff in your retry logic. Wait before retrying, doubling the wait time with each attempt.',
+  },
 ];
 
 const httpStatusCodes = [
   { code: 200, name: 'OK', description: 'The request succeeded. Returns the current balance.' },
+  { code: 400, name: 'Bad Request', description: 'The account is in an invalid state.' },
   { code: 401, name: 'Unauthorized', description: 'Authentication failed. Check your API key.' },
+  { code: 404, name: 'Not Found', description: 'The endpoint or service does not exist.' },
   { code: 429, name: 'Too Many Requests', description: 'You exceeded the rate limit. Slow down your requests.' },
   { code: 500, name: 'Internal Server Error', description: 'An error occurred on Omise\'s servers.' },
+  { code: 503, name: 'Service Unavailable', description: 'The service is temporarily unavailable. Retry later.' },
 ];
 
 function ErrorSection({ title, errors }: { title: string; errors: ErrorCode[] }) {
@@ -168,7 +205,9 @@ export default function BalanceErrorsPage() {
           ))}
         </div>
 
-        <ErrorSection title="Authentication Errors" errors={apiErrors} />
+        <ErrorSection title="Authentication & Resource Errors" errors={authErrors} />
+        <ErrorSection title="Account Errors" errors={accountErrors} />
+        <ErrorSection title="Rate Limiting Errors" errors={rateLimitErrors} />
 
         {/* Best Practices */}
         <div style={{ marginTop: '48px', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '8px', padding: '24px' }}>
@@ -206,6 +245,44 @@ export default function BalanceErrorsPage() {
   "location": "https://api.omise.co/balance",
   "code": "authentication_failure",
   "message": "authentication failed"
+}`}
+            </pre>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px' }}>
+            Invalid Account
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden' }}>
+            <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#ff6b6b' }}>400 Bad Request</span>
+            </div>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+{`{
+  "object": "error",
+  "location": "https://api.omise.co/balance",
+  "code": "invalid_account",
+  "message": "account is invalid"
+}`}
+            </pre>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px' }}>
+            Rate Limit Exceeded
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden' }}>
+            <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#fbbf24' }}>429 Too Many Requests</span>
+            </div>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+{`{
+  "object": "error",
+  "location": "https://api.omise.co/balance",
+  "code": "too_many_requests",
+  "message": "rate limit exceeded"
 }`}
             </pre>
           </div>

@@ -331,7 +331,7 @@ export default function ErrorsPage() {
         </div>
 
         <div style={{ marginTop: '40px', padding: '16px', background: '#f6f9fc', borderRadius: '6px', fontSize: '13px', color: '#697386' }}>
-          Full API schema available at <a href="https://api.omise.co/schema" style={{ color: '#1A1F71' }}>api.omise.co/schema</a>
+          Full API schema available at <Link href="/openapi.yaml" style={{ color: '#1A1F71' }}>openapi.yaml</Link>
         </div>
       </main>
 

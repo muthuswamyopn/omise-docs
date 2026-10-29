@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Script from 'next/script';
 import SidebarNew from '../../../components/SidebarNew';

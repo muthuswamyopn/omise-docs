@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
   }
   try {
     const body = await request.json();
-    const { url, method, secretKey, params } = body;
+    const { url, method, secretKey, params, version } = body;
 
     if (!url || !secretKey) {
       return NextResponse.json(
@@ -81,12 +81,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Build headers with optional version
+    const headers: Record<string, string> = {
+      'Authorization': 'Basic ' + Buffer.from(secretKey + ':').toString('base64'),
+      'Content-Type': 'application/x-www-form-urlencoded',
+    };
+
+    // Add Omise-Version header if specified
+    if (version) {
+      headers['Omise-Version'] = version;
+    }
+
     const options: RequestInit = {
       method: method || 'POST',
-      headers: {
-        'Authorization': 'Basic ' + Buffer.from(secretKey + ':').toString('base64'),
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+      headers,
     };
 
     let finalUrl = url;
@@ -138,6 +146,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
   const secretKey = searchParams.get('secretKey');
+  const version = searchParams.get('version');
 
   if (!url || !secretKey) {
     return NextResponse.json(
@@ -155,11 +164,19 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    // Build headers with optional version
+    const headers: Record<string, string> = {
+      'Authorization': 'Basic ' + Buffer.from(secretKey + ':').toString('base64'),
+    };
+
+    // Add Omise-Version header if specified
+    if (version) {
+      headers['Omise-Version'] = version;
+    }
+
     const response = await fetch(url, {
       method: 'GET',
-      headers: {
-        'Authorization': 'Basic ' + Buffer.from(secretKey + ':').toString('base64'),
-      },
+      headers,
     });
     const data = await response.json();
 

@@ -30,6 +30,14 @@ export default function AccountOverviewPage() {
           and manage other account-level settings. Both test and live keys return the same account information.
         </p>
 
+        {/* Error Handling Reference */}
+        <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
+          <div style={{ fontSize: '14px', color: '#78350f', lineHeight: 1.6 }}>
+            <strong style={{ color: '#92400e' }}>Error Handling:</strong> When an account operation fails, the API returns a specific error code.
+            See <Link href="/api-reference/account/errors" style={{ color: '#1A1F71', fontWeight: 600 }}>Account API Error Codes</Link> for a complete reference of all error codes, their meanings, and resolution steps.
+          </div>
+        </div>
+
         {/* Related APIs */}
         <div style={{ background: '#f6f9fc', border: '1px solid #e3e8ee', borderRadius: '8px', padding: '20px', marginBottom: '32px' }}>
           <div style={{ fontWeight: 600, color: '#1a1a1a', marginBottom: '12px' }}>Related APIs</div>

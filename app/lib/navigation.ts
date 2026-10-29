@@ -276,10 +276,11 @@ export const navigation: NavigationSection[] = [
           { name: lc('Account', 'Account', 'Account'), href: '/api-reference/account' },
           { name: lc('Retrieve Account', 'ดึงข้อมูลบัญชี', 'アカウントを取得'), href: '/api-reference/account/retrieve', method: 'GET' as const },
           { name: lc('Update Account', 'อัปเดตบัญชี', 'アカウントを更新'), href: '/api-reference/account/update', method: 'PATCH' as const },
-          { name: lc('Balance', 'Balance', 'Balance'), href: '/api-reference/balance' },
-          { name: lc('Capabilities', 'Capabilities', 'Capability'), href: '/api-reference/capabilities' },
+          { name: lc('Error Codes', 'รหัสข้อผิดพลาด', 'エラーコード'), href: '/api-reference/account/errors' },
         ],
       },
+      { name: lc('Balance', 'Balance', 'Balance'), href: '/api-reference/balance' },
+      { name: lc('Capabilities', 'Capabilities', 'Capability'), href: '/api-reference/capabilities' },
       {
         name: lc('Scheduling', 'การตั้งเวลา', 'スケジューリング'),
         href: '/api-reference/schedules',

@@ -813,15 +813,24 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
           examples:
-            invalid_webhook:
-              summary: Invalid webhook URI
+            invalid_webhook_url:
+              summary: Invalid webhook URL format
               value:
                 object: error
+                location: "https://www.omise.co/api-errors#bad-request"
                 code: bad_request
                 message: "webhook endpoint is invalid and webhook endpoint not-a-valid-url is either insecure or forbidden"
+            insecure_webhook:
+              summary: HTTP webhook (must be HTTPS)
+              value:
+                object: error
+                location: "https://www.omise.co/api-errors#bad-request"
+                code: bad_request
+                message: "webhook endpoint is invalid"
             invalid_account:
               summary: Account in invalid state
               value:
                 object: error
+                location: "https://www.omise.co/api-errors#invalid-account"
                 code: invalid_account
                 message: "account is invalid"

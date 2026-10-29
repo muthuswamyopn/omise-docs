@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import SidebarNew from '../../../components/SidebarNew';
-import VersionSelector, { VersionBadge, VersionDiff } from '../../../components/VersionSelector';
+import VersionSelector, { VersionDiff } from '../../../components/VersionSelector';
 import {
   API_VERSIONS,
   DEFAULT_VERSION,
@@ -213,9 +213,6 @@ export default function VersionedChargesPage() {
               <div>
                 <div className="attribute-name">
                   {field.name}
-                  {field.addedIn !== 'aegaeon' && (
-                    <VersionBadge addedIn={field.addedIn} small />
-                  )}
                 </div>
                 <div className="attribute-meta">
                   {field.type}

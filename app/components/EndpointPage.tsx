@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SidebarNew from './SidebarNew';
-import VersionSelector, { VersionBadge } from './VersionSelector';
+import VersionSelector from './VersionSelector';
 import { endpoints, codeExamples, responseExamples, languages, methodColors, EndpointConfig } from '../lib/chargeData';
 import { API_VERSIONS, DEFAULT_VERSION, ApiVersion } from '../lib/apiVersions';
 
@@ -382,29 +382,23 @@ export default function EndpointPage({ endpointKey, currentPage }: EndpointPageP
           <>
             <h2>Parameters <span style={{ fontSize: '14px', fontWeight: 400, color: '#697386' }}>({availableParams.length} in {currentVersion})</span></h2>
             <div className="params-section">
-              {availableParams.map((param) => {
-                const paramVersion = PARAM_VERSIONS[param.name] || 'aegaeon';
-                const isNew = paramVersion === currentVersion && currentVersion !== 'aegaeon';
-
-                return (
-                  <div key={param.name} className="param-row" style={{ background: isNew ? '#f0fdf4' : undefined, border: isNew ? '1px solid #86efac' : undefined, borderRadius: isNew ? '8px' : undefined, padding: isNew ? '16px' : undefined, marginBottom: isNew ? '12px' : undefined }}>
-                    <div className="param-header">
-                      <span className="param-name">{param.name}</span>
-                      {paramVersion !== 'aegaeon' && <VersionBadge addedIn={paramVersion} small />}
-                      <span className="param-type">{param.type}</span>
-                      {param.required === true && <span className="param-required">required</span>}
-                      {param.required === 'conditional' && <span style={{ fontSize: '11px', fontWeight: 600, color: '#9c6f19', textTransform: 'uppercase' }}>conditional</span>}
-                      {param.required === false && <span className="param-optional">optional</span>}
-                    </div>
-                    <div className="param-desc">{param.desc}</div>
-                    {param.options && (
-                      <div className="enum-values">
-                        {param.options.map(opt => <span key={opt} className="enum-value">{opt}</span>)}
-                      </div>
-                    )}
+              {availableParams.map((param) => (
+                <div key={param.name} className="param-row">
+                  <div className="param-header">
+                    <span className="param-name">{param.name}</span>
+                    <span className="param-type">{param.type}</span>
+                    {param.required === true && <span className="param-required">required</span>}
+                    {param.required === 'conditional' && <span style={{ fontSize: '11px', fontWeight: 600, color: '#9c6f19', textTransform: 'uppercase' }}>conditional</span>}
+                    {param.required === false && <span className="param-optional">optional</span>}
                   </div>
-                );
-              })}
+                  <div className="param-desc">{param.desc}</div>
+                  {param.options && (
+                    <div className="enum-values">
+                      {param.options.map(opt => <span key={opt} className="enum-value">{opt}</span>)}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
 
             {/* Error Handling Notice */}

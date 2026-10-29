@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import SidebarNew from '../../components/SidebarNew';
-import VersionSelector, { VersionBadge, VersionDiff } from '../../components/VersionSelector';
+import VersionSelector, { VersionDiff } from '../../components/VersionSelector';
 import { endpoints, methodColors } from '../../lib/chargeData';
 import {
   API_VERSIONS,
@@ -202,7 +202,6 @@ export default function ChargesOverviewPage() {
         <h2>The Charge Object <span style={{ fontSize: '14px', fontWeight: 400, color: '#697386' }}>({fields.length} fields)</span></h2>
         <p style={{ fontSize: '14px', color: '#697386', marginBottom: '16px' }}>
           Fields available in API version <strong>{versionInfo?.date}</strong> ({currentVersion}).
-          Fields added in later versions are marked with version badges.
         </p>
         <div className="attributes-section">
           {fields.map(field => (
@@ -210,9 +209,6 @@ export default function ChargesOverviewPage() {
               <div>
                 <div className="attribute-name">
                   {field.name}
-                  {field.addedIn !== 'aegaeon' && (
-                    <VersionBadge addedIn={field.addedIn} small />
-                  )}
                 </div>
                 <div className="attribute-meta">
                   {field.type}

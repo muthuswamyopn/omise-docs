@@ -1,0 +1,808 @@
+openapi: 3.0.3
+info:
+  title: Omise API
+  version: '2019-05-29'
+  description: |
+    The Omise API enables you to create and manage payment transactions and account settings.
+
+    ## Authentication
+    Use HTTP Basic Auth with your secret key as the username and an empty password.
+
+    ```bash
+    curl https://api.omise.co/charges \
+      -u $OMISE_SECRET_KEY:
+    ```
+
+servers:
+  - url: https://api.omise.co
+    description: Production / Live
+  - url: https://api.omise.co
+    description: Test Mode (use test keys)
+
+security:
+  - secretKey: []
+
+tags:
+  - name: Account
+    description: Retrieve and update account configuration
+  - name: Charges
+    description: Create, capture, and manage payment charges
+
+paths:
+  /account:
+    get:
+      summary: Retrieve account
+      description: |
+        Retrieve your account information including configuration settings, supported currencies, and webhook URI.
+
+        Both test and live keys return the same account information, but `livemode` will reflect which key was used.
+      operationId: getAccount
+      tags: [Account]
+      responses:
+        '200':
+          description: Account details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
+
+    patch:
+      summary: Update account
+      description: |
+        Update account configuration settings such as webhook URI, chain settings, or zero interest installment preferences.
+
+        Only the fields you specify will be updated; other fields remain unchanged.
+      operationId: updateAccount
+      tags: [Account]
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateAccountRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAccountRequest'
+            examples:
+              update_webhook:
+                summary: Update webhook URI
+                value:
+                  webhook_uri: https://example.com/webhooks
+              enable_zero_interest:
+                summary: Enable zero interest installments
+                value:
+                  zero_interest_installments: true
+      responses:
+        '200':
+          description: Account updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          $ref: '#/components/responses/InvalidAccount'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
+
+  /charges:
+    post:
+      summary: Create a charge
+      description: |
+        Create a new charge to collect payment from a customer.
+
+        You can charge using:
+        - A **card token** (one-time use, from Omise.js)
+        - A **customer ID** (charges their default card)
+        - A **source ID** (for alternative payment methods like PromptPay, mobile banking)
+
+        ## Idempotency
+        Use the `idempotency_key` header to safely retry requests without creating duplicate charges.
+      operationId: createCharge
+      tags: [Charges]
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          description: Unique key to prevent duplicate charges on retries
+          schema:
+            type: string
+          example: order-12345-attempt-1
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateChargeRequest'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateChargeRequest'
+            examples:
+              card_charge:
+                summary: Charge a card token
+                value:
+                  amount: 100000
+                  currency: thb
+                  card: tokn_test_000000000000000
+                  return_uri: https://example.com/complete
+                  description: "Order #12345"
+              promptpay:
+                summary: PromptPay QR payment
+                value:
+                  amount: 100000
+                  currency: thb
+                  source:
+                    type: promptpay
+                  return_uri: https://example.com/complete
+              preauth:
+                summary: Pre-authorization (capture later)
+                value:
+                  amount: 200000
+                  currency: thb
+                  card: tokn_test_000000000000000
+                  capture: false
+                  authorization_type: pre_auth
+      responses:
+        '200':
+          description: Charge created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charge'
+              examples:
+                successful:
+                  summary: Successful card charge
+                  value:
+                    object: charge
+                    id: chrg_test_000000000000000
+                    location: /charges/chrg_test_000000000000000
+                    amount: 100000
+                    currency: thb
+                    status: successful
+                    authorized: true
+                    captured: true
+                    card:
+                      object: card
+                      id: card_test_000000000000000
+                      last_digits: "4242"
+                      brand: Visa
+                    created_at: "2024-01-15T10:30:00Z"
+                pending_redirect:
+                  summary: Pending 3DS/redirect
+                  value:
+                    object: charge
+                    id: chrg_test_000000000000000
+                    amount: 100000
+                    currency: thb
+                    status: pending
+                    authorize_uri: https://api.omise.co/payments/chrg_test.../authorize
+                    return_uri: https://example.com/complete
+        '400':
+          $ref: '#/components/responses/InvalidCharge'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
+
+    get:
+      summary: List all charges
+      description: |
+        Retrieve a paginated list of charges for your account.
+
+        Results are sorted by creation date, newest first.
+      operationId: listCharges
+      tags: [Charges]
+      parameters:
+        - name: limit
+          in: query
+          description: Number of charges to return (1-100)
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: Number of charges to skip
+          schema:
+            type: integer
+            default: 0
+        - name: from
+          in: query
+          description: Filter charges created after this date
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          description: Filter charges created before this date
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: List of charges
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChargeList'
+
+  /charges/{id}:
+    get:
+      summary: Retrieve a charge
+      description: Get the details of an existing charge by its ID.
+      operationId: getCharge
+      tags: [Charges]
+      parameters:
+        - $ref: '#/components/parameters/ChargeId'
+      responses:
+        '200':
+          description: Charge details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charge'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      summary: Update a charge
+      description: Update the description or metadata of an existing charge.
+      operationId: updateCharge
+      tags: [Charges]
+      parameters:
+        - $ref: '#/components/parameters/ChargeId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  maxLength: 500000
+                metadata:
+                  type: object
+                  additionalProperties:
+                    type: string
+      responses:
+        '200':
+          description: Charge updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charge'
+
+  /charges/{id}/capture:
+    post:
+      summary: Capture a charge
+      description: |
+        Capture a previously authorized charge.
+
+        For **pre-authorized** charges (`authorization_type: pre_auth`), you can capture a partial amount. The remaining authorization is automatically released.
+
+        For **final-authorized** charges, you must capture the full amount.
+      operationId: captureCharge
+      tags: [Charges]
+      parameters:
+        - $ref: '#/components/parameters/ChargeId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                capture_amount:
+                  type: integer
+                  description: Amount to capture in smallest currency unit. Omit to capture full amount.
+                  example: 75000
+      responses:
+        '200':
+          description: Charge captured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charge'
+        '400':
+          description: Capture failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                object: error
+                code: failed_capture
+                message: Charge has already been captured
+
+  /charges/{id}/reverse:
+    post:
+      summary: Reverse a charge
+      description: |
+        Reverse (void) an authorized but uncaptured charge.
+
+        The authorization is released and the charge status becomes `reversed`.
+
+        **Note:** You cannot reverse a charge that has already been captured. Use refunds instead.
+      operationId: reverseCharge
+      tags: [Charges]
+      parameters:
+        - $ref: '#/components/parameters/ChargeId'
+      responses:
+        '200':
+          description: Charge reversed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charge'
+        '400':
+          description: Reverse failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                object: error
+                code: failed_reverse
+                message: Charge has already been captured
+
+  /charges/{id}/expire:
+    post:
+      summary: Expire a charge
+      description: |
+        Manually expire a pending charge.
+
+        Use this when a customer abandons a payment flow (e.g., 3DS redirect, PromptPay QR).
+      operationId: expireCharge
+      tags: [Charges]
+      parameters:
+        - $ref: '#/components/parameters/ChargeId'
+      responses:
+        '200':
+          description: Charge expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Charge'
+
+components:
+  securitySchemes:
+    secretKey:
+      type: http
+      scheme: basic
+      description: |
+        Use your **secret key** as the username with an empty password.
+
+        - Test keys start with `skey_test_`
+        - Live keys start with `skey_`
+
+  parameters:
+    ChargeId:
+      name: id
+      in: path
+      required: true
+      description: The charge ID
+      schema:
+        type: string
+        pattern: ^chrg_(test_)?[a-z0-9]+$
+      example: chrg_test_000000000000000
+
+  schemas:
+    Account:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [account]
+        id:
+          type: string
+          description: Unique account identifier
+          example: acct_test_000000000000000
+        team:
+          type: string
+          description: Team identifier
+        livemode:
+          type: boolean
+          description: Whether this is live mode (true) or test mode (false)
+        location:
+          type: string
+          example: /account
+        country:
+          type: string
+          description: Two-letter ISO 3166 country code
+          example: TH
+        currency:
+          type: string
+          description: Default three-letter ISO 4217 currency code
+          example: THB
+        email:
+          type: string
+          format: email
+          description: Primary email address
+        supported_currencies:
+          type: array
+          items:
+            type: string
+          description: Currencies available for card charges
+          example: [THB, JPY, USD, EUR, GBP, SGD]
+        api_version:
+          type: string
+          description: Current API version
+          example: "2019-05-29"
+        webhook_uri:
+          type: string
+          format: uri
+          nullable: true
+          description: URL where Omise sends event notifications
+        chain_enabled:
+          type: boolean
+          description: Whether chain integration is enabled
+        chain_return_uri:
+          type: string
+          format: uri
+          nullable: true
+          description: Redirect URL for chain transactions
+        zero_interest_installments:
+          type: boolean
+          description: Whether merchant absorbs installment interest
+        auto_activate_recipients:
+          type: boolean
+          description: Whether new recipients are auto-activated
+        metadata_export_keys:
+          type: object
+          description: Custom metadata keys for exports
+          properties:
+            charge:
+              type: array
+              items:
+                type: string
+            transfer:
+              type: array
+              items:
+                type: string
+            refund:
+              type: array
+              items:
+                type: string
+            dispute:
+              type: array
+              items:
+                type: string
+        created_at:
+          type: string
+          format: date-time
+          description: Account creation timestamp
+
+    UpdateAccountRequest:
+      type: object
+      properties:
+        webhook_uri:
+          type: string
+          format: uri
+          description: URL endpoint for webhook notifications (must be HTTPS)
+          example: https://example.com/webhooks
+        chain_enabled:
+          type: boolean
+          description: Enable or disable chain integration
+        chain_return_uri:
+          type: string
+          format: uri
+          description: URL to redirect users after chain transactions
+        zero_interest_installments:
+          type: boolean
+          description: Whether merchant absorbs installment interest charges
+        metadata_export_keys:
+          type: object
+          description: Custom metadata keys to include in exports
+
+    CreateChargeRequest:
+      type: object
+      required: [amount, currency]
+      properties:
+        amount:
+          type: integer
+          minimum: 1
+          description: |
+            Amount in the smallest currency unit:
+            - THB: satang (100 satang = 1 THB)
+            - JPY: yen (no subunit)
+            - USD: cents (100 cents = 1 USD)
+          example: 100000
+        currency:
+          type: string
+          enum: [thb, jpy, usd, eur, gbp, sgd, aud, chf, cny, dkk, hkd, myr]
+          description: ISO 4217 currency code (lowercase)
+          example: thb
+        card:
+          type: string
+          description: Card token from Omise.js or stored card ID
+          example: tokn_test_000000000000000
+        customer:
+          type: string
+          description: Customer ID (charges their default card)
+          example: cust_test_000000000000000
+        source:
+          oneOf:
+            - type: string
+              description: Existing source ID
+            - type: object
+              description: Create source inline
+              properties:
+                type:
+                  type: string
+                  enum: [promptpay, truemoney, mobile_banking_scb, mobile_banking_kbank, internet_banking_bbl]
+          example: src_test_000000000000000
+        capture:
+          type: boolean
+          default: true
+          description: Whether to capture immediately or authorize only
+        authorization_type:
+          type: string
+          enum: [pre_auth, final_auth]
+          description: |
+            - `pre_auth`: Allows partial capture
+            - `final_auth`: Must capture full amount
+        return_uri:
+          type: string
+          format: uri
+          description: URL to redirect customer after 3DS/offsite payment
+          example: https://example.com/checkout/complete
+        description:
+          type: string
+          maxLength: 500000
+          description: Description shown in dashboard
+          example: "Order #12345"
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: Custom key-value pairs (max 50 keys)
+          example:
+            order_id: "12345"
+            customer_email: "customer@example.com"
+        ip:
+          type: string
+          description: Customer IP for fraud detection
+          example: "203.0.113.1"
+        platform_fee:
+          type: object
+          description: Marketplace platform fee (Connect only)
+          properties:
+            fixed:
+              type: integer
+            percentage:
+              type: number
+        webhook_endpoints:
+          type: array
+          maxItems: 3
+          items:
+            type: string
+          description: Additional webhook endpoints for this charge
+
+    Charge:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [charge]
+        id:
+          type: string
+          example: chrg_test_000000000000000
+        location:
+          type: string
+          example: /charges/chrg_test_000000000000000
+        amount:
+          type: integer
+          description: Amount in smallest currency unit
+        net:
+          type: integer
+          description: Net amount after fees
+        fee:
+          type: integer
+          description: Processing fee
+        fee_vat:
+          type: integer
+          description: VAT on fee
+        currency:
+          type: string
+        status:
+          type: string
+          enum: [pending, successful, failed, expired, reversed]
+          description: |
+            - `pending`: Awaiting customer action or processing
+            - `successful`: Payment completed
+            - `failed`: Payment declined
+            - `expired`: Customer did not complete in time
+            - `reversed`: Authorization voided
+        authorized:
+          type: boolean
+          description: Whether the charge has been authorized
+        captured:
+          type: boolean
+          description: Whether the charge has been captured
+        capturable:
+          type: boolean
+          description: Whether the charge can be captured
+        capture:
+          type: boolean
+          description: Auto-capture setting when created
+        reversible:
+          type: boolean
+          description: Whether the charge can be reversed
+        refundable:
+          type: boolean
+          description: Whether the charge can be refunded
+        refunded_amount:
+          type: integer
+          description: Total amount refunded
+        card:
+          $ref: '#/components/schemas/Card'
+        source:
+          $ref: '#/components/schemas/Source'
+        customer:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+        failure_code:
+          type: string
+          nullable: true
+          description: Error code if failed
+        failure_message:
+          type: string
+          nullable: true
+          description: Human-readable error message
+        authorize_uri:
+          type: string
+          format: uri
+          nullable: true
+          description: URL to redirect customer for 3DS/offsite
+        return_uri:
+          type: string
+          format: uri
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        paid_at:
+          type: string
+          format: date-time
+          nullable: true
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+        livemode:
+          type: boolean
+
+    Card:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [card]
+        id:
+          type: string
+        last_digits:
+          type: string
+          description: Last 4 digits of card number
+        brand:
+          type: string
+          enum: [Visa, Mastercard, JCB, American Express, Discover, Diners Club]
+        bank:
+          type: string
+          nullable: true
+        financing:
+          type: string
+          enum: [credit, debit]
+          nullable: true
+        country:
+          type: string
+          description: ISO 3166-1 alpha-2 country code
+
+    Source:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [source]
+        id:
+          type: string
+        type:
+          type: string
+          enum: [promptpay, truemoney, mobile_banking_scb, mobile_banking_kbank]
+        flow:
+          type: string
+          enum: [redirect, offline]
+        scannable_code:
+          type: object
+          nullable: true
+          description: QR code data for offline payments
+
+    ChargeList:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [list]
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Charge'
+        total:
+          type: integer
+        offset:
+          type: integer
+        limit:
+          type: integer
+
+    Error:
+      type: object
+      properties:
+        object:
+          type: string
+          enum: [error]
+        code:
+          type: string
+        message:
+          type: string
+
+  responses:
+    InvalidCharge:
+      description: Invalid charge parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            missing_amount:
+              value:
+                object: error
+                code: invalid_charge
+                message: "amount can't be blank"
+            invalid_currency:
+              value:
+                object: error
+                code: invalid_charge
+                message: "currency is not supported"
+
+    AuthenticationFailure:
+      description: Invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: authentication_failure
+            message: authentication failed
+
+    NotFound:
+      description: Charge not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: not_found
+            message: charge chrg_test_000000000000000 was not found
+
+    InvalidAccount:
+      description: Invalid account parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            invalid_webhook:
+              summary: Invalid webhook URI
+              value:
+                object: error
+                code: bad_request
+                message: "webhook endpoint is invalid and webhook endpoint not-a-valid-url is either insecure or forbidden"
+            invalid_account:
+              summary: Account in invalid state
+              value:
+                object: error
+                code: invalid_account
+                message: "account is invalid"

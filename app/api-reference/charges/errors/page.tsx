@@ -4,8 +4,8 @@ import Link from 'next/link';
 import SidebarNew from '../../../components/SidebarNew';
 
 // ============================================================================
-// VERIFIED ERROR CODES
-// Source: Direct API testing on 2026-10-30 via 3DS flow completion
+// ERROR CODES
+// Source: https://docs.omise.co/charges-api
 // NOTE: Error codes are NOT version-specific - same across all versions
 // ============================================================================
 
@@ -15,10 +15,9 @@ interface ErrorCode {
   description: string;
   whenOccurs: string;
   resolution?: string;
-  verified: boolean;
 }
 
-// API Errors - Verified via actual API calls
+// API Errors
 const apiErrors: ErrorCode[] = [
   {
     code: 'authentication_failure',
@@ -26,7 +25,6 @@ const apiErrors: ErrorCode[] = [
     description: 'The API key is invalid or missing.',
     whenOccurs: 'The Authorization header is missing, malformed, or contains an invalid secret key.',
     resolution: 'Verify your API key is correct and properly formatted. Use HTTP Basic Auth with your secret key as the username and an empty password.',
-    verified: true,
   },
   {
     code: 'not_found',
@@ -34,7 +32,6 @@ const apiErrors: ErrorCode[] = [
     description: 'The resource does not exist.',
     whenOccurs: 'You attempt to retrieve, update, or act on a charge, token, customer, or source that does not exist.',
     resolution: 'Verify the resource ID is correct. Confirm the resource exists on the same account (test/live mode) you are currently using.',
-    verified: true,
   },
   {
     code: 'bad_request',
@@ -42,11 +39,10 @@ const apiErrors: ErrorCode[] = [
     description: 'The request is malformed or missing required parameters.',
     whenOccurs: 'Required parameters are missing, parameter types are incorrect, or values are out of valid range.',
     resolution: 'Check the request body for missing or invalid parameters. Refer to the endpoint documentation for required fields.',
-    verified: true,
   },
 ];
 
-// Charge Operation Errors - Verified via API testing 2026-10-30
+// Charge Operation Errors
 const chargeErrors: ErrorCode[] = [
   {
     code: 'failed_capture',
@@ -54,7 +50,6 @@ const chargeErrors: ErrorCode[] = [
     description: 'The system cannot capture this charge.',
     whenOccurs: 'You attempt to capture a charge that is already captured, not authorized, or expired.',
     resolution: 'Verify the charge status is "pending" with authorized=true. You must capture within 7 days of authorization.',
-    verified: true, // "charge is not authorized" / "charge was already captured"
   },
   {
     code: 'failed_reverse',
@@ -62,7 +57,6 @@ const chargeErrors: ErrorCode[] = [
     description: 'The system cannot reverse this charge.',
     whenOccurs: 'You attempt to reverse a charge that is already captured, failed, or expired.',
     resolution: 'You can only reverse uncaptured authorized charges. For captured charges, use a refund instead.',
-    verified: true, // "only uncaptured authorized charges can be reversed"
   },
   {
     code: 'failed_refund',
@@ -70,7 +64,6 @@ const chargeErrors: ErrorCode[] = [
     description: 'The refund processing failed.',
     whenOccurs: 'You attempt to refund a charge that cannot be refunded or exceeds refundable amount.',
     resolution: 'Verify the charge is refundable and the amount does not exceed the available refundable amount.',
-    verified: true, // "charge can't be refunded" / "amount cannot be higher than the remaining charge amount"
   },
   {
     code: 'failed_expire',
@@ -78,7 +71,6 @@ const chargeErrors: ErrorCode[] = [
     description: 'The charge cannot be expired.',
     whenOccurs: 'You attempt to expire a charge that is already completed, failed, or expired.',
     resolution: 'You can only expire pending charges that have not been completed.',
-    verified: true, // "charge cannot be expired"
   },
   {
     code: 'used_token',
@@ -86,7 +78,6 @@ const chargeErrors: ErrorCode[] = [
     description: 'The token has already been used.',
     whenOccurs: 'You attempt to create a charge with a token that was already used for another charge.',
     resolution: 'Tokens are single-use. Create a new token for each charge.',
-    verified: true, // "token was already used"
   },
   {
     code: 'invalid_charge',
@@ -94,12 +85,10 @@ const chargeErrors: ErrorCode[] = [
     description: 'The charge parameters are invalid.',
     whenOccurs: 'The charge amount is below the minimum or other parameters are invalid.',
     resolution: 'Verify the amount meets the minimum (e.g., 100 satangs for THB) and all parameters are valid.',
-    verified: true, // "amount must be greater than or equal to ฿1 (100 satangs)"
   },
 ];
 
 // Payment Failure Codes - These appear in failure_code when status=failed
-// Verified via 3DS flow on 2026-10-30 using test cards
 const paymentFailures: ErrorCode[] = [
   {
     code: 'insufficient_fund',
@@ -107,7 +96,6 @@ const paymentFailures: ErrorCode[] = [
     description: 'The card has insufficient funds or reached its credit limit.',
     whenOccurs: 'The cardholder\'s account does not have enough available balance or credit.',
     resolution: 'Ask the customer to use a different payment method or contact their bank.',
-    verified: true, // Test card: 4111111111140011
   },
   {
     code: 'stolen_or_lost_card',
@@ -115,7 +103,6 @@ const paymentFailures: ErrorCode[] = [
     description: 'The card issuer reported this card as stolen or lost.',
     whenOccurs: 'The card issuer flagged the card as compromised.',
     resolution: 'The customer must contact their bank and use a different payment method.',
-    verified: true, // Test card: 4111111111130012
   },
   {
     code: 'failed_processing',
@@ -123,7 +110,6 @@ const paymentFailures: ErrorCode[] = [
     description: 'The system encountered a general processing failure.',
     whenOccurs: 'The system cannot process the payment for unspecified reasons.',
     resolution: 'Retry the payment or ask the customer to use a different payment method.',
-    verified: true, // Test card: 4111111111120013
   },
   {
     code: 'payment_rejected',
@@ -131,7 +117,6 @@ const paymentFailures: ErrorCode[] = [
     description: 'The payment provider rejected the payment.',
     whenOccurs: 'The bank or payment provider declines the transaction for various reasons.',
     resolution: 'Ask the customer to contact their bank for details or try a different payment method.',
-    verified: true, // Test card: 4111111111110014
   },
   {
     code: 'failed_fraud_check',
@@ -139,7 +124,6 @@ const paymentFailures: ErrorCode[] = [
     description: 'The transaction failed fraud detection checks.',
     whenOccurs: 'The payment triggers fraud prevention rules at the bank or Omise.',
     resolution: 'Ask the customer to verify their identity with their bank or try a different payment method.',
-    verified: true, // Test card: 4111111111190016
   },
   {
     code: 'invalid_account_number',
@@ -147,16 +131,13 @@ const paymentFailures: ErrorCode[] = [
     description: 'The card account number is invalid.',
     whenOccurs: 'The card number does not correspond to a valid account.',
     resolution: 'Verify the card number is correct or use a different card.',
-    verified: true, // Test card: 4111111111180017
   },
-  // NOTE: The following codes are NOT verified - test cards did not return expected errors
   {
     code: 'expired_card',
     httpStatus: 402,
     description: 'The card has expired.',
     whenOccurs: 'The card\'s expiration date has passed.',
     resolution: 'Ask the customer to use a valid, non-expired card.',
-    verified: false, // Test card 4111111111170018 returns payment_rejected instead
   },
   {
     code: 'invalid_security_code',
@@ -164,7 +145,6 @@ const paymentFailures: ErrorCode[] = [
     description: 'The security code (CVV/CVC) is incorrect.',
     whenOccurs: 'The CVV/CVC does not match the card.',
     resolution: 'Ask the customer to verify and re-enter their security code.',
-    verified: false, // Test card 4111111111160019 returns successful charge
   },
   {
     code: 'insufficient_balance',
@@ -172,7 +152,6 @@ const paymentFailures: ErrorCode[] = [
     description: 'The account has insufficient balance.',
     whenOccurs: 'The payment source account does not have enough balance.',
     resolution: 'Ask the customer to top up their account or use a different payment method.',
-    verified: false,
   },
   {
     code: 'payment_cancelled',
@@ -180,7 +159,6 @@ const paymentFailures: ErrorCode[] = [
     description: 'The customer cancelled the payment.',
     whenOccurs: 'The customer cancelled the payment during authorization.',
     resolution: 'Ask the customer to retry the payment if they wish to continue.',
-    verified: false,
   },
   // From official docs (https://docs.omise.co/charges-api)
   {
@@ -189,7 +167,6 @@ const paymentFailures: ErrorCode[] = [
     description: 'The confirmed amount does not match the expected amount.',
     whenOccurs: 'The amount confirmed by the payment provider differs from the charge amount.',
     resolution: 'Verify the charge amount and retry or contact support.',
-    verified: false,
   },
   {
     code: 'timeout',
@@ -197,7 +174,6 @@ const paymentFailures: ErrorCode[] = [
     description: 'The payment request timed out.',
     whenOccurs: 'The payment provider did not respond within the expected time.',
     resolution: 'Ask the customer to retry the payment.',
-    verified: false,
   },
   {
     code: 'invalid_account',
@@ -205,7 +181,6 @@ const paymentFailures: ErrorCode[] = [
     description: 'The account is invalid (alias for invalid_account_number).',
     whenOccurs: 'The account number does not correspond to a valid account.',
     resolution: 'Verify the account details or use a different payment method.',
-    verified: false,
   },
 ];
 
@@ -254,18 +229,6 @@ function ErrorSection({ title, description, errors }: { title: string; descripti
               }}>
                 HTTP {error.httpStatus}
               </span>
-              {error.verified && (
-                <span style={{
-                  fontSize: '11px',
-                  fontWeight: 500,
-                  color: '#0e6245',
-                  background: '#cbf4c9',
-                  padding: '3px 8px',
-                  borderRadius: '4px',
-                }}>
-                  Verified
-                </span>
-              )}
             </div>
             <p style={{ fontSize: '15px', color: '#1a1a1a', fontWeight: 500, marginBottom: '8px' }}>
               {error.description}
@@ -327,7 +290,6 @@ export default function ErrorsPage() {
           </svg>
           <div>
             <strong>Note:</strong> Error codes are consistent across all API versions.
-            Codes marked as "Verified" were tested directly against the Omise API.
           </div>
         </div>
 
@@ -443,7 +405,7 @@ export default function ErrorsPage() {
           marginBottom: '20px',
         }}>
           <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9' }}>
-            Verified Error Examples
+            Error Examples
           </div>
         </div>
 
@@ -506,7 +468,7 @@ export default function ErrorsPage() {
 
         <div style={{ marginBottom: '24px' }}>
           <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px', padding: '0 16px' }}>
-            Payment Failed (Verified)
+            Payment Failed
           </div>
           <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden', margin: '0 8px' }}>
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>

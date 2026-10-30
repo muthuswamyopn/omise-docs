@@ -47,7 +47,7 @@ export default function AccountOverviewPage() {
           marginBottom: '32px'
         }}>
           <div style={{ background: '#f6f9fc', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: 700, color: '#1A1F71' }}>2</div>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#1A1F71' }}>{Object.keys(accountEndpoints).length}</div>
             <div style={{ fontSize: '13px', color: '#697386' }}>Endpoints</div>
           </div>
           <div style={{ background: '#f6f9fc', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>

@@ -270,23 +270,27 @@ export const navigation: NavigationSection[] = [
         ],
       },
       {
-        name: lc('Account', 'บัญชี', 'アカウント'),
+        name: lc('Merchant', 'ผู้ขาย', 'マーチャント'),
         href: '/api-reference/account',
         items: [
-          { name: lc('Account', 'Account', 'Account'), href: '/api-reference/account' },
-          { name: lc('Retrieve Account', 'ดึงข้อมูลบัญชี', 'アカウントを取得'), href: '/api-reference/account/retrieve', method: 'GET' as const },
-          { name: lc('Update Account', 'อัปเดตบัญชี', 'アカウントを更新'), href: '/api-reference/account/update', method: 'PATCH' as const },
-          { name: lc('Update API Version', 'อัปเดตเวอร์ชัน API', 'APIバージョンを更新'), href: '/api-reference/account/update-api-version', method: 'PATCH' as const },
-          { name: lc('Error Codes', 'รหัสข้อผิดพลาด', 'エラーコード'), href: '/api-reference/account/errors' },
-        ],
-      },
-      {
-        name: lc('Balance', 'ยอดคงเหลือ', '残高'),
-        href: '/api-reference/balance',
-        items: [
-          { name: lc('Balance', 'Balance', 'Balance'), href: '/api-reference/balance' },
-          { name: lc('Retrieve Balance', 'ดึงข้อมูลยอดคงเหลือ', '残高を取得'), href: '/api-reference/balance/retrieve', method: 'GET' as const },
-          { name: lc('Error Codes', 'รหัสข้อผิดพลาด', 'エラーコード'), href: '/api-reference/balance/errors' },
+          {
+            name: lc('Account', 'Account', 'Account'),
+            href: '/api-reference/account',
+            items: [
+              { name: lc('Retrieve Account', 'ดึงข้อมูลบัญชี', 'アカウントを取得'), href: '/api-reference/account/retrieve', method: 'GET' as const },
+              { name: lc('Update Account', 'อัปเดตบัญชี', 'アカウントを更新'), href: '/api-reference/account/update', method: 'PATCH' as const },
+              { name: lc('Update API Version', 'อัปเดตเวอร์ชัน API', 'APIバージョンを更新'), href: '/api-reference/account/update-api-version', method: 'PATCH' as const },
+              { name: lc('Error Codes', 'รหัสข้อผิดพลาด', 'エラーコード'), href: '/api-reference/account/errors' },
+            ],
+          },
+          {
+            name: lc('Balance', 'Balance', 'Balance'),
+            href: '/api-reference/balance',
+            items: [
+              { name: lc('Retrieve Balance', 'ดึงข้อมูลยอดคงเหลือ', '残高を取得'), href: '/api-reference/balance/retrieve', method: 'GET' as const },
+              { name: lc('Error Codes', 'รหัสข้อผิดพลาด', 'エラーコード'), href: '/api-reference/balance/errors' },
+            ],
+          },
         ],
       },
       { name: lc('Capabilities', 'Capabilities', 'Capability'), href: '/api-reference/capabilities' },

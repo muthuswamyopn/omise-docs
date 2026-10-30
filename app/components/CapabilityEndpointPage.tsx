@@ -24,10 +24,19 @@ function TryItForm() {
   }, []);
 
   const handleSubmit = async () => {
+    // Reject secret keys - Capability API does NOT accept them
+    if (publicKey.startsWith('skey_')) {
+      setResponse(JSON.stringify({
+        error: 'Secret key not accepted',
+        message: 'The Capability API does NOT accept secret keys (skey_...). You must use a public key (pkey_test_...) for this endpoint.'
+      }, null, 2));
+      return;
+    }
+
     if (!publicKey.startsWith('pkey_test_')) {
       setResponse(JSON.stringify({
         error: 'Invalid key type',
-        message: 'The Capability API requires a public key (pkey_test_...). For security, only test public keys are allowed on this documentation site.'
+        message: 'Please enter a valid test public key (pkey_test_...). Live keys are not allowed on this documentation site.'
       }, null, 2));
       return;
     }
@@ -80,7 +89,7 @@ function TryItForm() {
       </div>
 
       <div style={{ background: '#cbf4c9', border: '1px solid #0e6245', borderRadius: '6px', padding: '12px 16px', marginBottom: '20px', fontSize: '13px', color: '#0e6245' }}>
-        <strong>Public key required.</strong> This endpoint uses your public key (pkey_test_...), not your secret key.
+        <strong>Public key ONLY.</strong> This endpoint does NOT accept secret keys. Use your public key (pkey_test_...).
       </div>
 
       <div style={{ marginBottom: '20px' }}>

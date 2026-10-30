@@ -8,7 +8,7 @@ import Notice from '../../components/Notice';
 import { API_VERSIONS } from '../../lib/apiVersions';
 import {
   capabilityEndpoints,
-  CAPABILITY_FIELDS,
+  getCapabilityFieldsForVersion,
   capabilityResponseExample,
   methodColors
 } from '../../lib/accountData';
@@ -17,6 +17,7 @@ import { useVersion } from '../../context/VersionContext';
 export default function CapabilitiesPage() {
   const { currentVersion } = useVersion();
   const versionInfo = API_VERSIONS.find(v => v.codename === currentVersion);
+  const capabilityFields = getCapabilityFieldsForVersion(currentVersion);
 
   return (
     <div className="docs-layout">
@@ -53,19 +54,19 @@ export default function CapabilitiesPage() {
             <div style={{ fontSize: '13px', color: '#697386' }}>Endpoint</div>
           </div>
           <div style={{ background: '#f6f9fc', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: 700, color: '#1A1F71' }}>{CAPABILITY_FIELDS.length}</div>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#1A1F71' }}>{capabilityFields.length}</div>
             <div style={{ fontSize: '13px', color: '#697386' }}>Fields</div>
           </div>
           <div style={{ background: '#f6f9fc', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: 700, color: '#0e6245' }}>PUBLIC</div>
-            <div style={{ fontSize: '13px', color: '#697386' }}>Key Type</div>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#0055bc' }}>BOTH</div>
+            <div style={{ fontSize: '13px', color: '#697386' }}>Key Types</div>
           </div>
         </div>
 
-        {/* Public Key Notice */}
+        {/* Authentication Notice */}
         <Notice type="note" title="Authentication">
-          The Capability API uses your <strong>public key</strong> for authentication, not your secret key.
-          This allows you to safely call it from client-side code.
+          The Capability API accepts both <strong>public keys</strong> and <strong>secret keys</strong>.
+          Public key is recommended for client-side code since it can be safely exposed.
         </Notice>
 
         {/* Related APIs */}
@@ -147,10 +148,15 @@ export default function CapabilitiesPage() {
         {/* The Capability Object */}
         <h2>The Capability Object</h2>
         <p style={{ fontSize: '14px', color: '#697386', marginBottom: '16px' }}>
-          {CAPABILITY_FIELDS.length} fields
+          {capabilityFields.length} fields in {currentVersion}
+          {currentVersion !== 'deimos' && (
+            <span style={{ marginLeft: '8px', color: '#9c6f19' }}>
+              (uses <code style={{ background: '#fcefc7', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>payment_backends</code> instead of <code style={{ background: '#fcefc7', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>payment_methods</code>)
+            </span>
+          )}
         </p>
         <div className="attributes-section">
-          {CAPABILITY_FIELDS.map(attr => (
+          {capabilityFields.map(attr => (
             <div key={attr.name} className="attribute-row">
               <div>
                 <div className="attribute-name">{attr.name}</div>
@@ -301,13 +307,13 @@ export default function CapabilitiesPage() {
         <div style={{ marginBottom: '16px' }}>
           <div style={{
             padding: '8px 12px',
-            background: 'rgba(14, 98, 69, 0.3)',
-            border: '1px solid rgba(62, 207, 142, 0.3)',
+            background: 'rgba(0, 85, 188, 0.2)',
+            border: '1px solid rgba(103, 232, 249, 0.3)',
             borderRadius: '6px',
             fontSize: '12px',
-            color: '#3ecf8e',
+            color: '#67e8f9',
           }}>
-            Uses <strong>public key</strong> authentication
+            Accepts <strong>public</strong> or <strong>secret</strong> key
           </div>
         </div>
 
@@ -331,7 +337,11 @@ export default function CapabilitiesPage() {
           </div>
           <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden' }}>
             <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', fontFamily: "'SF Mono', Monaco, monospace" }}>
-{`Authorization: Basic {base64(pkey_test_...)}`}
+{`# Using public key (recommended)
+Authorization: Basic {base64(pkey_test_...)}
+
+# Or using secret key
+Authorization: Basic {base64(skey_test_...)}`}
             </pre>
           </div>
         </div>

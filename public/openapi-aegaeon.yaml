@@ -23,6 +23,8 @@ tags:
     description: Retrieve your account balance
   - name: Account
     description: Retrieve and update your account configuration
+  - name: Capability
+    description: Retrieve available payment methods and account limits
 
 paths:
   /account:
@@ -85,6 +87,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Balance'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
+
+  /capability:
+    get:
+      summary: Retrieve capability
+      description: |
+        Retrieve available payment methods, limits, and features for your account.
+
+        **Authentication:** Accepts both public keys and secret keys.
+        Public key is recommended for client-side usage.
+
+        **Note:** This version uses `payment_backends` instead of `payment_methods`
+        and does not include the `country` field. See Deimos for newer format.
+      operationId: getCapability
+      tags: [Capability]
+      security:
+        - publicKey: []
+        - secretKey: []
+      responses:
+        '200':
+          description: Account capabilities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Capability'
         '401':
           $ref: '#/components/responses/AuthenticationFailure'
 
@@ -233,6 +261,11 @@ components:
     secretKey:
       type: http
       scheme: basic
+      description: Secret key (skey_...) - use as username with empty password
+    publicKey:
+      type: http
+      scheme: basic
+      description: Public key (pkey_...) - use as username with empty password. Safe for client-side.
 
   parameters:
     ChargeId:
@@ -499,6 +532,91 @@ components:
           type: string
           format: date-time
           readOnly: true
+
+    Capability:
+      type: object
+      description: |
+        Describes available payment methods and limits (Aegaeon 2014-07-27).
+        Uses payment_backends (not payment_methods), no country field.
+        Authentication: Accepts both public and secret keys.
+      properties:
+        object:
+          type: string
+          enum: [capability]
+          readOnly: true
+        location:
+          type: string
+          readOnly: true
+        banks:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        payment_backends:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentBackend'
+          readOnly: true
+        tokenization_methods:
+          type: array
+          items:
+            type: string
+          nullable: true
+          readOnly: true
+        limits:
+          $ref: '#/components/schemas/CapabilityLimits'
+        zero_interest_installments:
+          type: boolean
+          readOnly: true
+
+    PaymentBackend:
+      type: object
+      properties:
+        object:
+          type: string
+        name:
+          type: string
+        currencies:
+          type: array
+          items:
+            type: string
+        card_brands:
+          type: array
+          items:
+            type: string
+          nullable: true
+        installment_terms:
+          type: array
+          items:
+            type: integer
+          nullable: true
+        banks:
+          type: array
+          items:
+            type: string
+
+    CapabilityLimits:
+      type: object
+      properties:
+        charge_amount:
+          type: object
+          properties:
+            min:
+              type: integer
+            max:
+              type: integer
+        transfer_amount:
+          type: object
+          properties:
+            min:
+              type: integer
+            max:
+              type: integer
+        installment_amount:
+          type: object
+          properties:
+            min:
+              type: integer
 
     UpdateAccountRequest:
       type: object

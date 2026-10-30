@@ -241,7 +241,8 @@ export function getParamsForVersion(params: EndpointParam[], codename: string): 
 
 // ============================================================================
 // CAPABILITY API
-// Note: Uses PUBLIC KEY authentication (not secret key)
+// Verified 2026-10-30: Accepts BOTH public and secret keys
+// Public key recommended for client-side usage
 // ============================================================================
 
 // Capability API endpoints
@@ -253,7 +254,7 @@ export const capabilityEndpoints: Record<string, EndpointConfig> = {
     description: 'Retrieves your account capabilities including payment methods and limits.',
     longDescription: `Returns information about what payment methods and features are available for your account.
 
-This endpoint uses your **public key** for authentication (not secret key).
+This endpoint accepts both public and secret keys, but **public key is recommended** since it can be safely used in client-side code.
 
 The response includes:
 • Available payment methods with their supported currencies
@@ -264,23 +265,49 @@ The response includes:
   },
 };
 
-// Capability attributes - 8 fields (verified from official schema)
+// ============================================================================
+// VERSION-SPECIFIC CAPABILITY FIELDS
+// Verified: 2026-10-30 via direct API calls
+// ============================================================================
+
 export interface CapabilityFieldInfo {
   name: string;
   type: string;
   description: string;
 }
 
-export const CAPABILITY_FIELDS: CapabilityFieldInfo[] = [
+// Deimos (2019-05-29) - 8 fields
+// Keys: ["banks", "country", "limits", "location", "object", "payment_methods", "tokenization_methods", "zero_interest_installments"]
+export const CAPABILITY_DEIMOS_FIELDS: CapabilityFieldInfo[] = [
   { name: 'object', type: 'string', description: 'Object type, always "capability"' },
   { name: 'location', type: 'string', description: 'API path "/capability"' },
-  { name: 'country', type: 'string', description: 'Two-letter ISO 3166 country code where account is registered' },
+  { name: 'country', type: 'string', description: 'Two-letter ISO 3166 country code where account is registered (Deimos only)' },
   { name: 'banks', type: 'array', description: 'List of supported bank codes for transfer recipients' },
   { name: 'payment_methods', type: 'array', description: 'Available payment methods with currencies, card brands, and terms' },
   { name: 'tokenization_methods', type: 'array', description: 'Supported tokenization: "googlepay", "applepay", or null' },
   { name: 'limits', type: 'object', description: 'Min/max for charge_amount, transfer_amount, installment_amount' },
   { name: 'zero_interest_installments', type: 'boolean', description: 'Whether merchant absorbs installment interest costs' },
 ];
+
+// Cordelia/Bestla/Aegaeon (older versions) - 7 fields
+// Keys: ["banks", "limits", "location", "object", "payment_backends", "tokenization_methods", "zero_interest_installments"]
+// NOTE: Uses payment_backends instead of payment_methods, no country field
+export const CAPABILITY_OLDER_FIELDS: CapabilityFieldInfo[] = [
+  { name: 'object', type: 'string', description: 'Object type, always "capability"' },
+  { name: 'location', type: 'string', description: 'API path "/capability"' },
+  { name: 'banks', type: 'array', description: 'List of supported bank codes for transfer recipients' },
+  { name: 'payment_backends', type: 'array', description: 'Available payment backends (renamed to payment_methods in Deimos)' },
+  { name: 'tokenization_methods', type: 'array', description: 'Supported tokenization: "googlepay", "applepay", or null' },
+  { name: 'limits', type: 'object', description: 'Min/max for charge_amount, transfer_amount, installment_amount' },
+  { name: 'zero_interest_installments', type: 'boolean', description: 'Whether merchant absorbs installment interest costs' },
+];
+
+export function getCapabilityFieldsForVersion(codename: string): CapabilityFieldInfo[] {
+  return codename === 'deimos' ? CAPABILITY_DEIMOS_FIELDS : CAPABILITY_OLDER_FIELDS;
+}
+
+// Default export uses Deimos fields (latest version)
+export const CAPABILITY_FIELDS = CAPABILITY_DEIMOS_FIELDS;
 
 // Legacy export for backward compatibility
 export const capabilityAttributes = CAPABILITY_FIELDS.map(f => ({

@@ -31,6 +31,8 @@ tags:
     description: Retrieve your account balance
   - name: Account
     description: Retrieve and update your account configuration
+  - name: Capability
+    description: Retrieve available payment methods and account limits
 
 paths:
   /account:
@@ -108,6 +110,35 @@ paths:
         '401':
           $ref: '#/components/responses/AuthenticationFailure'
 
+  /capability:
+    get:
+      summary: Retrieve capability
+      description: |
+        Retrieve available payment methods, limits, and features for your account.
+
+        **Authentication:** This endpoint accepts both public keys and secret keys.
+        Public key is recommended for client-side usage since it can be safely exposed.
+
+        The response includes:
+        - **payment_methods** - Available payment methods with currencies and terms
+        - **banks** - Supported bank codes for transfers
+        - **limits** - Transaction limits for charges, transfers, installments
+        - **tokenization_methods** - Apple Pay, Google Pay support
+        - **country** - Account country (Deimos only)
+      operationId: getCapability
+      tags: [Capability]
+      security:
+        - publicKey: []
+        - secretKey: []
+      responses:
+        '200':
+          description: Account capabilities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Capability'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
 
   /charges:
     post:
@@ -349,6 +380,11 @@ components:
     secretKey:
       type: http
       scheme: basic
+      description: Secret key (skey_...) - use as username with empty password
+    publicKey:
+      type: http
+      scheme: basic
+      description: Public key (pkey_...) - use as username with empty password. Safe for client-side.
 
   parameters:
     ChargeId:
@@ -968,6 +1004,141 @@ components:
           format: date-time
           description: Account creation timestamp (Deimos). Called "created" in older versions.
           readOnly: true
+
+    Capability:
+      type: object
+      description: |
+        Describes available payment methods, limits, and features for your account.
+
+        **Authentication:** Accepts both public and secret keys. Public recommended for client-side.
+
+        **VERSION DIFFERENCES (Deimos 2019-05-29):**
+        - Has `country` field (not available in older versions)
+        - Has `payment_methods` (older versions use `payment_backends`)
+
+        Verified 2026-10-30 via direct API calls.
+      properties:
+        object:
+          type: string
+          enum: [capability]
+          description: Always "capability"
+          readOnly: true
+        location:
+          type: string
+          description: API path "/capability"
+          readOnly: true
+        country:
+          type: string
+          description: |
+            Two-letter ISO 3166 country code where account is registered.
+            NEW IN DEIMOS: Not available in older API versions.
+          readOnly: true
+        banks:
+          type: array
+          items:
+            type: string
+          description: List of supported bank codes for transfer recipients
+          readOnly: true
+          example: ["bbl", "kbank", "ktb", "scb", "bay"]
+        payment_methods:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentMethod'
+          description: |
+            Available payment methods with currencies, card brands, and terms.
+            Called "payment_backends" in older API versions.
+          readOnly: true
+        tokenization_methods:
+          type: array
+          items:
+            type: string
+            enum: [googlepay, applepay]
+          description: Supported tokenization methods (Google Pay, Apple Pay)
+          readOnly: true
+          nullable: true
+        limits:
+          $ref: '#/components/schemas/CapabilityLimits'
+        zero_interest_installments:
+          type: boolean
+          description: Whether merchant absorbs installment interest costs
+          readOnly: true
+
+    PaymentMethod:
+      type: object
+      description: Payment method configuration from Capability API
+      properties:
+        object:
+          type: string
+          enum: [payment_method]
+        name:
+          type: string
+          description: Payment method identifier (e.g., "card", "promptpay", "truemoney")
+        currencies:
+          type: array
+          items:
+            type: string
+          description: Supported ISO 4217 currency codes
+        card_brands:
+          type: array
+          items:
+            type: string
+          description: For card payments - "Visa", "MasterCard", "JCB", "American Express", "UnionPay"
+          nullable: true
+        installment_terms:
+          type: array
+          items:
+            type: integer
+          description: Available installment term lengths in months
+          nullable: true
+        loan_installment_terms:
+          type: array
+          items:
+            type: integer
+          description: Available loan installment term lengths
+          nullable: true
+        banks:
+          type: array
+          items:
+            type: string
+          description: Supported bank codes for bank-specific methods
+        provider:
+          type: string
+          description: Provider identifier if applicable
+          nullable: true
+
+    CapabilityLimits:
+      type: object
+      description: Transaction limits (in smallest currency unit, e.g., satang for THB)
+      properties:
+        charge_amount:
+          type: object
+          properties:
+            min:
+              type: integer
+              description: Minimum charge amount (e.g., 100 = 1 THB)
+              example: 100
+            max:
+              type: integer
+              description: Maximum charge amount (e.g., 15000000 = 150,000 THB)
+              example: 15000000
+        transfer_amount:
+          type: object
+          properties:
+            min:
+              type: integer
+              description: Minimum transfer amount
+              example: 2000
+            max:
+              type: integer
+              description: Maximum transfer amount
+              example: 200000000000
+        installment_amount:
+          type: object
+          properties:
+            min:
+              type: integer
+              description: Minimum amount for installment payments
+              example: 200000
 
     UpdateAccountRequest:
       type: object

@@ -31,6 +31,8 @@ tags:
     description: Retrieve your account balance
   - name: Account
     description: Retrieve and update your account configuration
+  - name: Capability
+    description: Retrieve available payment methods and account limits
 
 paths:
   /account:
@@ -101,6 +103,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Balance'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
+
+  /capability:
+    get:
+      summary: Retrieve capability
+      description: |
+        Retrieve available payment methods, limits, and features for your account.
+
+        **Authentication:** This endpoint accepts both public keys and secret keys.
+        Public key is recommended for client-side usage.
+
+        **Note:** This version uses `payment_backends` instead of `payment_methods`
+        and does not include the `country` field. See Deimos for newer format.
+      operationId: getCapability
+      tags: [Capability]
+      security:
+        - publicKey: []
+        - secretKey: []
+      responses:
+        '200':
+          description: Account capabilities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Capability'
         '401':
           $ref: '#/components/responses/AuthenticationFailure'
 
@@ -282,6 +310,11 @@ components:
     secretKey:
       type: http
       scheme: basic
+      description: Secret key (skey_...) - use as username with empty password
+    publicKey:
+      type: http
+      scheme: basic
+      description: Public key (pkey_...) - use as username with empty password. Safe for client-side.
 
   parameters:
     ChargeId:
@@ -703,6 +736,111 @@ components:
           format: date-time
           description: Account creation timestamp (renamed to created_at in Deimos)
           readOnly: true
+
+    Capability:
+      type: object
+      description: |
+        Describes available payment methods, limits, and features for your account.
+
+        **Authentication:** Accepts both public and secret keys. Public recommended for client-side.
+
+        **VERSION NOTE (Cordelia):**
+        - Uses `payment_backends` (Deimos uses `payment_methods`)
+        - No `country` field (added in Deimos)
+
+        Verified 2026-10-30 via direct API calls.
+      properties:
+        object:
+          type: string
+          enum: [capability]
+          description: Always "capability"
+          readOnly: true
+        location:
+          type: string
+          description: API path "/capability"
+          readOnly: true
+        banks:
+          type: array
+          items:
+            type: string
+          description: List of supported bank codes for transfer recipients
+          readOnly: true
+        payment_backends:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentBackend'
+          description: |
+            Available payment backends with currencies and terms.
+            Renamed to "payment_methods" in Deimos.
+          readOnly: true
+        tokenization_methods:
+          type: array
+          items:
+            type: string
+            enum: [googlepay, applepay]
+          description: Supported tokenization methods
+          readOnly: true
+          nullable: true
+        limits:
+          $ref: '#/components/schemas/CapabilityLimits'
+        zero_interest_installments:
+          type: boolean
+          description: Whether merchant absorbs installment interest costs
+          readOnly: true
+
+    PaymentBackend:
+      type: object
+      description: Payment backend configuration (renamed to PaymentMethod in Deimos)
+      properties:
+        object:
+          type: string
+          enum: [payment_backend]
+        name:
+          type: string
+          description: Payment method identifier (e.g., "card", "promptpay")
+        currencies:
+          type: array
+          items:
+            type: string
+          description: Supported currency codes
+        card_brands:
+          type: array
+          items:
+            type: string
+          nullable: true
+        installment_terms:
+          type: array
+          items:
+            type: integer
+          nullable: true
+        banks:
+          type: array
+          items:
+            type: string
+
+    CapabilityLimits:
+      type: object
+      description: Transaction limits (in smallest currency unit)
+      properties:
+        charge_amount:
+          type: object
+          properties:
+            min:
+              type: integer
+            max:
+              type: integer
+        transfer_amount:
+          type: object
+          properties:
+            min:
+              type: integer
+            max:
+              type: integer
+        installment_amount:
+          type: object
+          properties:
+            min:
+              type: integer
 
     UpdateAccountRequest:
       type: object

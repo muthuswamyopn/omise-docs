@@ -9,9 +9,11 @@ import { capabilityEndpoints, capabilityCodeExamples, capabilityResponseExample,
 import { API_VERSIONS } from '../lib/apiVersions';
 import { useVersion } from '../context/VersionContext';
 
-// Try It Out form for Capability API (uses PUBLIC key)
+// Try It Out form for Capability API
+// Verified 2026-10-30: Accepts BOTH public and secret keys
+// Public key recommended for client-side usage
 function TryItForm() {
-  const [publicKey, setPublicKey] = useState('pkey_test_');
+  const [apiKey, setApiKey] = useState('pkey_test_');
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState<string | null>(null);
   const [rateLimit, setRateLimit] = useState<{ ip: string; used: number; remaining: number } | null>(null);
@@ -24,19 +26,14 @@ function TryItForm() {
   }, []);
 
   const handleSubmit = async () => {
-    // Reject secret keys - Capability API does NOT accept them
-    if (publicKey.startsWith('skey_')) {
-      setResponse(JSON.stringify({
-        error: 'Secret key not accepted',
-        message: 'The Capability API does NOT accept secret keys (skey_...). You must use a public key (pkey_test_...) for this endpoint.'
-      }, null, 2));
-      return;
-    }
+    // Accept both public keys (pkey_test_) and secret keys (skey_test_)
+    const isPublicKey = apiKey.startsWith('pkey_test_');
+    const isSecretKey = apiKey.startsWith('skey_test_');
 
-    if (!publicKey.startsWith('pkey_test_')) {
+    if (!isPublicKey && !isSecretKey) {
       setResponse(JSON.stringify({
         error: 'Invalid key type',
-        message: 'Please enter a valid test public key (pkey_test_...). Live keys are not allowed on this documentation site.'
+        message: 'Please enter a valid test key (pkey_test_... or skey_test_...). Live keys are not allowed on this documentation site.'
       }, null, 2));
       return;
     }
@@ -53,7 +50,7 @@ function TryItForm() {
         body: JSON.stringify({
           url: 'https://api.omise.co/capability',
           method: 'GET',
-          secretKey: publicKey, // The proxy will handle this as auth
+          secretKey: apiKey, // The proxy will handle this as auth
           params: {},
         }),
       });
@@ -66,7 +63,7 @@ function TryItForm() {
         setRateLimit({ ...rateLimit, used: 200 - parseInt(remaining), remaining: parseInt(remaining) });
       }
     } catch (error) {
-      setResponse(JSON.stringify({ error: 'Request failed. Check your public key.' }, null, 2));
+      setResponse(JSON.stringify({ error: 'Request failed. Check your API key.' }, null, 2));
     }
     setIsLoading(false);
   };
@@ -88,20 +85,20 @@ function TryItForm() {
         )}
       </div>
 
-      <div style={{ background: '#cbf4c9', border: '1px solid #0e6245', borderRadius: '6px', padding: '12px 16px', marginBottom: '20px', fontSize: '13px', color: '#0e6245' }}>
-        <strong>Public key ONLY.</strong> This endpoint does NOT accept secret keys. Use your public key (pkey_test_...).
+      <div style={{ background: '#d6ecff', border: '1px solid #0055bc', borderRadius: '6px', padding: '12px 16px', marginBottom: '20px', fontSize: '13px', color: '#0055bc' }}>
+        <strong>Accepts both public and secret keys.</strong> Public key (pkey_test_...) is recommended for client-side usage.
       </div>
 
       <div style={{ marginBottom: '20px' }}>
         <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#1a1a1a', marginBottom: '8px' }}>
-          Public Key
+          API Key
           <span style={{ fontWeight: 400, color: '#697386', marginLeft: '8px', fontSize: '13px' }}>required</span>
         </label>
         <input
           type="text"
-          value={publicKey}
-          onChange={(e) => setPublicKey(e.target.value)}
-          placeholder="pkey_test_..."
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+          placeholder="pkey_test_... or skey_test_..."
           style={{ width: '100%', padding: '12px 14px', background: '#fff', border: '2px solid #e3e8ee', borderRadius: '6px', fontSize: '14px', fontFamily: "'SF Mono', Monaco, monospace" }}
         />
       </div>
@@ -174,11 +171,11 @@ export default function CapabilityEndpointPage({ endpointKey }: CapabilityEndpoi
         <VersionSelector />
         <VersionDiff />
 
-        {/* Public Key Notice */}
+        {/* Authentication Notice */}
         <div style={{ marginBottom: '24px' }}>
           <Notice type="note" title="Authentication">
-            This endpoint uses your <strong>public key</strong> (pkey_test_...) for authentication, not your secret key.
-            This allows you to safely call it from client-side code.
+            This endpoint accepts both <strong>public keys</strong> (pkey_test_...) and <strong>secret keys</strong> (skey_test_...).
+            Public key is recommended for client-side code since it can be safely exposed.
           </Notice>
         </div>
 
@@ -264,13 +261,13 @@ export default function CapabilityEndpointPage({ endpointKey }: CapabilityEndpoi
         <div style={{ marginBottom: '16px' }}>
           <div style={{
             padding: '8px 12px',
-            background: 'rgba(14, 98, 69, 0.3)',
-            border: '1px solid rgba(62, 207, 142, 0.3)',
+            background: 'rgba(0, 85, 188, 0.2)',
+            border: '1px solid rgba(103, 232, 249, 0.3)',
             borderRadius: '6px',
             fontSize: '12px',
-            color: '#3ecf8e',
+            color: '#67e8f9',
           }}>
-            Uses <strong>public key</strong> authentication
+            Accepts <strong>public</strong> or <strong>secret</strong> key
           </div>
         </div>
 

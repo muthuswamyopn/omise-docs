@@ -78,33 +78,31 @@ This endpoint is called automatically when you update your API version through t
   },
 };
 
-// Account attributes (verified 2026-10-30)
-// Version differences:
-// - Deimos (2019-05-29): id format account_test_..., has team, created_at, paas_enabled, restricted_recipient_management
-// - Cordelia/Aegaeon: id format acct_..., uses created (not created_at), currencies lowercase
+// Account attributes - All 22 fields from Deimos (verified 2026-10-30)
+// INPUT = can be set via PATCH, OUTPUT = read-only
 export const accountAttributes = [
-  { name: 'id', type: 'string', desc: 'Unique identifier. Format: account_test_... (Deimos) or acct_... (older versions)', io: 'output' },
-  { name: 'object', type: 'string', desc: 'Object type, always "account"', io: 'output' },
-  { name: 'livemode', type: 'boolean', desc: 'Whether this is a live mode account (true) or test mode (false)', io: 'output' },
-  { name: 'location', type: 'string', desc: 'API path to retrieve this account ("/account")', io: 'output' },
-  { name: 'team', type: 'string', desc: 'Team identifier this account belongs to (Deimos only)', io: 'output' },
-  { name: 'country', type: 'string', desc: 'Two-letter ISO 3166 country code (e.g., "TH")', io: 'output' },
-  { name: 'currency', type: 'string', desc: 'Default currency. UPPERCASE in Deimos (THB), lowercase in older versions (thb)', io: 'output' },
-  { name: 'email', type: 'string', desc: 'Primary email address associated with the account', io: 'output' },
-  { name: 'supported_currencies', type: 'array', desc: 'List of currencies available for card charges', io: 'output' },
-  { name: 'api_version', type: 'string', desc: 'Current API version used by the account (e.g., "2019-05-29")', io: 'output' },
-  { name: 'webhook_uri', type: 'string', desc: 'URL where Omise sends event notifications', io: 'editable' },
-  { name: 'chain_enabled', type: 'boolean', desc: 'Whether chain integration is enabled', io: 'editable' },
-  { name: 'chain_return_uri', type: 'string', desc: 'Redirect URL for chain transactions', io: 'editable' },
-  { name: 'chaining_allowed', type: 'boolean', desc: 'Whether this account is allowed to use chaining', io: 'output' },
-  { name: 'zero_interest_installments', type: 'boolean', desc: 'Whether merchant absorbs installment interest', io: 'editable' },
-  { name: 'auto_activate_recipients', type: 'boolean', desc: 'Whether new recipients are auto-activated', io: 'output' },
-  { name: 'metadata_export_keys', type: 'object', desc: 'Custom metadata keys for exports (charge, transfer, refund, dispute)', io: 'editable' },
-  { name: 'transfer_config', type: 'object', desc: 'Transfer configuration including min/max amounts, fees, and provider settings', io: 'output' },
-  { name: 'last_updated_api_version', type: 'string', desc: 'Date when API version was last updated', io: 'output' },
-  { name: 'restricted_recipient_management', type: 'boolean', desc: 'Whether recipient management is restricted (Deimos only)', io: 'output' },
-  { name: 'paas_enabled', type: 'boolean', desc: 'Whether Platform as a Service is enabled (Deimos only)', io: 'output' },
-  { name: 'created_at', type: 'datetime', desc: 'Account creation timestamp (Deimos). Called "created" in older versions.', io: 'output' },
+  { name: 'id', type: 'string', desc: 'account_test_... (Deimos) or acct_... (older)', io: 'output' },
+  { name: 'object', type: 'string', desc: 'Always "account"', io: 'output' },
+  { name: 'team', type: 'string', desc: 'Team identifier (Deimos only)', io: 'output' },
+  { name: 'livemode', type: 'boolean', desc: 'Whether live mode', io: 'output' },
+  { name: 'location', type: 'string', desc: 'API path "/account"', io: 'output' },
+  { name: 'country', type: 'string', desc: 'Two-letter ISO 3166 country code', io: 'output' },
+  { name: 'currency', type: 'string', desc: 'Default currency (UPPERCASE in Deimos)', io: 'output' },
+  { name: 'email', type: 'string', desc: 'Primary email address', io: 'output' },
+  { name: 'supported_currencies', type: 'array', desc: 'Available currencies for card charges', io: 'output' },
+  { name: 'api_version', type: 'string', desc: 'Current API version (e.g., "2019-05-29")', io: 'output' },
+  { name: 'webhook_uri', type: 'string', desc: 'URL for event notifications', io: 'input' },
+  { name: 'chain_enabled', type: 'boolean', desc: 'Whether chain integration enabled', io: 'input' },
+  { name: 'chain_return_uri', type: 'string', desc: 'Redirect URL for chain transactions', io: 'input' },
+  { name: 'chaining_allowed', type: 'boolean', desc: 'Whether chaining is allowed', io: 'output' },
+  { name: 'zero_interest_installments', type: 'boolean', desc: 'Merchant absorbs interest', io: 'input' },
+  { name: 'auto_activate_recipients', type: 'boolean', desc: 'Auto-activate new recipients', io: 'output' },
+  { name: 'metadata_export_keys', type: 'object', desc: 'Custom metadata keys for exports', io: 'input' },
+  { name: 'transfer_config', type: 'object', desc: 'Transfer limits, fees, provider settings', io: 'output' },
+  { name: 'last_updated_api_version', type: 'string', desc: 'API version update date', io: 'output' },
+  { name: 'restricted_recipient_management', type: 'boolean', desc: 'Recipient management restricted (Deimos only)', io: 'output' },
+  { name: 'paas_enabled', type: 'boolean', desc: 'Platform as a Service enabled (Deimos only)', io: 'output' },
+  { name: 'created_at', type: 'datetime', desc: 'Creation timestamp (Deimos: created_at, older: created)', io: 'output' },
 ];
 
 // Balance attributes (all fields are OUTPUT-only - Balance API is read-only)

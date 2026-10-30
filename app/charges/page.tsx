@@ -4,36 +4,71 @@ import Link from 'next/link';
 import Sidebar from '../components/Sidebar';
 import { endpoints, methodColors } from '../lib/chargeData';
 
-// Fields marked as 'input' can be set when creating a charge
-// Fields marked as 'editable' can be updated after creation
-// Fields marked as 'output' are read-only (set by API)
+// Charge attributes - All 62 fields from Deimos (2019-05-29)
+// INPUT = can be set when creating, OUTPUT = read-only
 const chargeAttributes = [
-  { name: 'id', type: 'string', desc: 'Charge identifier matching /chrg(_test)?_[0-9a-z]+/', io: 'output' },
-  { name: 'object', type: 'string', desc: 'Object type, always "charge"', io: 'output' },
-  { name: 'amount', type: 'integer', desc: 'Charge amount in smallest unit of currency', io: 'input' },
+  { name: 'id', type: 'string', desc: 'Charge identifier (chrg_test_...)', io: 'output' },
+  { name: 'object', type: 'string', desc: 'Always "charge"', io: 'output' },
+  { name: 'livemode', type: 'boolean', desc: 'Whether live mode', io: 'output' },
+  { name: 'location', type: 'string', desc: 'API path to this charge', io: 'output' },
+  { name: 'amount', type: 'integer', desc: 'Charge amount in smallest currency unit', io: 'input' },
   { name: 'currency', type: 'string', desc: 'Three-letter ISO 4217 currency code', io: 'input' },
-  { name: 'status', type: 'string', desc: 'Charge status: pending, successful, failed, expired, reversed', io: 'output' },
-  { name: 'authorized', type: 'boolean', desc: 'Whether charge has been authorized', io: 'output' },
-  { name: 'captured_amount', type: 'integer', desc: 'Amount captured (use this to check if captured: captured_amount > 0)', io: 'output' },
-  { name: 'capturable', type: 'boolean', desc: 'Whether charge can still be captured', io: 'output' },
-  { name: 'reversed', type: 'boolean', desc: 'Whether authorization has been reversed', io: 'output' },
-  { name: 'reversible', type: 'boolean', desc: 'Whether authorization can be reversed', io: 'output' },
-  { name: 'refundable', type: 'boolean', desc: 'Whether charge can be refunded', io: 'output' },
-  { name: 'refunded_amount', type: 'integer', desc: 'Total amount refunded', io: 'output' },
-  { name: 'expired', type: 'boolean', desc: 'Whether charge has expired', io: 'output' },
-  { name: 'net', type: 'integer', desc: 'Funding amount after fees, interest, and VAT deducted', io: 'output' },
-  { name: 'fee', type: 'integer', desc: 'Omise processing fee amount', io: 'output' },
-  { name: 'fee_vat', type: 'integer', desc: 'VAT applied to fee', io: 'output' },
-  { name: 'card', type: 'object', desc: 'Card that was charged (set via card token at creation)', io: 'output' },
-  { name: 'source', type: 'object', desc: 'Source that was charged (set via source at creation)', io: 'output' },
-  { name: 'customer', type: 'string', desc: 'Customer associated with charge', io: 'input' },
-  { name: 'description', type: 'string', desc: 'Charge description (can be updated after creation)', io: 'editable' },
-  { name: 'metadata', type: 'object', desc: 'Custom metadata key-value pairs (can be updated after creation)', io: 'editable' },
-  { name: 'return_uri', type: 'string', desc: 'URI customer is redirected to after authorization', io: 'input' },
-  { name: 'authorize_uri', type: 'string', desc: 'URI for payment authorization (3DS, redirects)', io: 'output' },
-  { name: 'created_at', type: 'datetime', desc: 'UTC datetime of charge creation (ISO 8601)', io: 'output' },
-  { name: 'paid_at', type: 'datetime', desc: 'UTC datetime of payment (ISO 8601)', io: 'output' },
-  { name: 'expires_at', type: 'datetime', desc: 'UTC datetime of expected expiration (ISO 8601)', io: 'input' },
+  { name: 'funding_amount', type: 'integer', desc: 'Amount in funding currency', io: 'output' },
+  { name: 'funding_currency', type: 'string', desc: 'Funding currency code', io: 'output' },
+  { name: 'fee', type: 'integer', desc: 'Omise processing fee (Deimos only)', io: 'output' },
+  { name: 'fee_vat', type: 'integer', desc: 'VAT on fee (Deimos only)', io: 'output' },
+  { name: 'interest', type: 'integer', desc: 'Interest amount (Deimos only)', io: 'output' },
+  { name: 'interest_vat', type: 'integer', desc: 'VAT on interest (Deimos only)', io: 'output' },
+  { name: 'net', type: 'integer', desc: 'Net amount after fees (Deimos only)', io: 'output' },
+  { name: 'status', type: 'string', desc: 'pending, successful, failed, expired, reversed', io: 'output' },
+  { name: 'authorized', type: 'boolean', desc: 'Whether authorized', io: 'output' },
+  { name: 'authorized_amount', type: 'integer', desc: 'Amount authorized', io: 'output' },
+  { name: 'authorized_at', type: 'datetime', desc: 'Authorization timestamp (Deimos only)', io: 'output' },
+  { name: 'authorization_type', type: 'string', desc: 'pre_auth or final_auth', io: 'input' },
+  { name: 'capture', type: 'boolean', desc: 'Whether to auto-capture', io: 'input' },
+  { name: 'capturable', type: 'boolean', desc: 'Whether can be captured', io: 'output' },
+  { name: 'captured_amount', type: 'integer', desc: 'Amount captured', io: 'output' },
+  { name: 'multi_capture', type: 'boolean', desc: 'Multi-capture enabled (Deimos only)', io: 'output' },
+  { name: 'reversed', type: 'boolean', desc: 'Whether reversed', io: 'output' },
+  { name: 'reversed_at', type: 'datetime', desc: 'Reversal timestamp', io: 'output' },
+  { name: 'reversible', type: 'boolean', desc: 'Whether can be reversed', io: 'output' },
+  { name: 'refundable', type: 'boolean', desc: 'Whether can be refunded', io: 'output' },
+  { name: 'refunded_amount', type: 'integer', desc: 'Amount refunded (Deimos: refunded_amount, older: refunded)', io: 'output' },
+  { name: 'refunds', type: 'object', desc: 'List of refunds', io: 'output' },
+  { name: 'partially_refundable', type: 'boolean', desc: 'Whether partial refund allowed', io: 'output' },
+  { name: 'paid', type: 'boolean', desc: 'Whether paid', io: 'output' },
+  { name: 'paid_at', type: 'datetime', desc: 'Payment timestamp', io: 'output' },
+  { name: 'expired', type: 'boolean', desc: 'Whether expired', io: 'output' },
+  { name: 'expired_at', type: 'datetime', desc: 'Expiration timestamp', io: 'output' },
+  { name: 'expires_at', type: 'datetime', desc: 'Expected expiration time', io: 'input' },
+  { name: 'voided', type: 'boolean', desc: 'Whether voided', io: 'output' },
+  { name: 'can_perform_void', type: 'boolean', desc: 'Whether void is possible', io: 'output' },
+  { name: 'disputable', type: 'boolean', desc: 'Whether disputable', io: 'output' },
+  { name: 'dispute', type: 'object', desc: 'Dispute object if disputed', io: 'output' },
+  { name: 'card', type: 'object', desc: 'Card object (if card payment)', io: 'output' },
+  { name: 'source', type: 'object', desc: 'Source object (Cordelia+, replaces offsite)', io: 'output' },
+  { name: 'customer', type: 'string', desc: 'Customer ID', io: 'input' },
+  { name: 'description', type: 'string', desc: 'Charge description', io: 'input' },
+  { name: 'metadata', type: 'object', desc: 'Custom key-value pairs', io: 'input' },
+  { name: 'ip', type: 'string', desc: 'Customer IP address', io: 'input' },
+  { name: 'return_uri', type: 'string', desc: 'Redirect URI after authorization', io: 'input' },
+  { name: 'authorize_uri', type: 'string', desc: 'URI for payment authorization', io: 'output' },
+  { name: 'failure_code', type: 'string', desc: 'Error code if failed', io: 'output' },
+  { name: 'failure_message', type: 'string', desc: 'Error message if failed', io: 'output' },
+  { name: 'merchant_advice', type: 'string', desc: 'Merchant advice code (Deimos only)', io: 'output' },
+  { name: 'approval_code', type: 'string', desc: 'Authorization approval code', io: 'output' },
+  { name: 'acquirer_reference_number', type: 'string', desc: 'ARN from acquirer', io: 'output' },
+  { name: 'transaction', type: 'string', desc: 'Transaction ID', io: 'output' },
+  { name: 'transaction_fees', type: 'object', desc: 'Fee breakdown', io: 'output' },
+  { name: 'platform_fee', type: 'object', desc: 'Platform fee config (Cordelia+)', io: 'input' },
+  { name: 'zero_interest_installments', type: 'boolean', desc: 'Merchant absorbs interest (Cordelia+)', io: 'input' },
+  { name: 'linked_account', type: 'string', desc: 'Linked account ID', io: 'output' },
+  { name: 'link', type: 'string', desc: 'Payment link ID', io: 'output' },
+  { name: 'schedule', type: 'string', desc: 'Schedule ID if scheduled', io: 'output' },
+  { name: 'branch', type: 'string', desc: 'Branch identifier', io: 'output' },
+  { name: 'terminal', type: 'string', desc: 'Terminal identifier', io: 'output' },
+  { name: 'device', type: 'string', desc: 'Device identifier', io: 'output' },
+  { name: 'created_at', type: 'datetime', desc: 'Creation timestamp (Deimos: created_at, older: created)', io: 'output' },
 ];
 
 const endpointOrder = ['create', 'retrieve', 'list', 'update', 'capture', 'reverse', 'expire', 'mark-as-paid', 'mark-as-failed'];
@@ -139,11 +174,10 @@ export default function ChargesOverviewPage() {
         {/* Input vs Output Info */}
         <div style={{ background: '#eff6ff', border: '1px solid #3b82f6', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
           <div style={{ fontSize: '14px', color: '#1e40af', lineHeight: 1.6 }}>
-            <strong>Input vs Output Fields:</strong><br/>
+            <strong>Field Types:</strong><br/>
             <span style={{ display: 'inline-block', padding: '2px 6px', background: '#dcfce7', color: '#166534', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>INPUT</span> Can be set when creating a charge<br/>
-            <span style={{ display: 'inline-block', padding: '2px 6px', background: '#fef3c7', color: '#92400e', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>EDITABLE</span> Can be updated after creation (via PATCH)<br/>
-            <span style={{ display: 'inline-block', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>OUTPUT</span> Read-only, set by API<br/><br/>
-            <strong>Checking capture status:</strong> Use <code style={{ background: '#e5e7eb', padding: '2px 6px', borderRadius: '4px' }}>captured_amount &gt; 0</code> (the <code>captured</code> boolean only exists in API version Aegaeon)
+            <span style={{ display: 'inline-block', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>OUTPUT</span> Read-only, returned by API<br/><br/>
+            <strong>Note:</strong> This shows all 62 fields from Deimos (2019-05-29). Older versions have fewer fields.
           </div>
         </div>
 
@@ -157,9 +191,6 @@ export default function ChargesOverviewPage() {
                   {attr.name}
                   {attr.io === 'input' && (
                     <span style={{ marginLeft: '8px', padding: '2px 6px', background: '#dcfce7', color: '#166534', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>INPUT</span>
-                  )}
-                  {attr.io === 'editable' && (
-                    <span style={{ marginLeft: '8px', padding: '2px 6px', background: '#fef3c7', color: '#92400e', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>EDITABLE</span>
                   )}
                 </div>
                 <div className="attribute-meta">{attr.type}</div>

@@ -39,8 +39,9 @@ export default function AccountOverviewPage() {
         <div style={{ background: '#eff6ff', border: '1px solid #3b82f6', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
           <div style={{ fontSize: '14px', color: '#1e40af', lineHeight: 1.6 }}>
             <strong>Field Types:</strong><br/>
-            <span style={{ display: 'inline-block', padding: '2px 6px', background: '#fef3c7', color: '#92400e', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>EDITABLE</span> Can be updated via PATCH /account<br/>
-            <span style={{ display: 'inline-block', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>OUTPUT</span> Read-only, set by API
+            <span style={{ display: 'inline-block', padding: '2px 6px', background: '#dcfce7', color: '#166534', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>INPUT</span> Can be updated via PATCH /account<br/>
+            <span style={{ display: 'inline-block', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>OUTPUT</span> Read-only, returned by API<br/><br/>
+            <strong>Note:</strong> This shows all 22 fields from Deimos (2019-05-29). Older versions have fewer fields.
           </div>
         </div>
 
@@ -146,11 +147,8 @@ export default function AccountOverviewPage() {
               <div>
                 <div className="attribute-name">
                   {attr.name}
-                  {attr.io === 'editable' && (
-                    <span style={{ marginLeft: '8px', padding: '2px 6px', background: '#fef3c7', color: '#92400e', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>EDITABLE</span>
-                  )}
-                  {attr.io === 'output' && (
-                    <span style={{ marginLeft: '8px', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>OUTPUT</span>
+                  {attr.io === 'input' && (
+                    <span style={{ marginLeft: '8px', padding: '2px 6px', background: '#dcfce7', color: '#166534', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>INPUT</span>
                   )}
                 </div>
                 <div className="attribute-meta">{attr.type}</div>

@@ -233,6 +233,7 @@ export default function ChargesOverviewPage() {
   },
   "source": null,
   "customer": null,
+  "ip": "203.0.113.42",
   "created_at": "2024-01-15T10:30:00Z",
   "paid_at": "2024-01-15T10:30:01Z"
 }`}

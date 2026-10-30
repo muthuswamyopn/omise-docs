@@ -344,6 +344,7 @@ export default function ChargesOverviewPage() {
   customer: null,
   description: "Order #12345",
   metadata: { order_id: "12345" },
+  ip: "203.0.113.42",
   created_at: "2024-01-15T10:30:00Z",
   paid_at: "2024-01-15T10:30:01Z"
 }, null, 2)}

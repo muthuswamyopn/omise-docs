@@ -29,8 +29,55 @@ tags:
     description: Create, capture, and manage payment charges
   - name: Balance
     description: Retrieve your account balance
+  - name: Account
+    description: Retrieve and update your account configuration
 
 paths:
+  /account:
+    get:
+      summary: Retrieve account
+      description: |
+        Retrieve the current account information.
+
+        NOTE: In Deimos (2019-05-29), the ID format changed from `acct_...` to `account_test_...`,
+        `created` was renamed to `created_at`, and currencies are UPPERCASE.
+      operationId: getAccount
+      tags: [Account]
+      responses:
+        '200':
+          description: Account information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
+    patch:
+      summary: Update account
+      description: |
+        Update account configuration settings.
+
+        **Editable fields:** webhook_uri, chain_enabled, chain_return_uri,
+        zero_interest_installments, metadata_export_keys
+      operationId: updateAccount
+      tags: [Account]
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateAccountRequest'
+      responses:
+        '200':
+          description: Updated account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
+
   /balance:
     get:
       summary: Retrieve balance
@@ -585,6 +632,91 @@ components:
           type: integer
           description: Amount on hold for disputes or reviews (in smallest currency unit)
           readOnly: true
+
+    Account:
+      type: object
+      description: |
+        Represents your Omise account configuration.
+
+        VERSION NOTE (Cordelia 2017-11-02):
+        - ID format: `acct_...` (Deimos uses `account_test_...`)
+        - Uses `created` (Deimos uses `created_at`)
+        - Currencies are lowercase (Deimos uses UPPERCASE)
+        - No `team`, `paas_enabled`, `restricted_recipient_management` fields
+      properties:
+        object:
+          type: string
+          enum: [account]
+          readOnly: true
+        id:
+          type: string
+          description: Account identifier (acct_...)
+          readOnly: true
+        livemode:
+          type: boolean
+          readOnly: true
+        location:
+          type: string
+          readOnly: true
+        country:
+          type: string
+          readOnly: true
+        currency:
+          type: string
+          description: Default currency (lowercase in this version)
+          readOnly: true
+        email:
+          type: string
+          readOnly: true
+        supported_currencies:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        api_version:
+          type: string
+          readOnly: true
+        webhook_uri:
+          type: string
+        chain_enabled:
+          type: boolean
+        chain_return_uri:
+          type: string
+        chaining_allowed:
+          type: boolean
+          readOnly: true
+        zero_interest_installments:
+          type: boolean
+        auto_activate_recipients:
+          type: boolean
+          readOnly: true
+        metadata_export_keys:
+          type: object
+        transfer_config:
+          type: object
+          readOnly: true
+        last_updated_api_version:
+          type: string
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          description: Account creation timestamp (renamed to created_at in Deimos)
+          readOnly: true
+
+    UpdateAccountRequest:
+      type: object
+      properties:
+        webhook_uri:
+          type: string
+        chain_enabled:
+          type: boolean
+        chain_return_uri:
+          type: string
+        zero_interest_installments:
+          type: boolean
+        metadata_export_keys:
+          type: object
 
     Error:
       type: object

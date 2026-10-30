@@ -27,8 +27,47 @@ tags:
     description: Create, capture, and manage payment charges
   - name: Balance
     description: Retrieve your account balance
+  - name: Account
+    description: Retrieve and update your account configuration
 
 paths:
+  /account:
+    get:
+      summary: Retrieve account
+      description: Retrieve the current account information.
+      operationId: getAccount
+      tags: [Account]
+      responses:
+        '200':
+          description: Account information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
+    patch:
+      summary: Update account
+      description: Update account configuration settings.
+      operationId: updateAccount
+      tags: [Account]
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateAccountRequest'
+      responses:
+        '200':
+          description: Updated account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
+
   /balance:
     get:
       summary: Retrieve balance
@@ -465,6 +504,76 @@ components:
           type: integer
           description: Amount on hold for disputes or reviews (in smallest currency unit)
           readOnly: true
+
+    Account:
+      type: object
+      description: |
+        Represents your Omise account configuration (Bestla 2015-11-17).
+        ID format: acct_..., uses created (not created_at), currencies lowercase.
+      properties:
+        object:
+          type: string
+          enum: [account]
+          readOnly: true
+        id:
+          type: string
+          readOnly: true
+        livemode:
+          type: boolean
+          readOnly: true
+        location:
+          type: string
+          readOnly: true
+        country:
+          type: string
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        email:
+          type: string
+          readOnly: true
+        supported_currencies:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        api_version:
+          type: string
+          readOnly: true
+        webhook_uri:
+          type: string
+        chain_enabled:
+          type: boolean
+        chain_return_uri:
+          type: string
+        chaining_allowed:
+          type: boolean
+          readOnly: true
+        auto_activate_recipients:
+          type: boolean
+          readOnly: true
+        metadata_export_keys:
+          type: object
+        transfer_config:
+          type: object
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+
+    UpdateAccountRequest:
+      type: object
+      properties:
+        webhook_uri:
+          type: string
+        chain_enabled:
+          type: boolean
+        chain_return_uri:
+          type: string
+        metadata_export_keys:
+          type: object
 
     Error:
       type: object

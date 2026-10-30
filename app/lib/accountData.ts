@@ -78,26 +78,33 @@ This endpoint is called automatically when you update your API version through t
   },
 };
 
-// Account attributes
+// Account attributes (verified 2026-10-30)
+// Version differences:
+// - Deimos (2019-05-29): id format account_test_..., has team, created_at, paas_enabled, restricted_recipient_management
+// - Cordelia/Aegaeon: id format acct_..., uses created (not created_at), currencies lowercase
 export const accountAttributes = [
-  { name: 'id', type: 'string', desc: 'Unique identifier for the account (acct_test_...)' },
-  { name: 'object', type: 'string', desc: 'Object type, always "account"' },
-  { name: 'livemode', type: 'boolean', desc: 'Whether this is a live mode account (true) or test mode (false)' },
-  { name: 'location', type: 'string', desc: 'API path to retrieve this account' },
-  { name: 'team', type: 'string', desc: 'Team identifier this account belongs to' },
-  { name: 'country', type: 'string', desc: 'Two-letter ISO 3166 country code' },
-  { name: 'currency', type: 'string', desc: 'Default three-letter ISO 4217 currency code' },
-  { name: 'email', type: 'string', desc: 'Primary email address associated with the account' },
-  { name: 'supported_currencies', type: 'array', desc: 'List of currencies available for card charges' },
-  { name: 'api_version', type: 'string', desc: 'Current API version used by the account' },
-  { name: 'webhook_uri', type: 'string', desc: 'URL where Omise sends event notifications' },
-  { name: 'chain_enabled', type: 'boolean', desc: 'Whether chain integration is enabled' },
-  { name: 'chain_return_uri', type: 'string', desc: 'Redirect URL for chain transactions' },
-  { name: 'zero_interest_installments', type: 'boolean', desc: 'Whether merchant absorbs installment interest' },
-  { name: 'auto_activate_recipients', type: 'boolean', desc: 'Whether new recipients are auto-activated' },
-  { name: 'metadata_export_keys', type: 'object', desc: 'Custom metadata keys for exports' },
-  { name: 'transfer_config', type: 'object', desc: 'Transfer configuration including limits and fees' },
-  { name: 'created_at', type: 'datetime', desc: 'Account creation timestamp (ISO 8601)' },
+  { name: 'id', type: 'string', desc: 'Unique identifier. Format: account_test_... (Deimos) or acct_... (older versions)', io: 'output' },
+  { name: 'object', type: 'string', desc: 'Object type, always "account"', io: 'output' },
+  { name: 'livemode', type: 'boolean', desc: 'Whether this is a live mode account (true) or test mode (false)', io: 'output' },
+  { name: 'location', type: 'string', desc: 'API path to retrieve this account ("/account")', io: 'output' },
+  { name: 'team', type: 'string', desc: 'Team identifier this account belongs to (Deimos only)', io: 'output' },
+  { name: 'country', type: 'string', desc: 'Two-letter ISO 3166 country code (e.g., "TH")', io: 'output' },
+  { name: 'currency', type: 'string', desc: 'Default currency. UPPERCASE in Deimos (THB), lowercase in older versions (thb)', io: 'output' },
+  { name: 'email', type: 'string', desc: 'Primary email address associated with the account', io: 'output' },
+  { name: 'supported_currencies', type: 'array', desc: 'List of currencies available for card charges', io: 'output' },
+  { name: 'api_version', type: 'string', desc: 'Current API version used by the account (e.g., "2019-05-29")', io: 'output' },
+  { name: 'webhook_uri', type: 'string', desc: 'URL where Omise sends event notifications', io: 'editable' },
+  { name: 'chain_enabled', type: 'boolean', desc: 'Whether chain integration is enabled', io: 'editable' },
+  { name: 'chain_return_uri', type: 'string', desc: 'Redirect URL for chain transactions', io: 'editable' },
+  { name: 'chaining_allowed', type: 'boolean', desc: 'Whether this account is allowed to use chaining', io: 'output' },
+  { name: 'zero_interest_installments', type: 'boolean', desc: 'Whether merchant absorbs installment interest', io: 'editable' },
+  { name: 'auto_activate_recipients', type: 'boolean', desc: 'Whether new recipients are auto-activated', io: 'output' },
+  { name: 'metadata_export_keys', type: 'object', desc: 'Custom metadata keys for exports (charge, transfer, refund, dispute)', io: 'editable' },
+  { name: 'transfer_config', type: 'object', desc: 'Transfer configuration including min/max amounts, fees, and provider settings', io: 'output' },
+  { name: 'last_updated_api_version', type: 'string', desc: 'Date when API version was last updated', io: 'output' },
+  { name: 'restricted_recipient_management', type: 'boolean', desc: 'Whether recipient management is restricted (Deimos only)', io: 'output' },
+  { name: 'paas_enabled', type: 'boolean', desc: 'Whether Platform as a Service is enabled (Deimos only)', io: 'output' },
+  { name: 'created_at', type: 'datetime', desc: 'Account creation timestamp (Deimos). Called "created" in older versions.', io: 'output' },
 ];
 
 // Balance attributes (all fields are OUTPUT-only - Balance API is read-only)
@@ -272,12 +279,12 @@ Console.WriteLine(capability.PaymentMethods);`,
   },
 };
 
-// Response examples
+// Response examples (verified 2026-10-30 - Deimos format)
 export const accountResponseExamples: Record<string, string> = {
   retrieve: `{
   "object": "account",
-  "id": "acct_test_no1t4tnemucod0e51mo",
-  "team": "team_test_no1t4tnemucod0e51mo",
+  "id": "account_test_no1t4tnemucod0e51mo",
+  "team": "acct_no1t4tnemucod0e51mo",
   "livemode": false,
   "location": "/account",
   "country": "TH",
@@ -285,30 +292,37 @@ export const accountResponseExamples: Record<string, string> = {
   "email": "merchant@example.com",
   "created_at": "2024-01-15T10:30:00Z",
   "supported_currencies": [
-    "THB",
-    "JPY",
-    "USD",
-    "EUR",
-    "GBP",
-    "SGD"
+    "THB", "JPY", "USD", "EUR", "GBP",
+    "SGD", "AUD", "CHF", "CNY", "DKK",
+    "HKD", "NOK", "SEK"
   ],
   "api_version": "2019-05-29",
   "auto_activate_recipients": false,
   "chain_enabled": true,
+  "chaining_allowed": true,
   "zero_interest_installments": false,
-  "chain_return_uri": "https://dashboard.omise.co/v2/settings",
+  "chain_return_uri": "https://example.com/chain",
   "webhook_uri": "https://example.com/webhooks",
   "metadata_export_keys": {
     "charge": ["order_id"],
     "transfer": [],
     "refund": [],
     "dispute": []
-  }
+  },
+  "last_updated_api_version": "2024-01-15",
+  "transfer_config": {
+    "min_transfer_amount": "30.00",
+    "max_transfer_amount": "2000000000.00",
+    "fee": "30.00",
+    "is_payout_enabled": false
+  },
+  "restricted_recipient_management": false,
+  "paas_enabled": false
 }`,
   update: `{
   "object": "account",
-  "id": "acct_test_no1t4tnemucod0e51mo",
-  "team": "team_test_no1t4tnemucod0e51mo",
+  "id": "account_test_no1t4tnemucod0e51mo",
+  "team": "acct_no1t4tnemucod0e51mo",
   "livemode": false,
   "location": "/account",
   "country": "TH",
@@ -316,12 +330,14 @@ export const accountResponseExamples: Record<string, string> = {
   "email": "merchant@example.com",
   "webhook_uri": "https://example.com/webhooks",
   "chain_enabled": true,
-  "zero_interest_installments": false
+  "chaining_allowed": true,
+  "zero_interest_installments": false,
+  "last_updated_api_version": "2024-01-15"
 }`,
   'update-api-version': `{
   "object": "account",
-  "id": "acct_test_no1t4tnemucod0e51mo",
-  "team": "team_test_no1t4tnemucod0e51mo",
+  "id": "account_test_no1t4tnemucod0e51mo",
+  "team": "acct_no1t4tnemucod0e51mo",
   "livemode": false,
   "location": "/account",
   "country": "TH",

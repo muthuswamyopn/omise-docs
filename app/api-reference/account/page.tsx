@@ -35,6 +35,56 @@ export default function AccountOverviewPage() {
           </div>
         </div>
 
+        {/* Input/Output Fields Info */}
+        <div style={{ background: '#eff6ff', border: '1px solid #3b82f6', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
+          <div style={{ fontSize: '14px', color: '#1e40af', lineHeight: 1.6 }}>
+            <strong>Field Types:</strong><br/>
+            <span style={{ display: 'inline-block', padding: '2px 6px', background: '#fef3c7', color: '#92400e', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>EDITABLE</span> Can be updated via PATCH /account<br/>
+            <span style={{ display: 'inline-block', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>OUTPUT</span> Read-only, set by API
+          </div>
+        </div>
+
+        {/* Version Differences */}
+        <div style={{ background: '#faf5ff', border: '1px solid #a855f7', borderRadius: '8px', padding: '20px', marginBottom: '32px' }}>
+          <div style={{ fontWeight: 600, color: '#6b21a8', marginBottom: '12px' }}>API Version Differences</div>
+          <table style={{ width: '100%', fontSize: '13px', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid #e9d5ff' }}>
+                <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b21a8' }}>Deimos (2019-05-29)</th>
+                <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b21a8' }}>Older Versions</th>
+                <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b21a8' }}>Notes</th>
+              </tr>
+            </thead>
+            <tbody style={{ color: '#581c87' }}>
+              <tr style={{ borderBottom: '1px solid #f3e8ff' }}>
+                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>account_test_...</code></td>
+                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>acct_...</code></td>
+                <td style={{ padding: '8px 12px' }}>ID format changed</td>
+              </tr>
+              <tr style={{ borderBottom: '1px solid #f3e8ff' }}>
+                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>created_at</code></td>
+                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>created</code></td>
+                <td style={{ padding: '8px 12px' }}>Timestamp field renamed</td>
+              </tr>
+              <tr style={{ borderBottom: '1px solid #f3e8ff' }}>
+                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>team</code></td>
+                <td style={{ padding: '8px 12px', color: '#9ca3af', fontStyle: 'italic' }}>not available</td>
+                <td style={{ padding: '8px 12px' }}>Team identifier added in Deimos</td>
+              </tr>
+              <tr style={{ borderBottom: '1px solid #f3e8ff' }}>
+                <td style={{ padding: '8px 12px' }}>THB, USD (uppercase)</td>
+                <td style={{ padding: '8px 12px' }}>thb, usd (lowercase)</td>
+                <td style={{ padding: '8px 12px' }}>Currency codes case changed</td>
+              </tr>
+              <tr>
+                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>paas_enabled</code></td>
+                <td style={{ padding: '8px 12px', color: '#9ca3af', fontStyle: 'italic' }}>not available</td>
+                <td style={{ padding: '8px 12px' }}>Platform-as-a-Service flag (Deimos only)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
         {/* Error Handling Reference */}
         <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
           <div style={{ fontSize: '14px', color: '#78350f', lineHeight: 1.6 }}>
@@ -91,10 +141,18 @@ export default function AccountOverviewPage() {
         {/* The Account Object */}
         <h2>The Account Object</h2>
         <div className="attributes-section">
-          {accountAttributes.map(attr => (
+          {accountAttributes.map((attr: { name: string; type: string; desc: string; io?: string }) => (
             <div key={attr.name} className="attribute-row">
               <div>
-                <div className="attribute-name">{attr.name}</div>
+                <div className="attribute-name">
+                  {attr.name}
+                  {attr.io === 'editable' && (
+                    <span style={{ marginLeft: '8px', padding: '2px 6px', background: '#fef3c7', color: '#92400e', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>EDITABLE</span>
+                  )}
+                  {attr.io === 'output' && (
+                    <span style={{ marginLeft: '8px', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>OUTPUT</span>
+                  )}
+                </div>
                 <div className="attribute-meta">{attr.type}</div>
               </div>
               <div className="attribute-desc">{attr.desc}</div>
@@ -120,8 +178,8 @@ export default function AccountOverviewPage() {
             <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', maxHeight: '600px', fontFamily: "'SF Mono', Monaco, monospace" }}>
 {`{
   "object": "account",
-  "id": "acct_test_no1t4tnemucod0e51mo",
-  "team": "team_test_no1t4tnemucod0e51mo",
+  "id": "account_test_no1t4tnemucod0e51mo",
+  "team": "acct_no1t4tnemucod0e51mo",
   "livemode": false,
   "location": "/account",
   "country": "TH",
@@ -129,16 +187,14 @@ export default function AccountOverviewPage() {
   "email": "merchant@example.com",
   "created_at": "2024-01-15T10:30:00Z",
   "supported_currencies": [
-    "THB",
-    "JPY",
-    "USD",
-    "EUR",
-    "GBP",
-    "SGD"
+    "THB", "JPY", "USD", "EUR",
+    "GBP", "SGD", "AUD", "CHF",
+    "CNY", "DKK", "HKD", "NOK", "SEK"
   ],
   "api_version": "2019-05-29",
   "auto_activate_recipients": false,
   "chain_enabled": true,
+  "chaining_allowed": true,
   "zero_interest_installments": false,
   "chain_return_uri": "https://example.com/chain",
   "webhook_uri": "https://example.com/webhooks",
@@ -147,7 +203,16 @@ export default function AccountOverviewPage() {
     "transfer": [],
     "refund": [],
     "dispute": []
-  }
+  },
+  "last_updated_api_version": "2024-01-15",
+  "transfer_config": {
+    "min_transfer_amount": "30.00",
+    "max_transfer_amount": "2000000000.00",
+    "fee": "30.00",
+    "is_payout_enabled": false
+  },
+  "restricted_recipient_management": false,
+  "paas_enabled": false
 }`}
             </pre>
           </div>

@@ -257,6 +257,50 @@ The Balance API is **read-only** (GET only). All fields are OUTPUT:
 
 ---
 
+## Account API (Verified 2026-10-30)
+
+### Account Object Fields by Version
+
+**Deimos (2019-05-29) - 22 fields:**
+```
+object, id, team, livemode, location, country, currency, email,
+supported_currencies, api_version, auto_activate_recipients, chain_enabled,
+zero_interest_installments, chaining_allowed, chain_return_uri, webhook_uri,
+metadata_export_keys, last_updated_api_version, transfer_config,
+restricted_recipient_management, paas_enabled, created_at
+```
+
+**Cordelia/Aegaeon (2017-11-02 / 2014-07-27) - 19 fields:**
+```
+object, id, livemode, location, country, currency, email,
+supported_currencies, api_version, auto_activate_recipients, chain_enabled,
+zero_interest_installments, chaining_allowed, chain_return_uri, webhook_uri,
+metadata_export_keys, last_updated_api_version, transfer_config, created
+```
+
+### Key Differences Between Versions
+
+| Deimos | Older Versions | Notes |
+|--------|----------------|-------|
+| `account_test_...` | `acct_...` | ID format changed |
+| `created_at` | `created` | Timestamp field renamed |
+| `team` | not available | Team identifier added |
+| THB, USD | thb, usd | Currencies changed to UPPERCASE |
+| `paas_enabled` | not available | PaaS flag (Deimos only) |
+| `restricted_recipient_management` | not available | Deimos only |
+
+### Editable Fields (via PATCH /account)
+- `webhook_uri` - URL for event notifications
+- `chain_enabled` - Enable/disable chain integration
+- `chain_return_uri` - Redirect URL for chain transactions
+- `zero_interest_installments` - Merchant absorbs interest (Cordelia+)
+- `metadata_export_keys` - Custom metadata keys for exports
+
+### Output-Only Fields
+All other fields are read-only and set by the API.
+
+---
+
 ## Notes
 
 1. Field names changed between versions:

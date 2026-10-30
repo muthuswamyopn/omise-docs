@@ -117,11 +117,31 @@ source_of_fund, status, terminal, transaction, transaction_fees, voided
 | `failed_fraud_check` | 4111111111190016 | "failed fraud check" |
 | `invalid_account_number` | 4111111111180017 | "the account number is invalid" |
 
+### From Official Docs (https://docs.omise.co/charges-api):
+| Failure Code | Description |
+|-------------|-------------|
+| `confirmed_amount_mismatch` | Confirmed amount does not match expected amount |
+| `timeout` | Payment request timed out |
+| `invalid_account` | Alias for `invalid_account_number` |
+| `insufficient_balance` | Account has insufficient balance |
+| `payment_cancelled` | Customer cancelled the payment |
+| `expired_card` | Card has expired |
+
+### Additional Fields from Official Docs:
+| Field | Type | Description |
+|-------|------|-------------|
+| `three_ds_info` | object | 3DS authentication details |
+| `authenticated_by` | string | Authentication method (PASSKEY or 3DS) |
+| `missing_3ds_fields` | array | Array of missing 3DS fields |
+| `merchant_advice_code` | string | Numerical merchant advice code |
+| `unmanaged_payment` | object | Unmanaged payment information |
+| `ref_id` | string | Idempotency reference ID |
+
 ### CORRECTIONS from previous documentation:
 - ❌ `missing_card` - Does NOT exist. Returns `bad_request` instead.
 - ❌ `invalid_card_token` - Does NOT exist for invalid token. Returns `not_found` instead.
-- ❌ `expired_card` - Card 4111111111170018 returns `payment_rejected`, NOT `expired_card`
-- ❌ `invalid_security_code` - Card 4111111111160019 returns SUCCESSFUL charge, no error
+- ❌ `expired_card` - Test card 4111111111170018 returns `payment_rejected`, NOT `expired_card`
+- ❌ `invalid_security_code` - Test card 4111111111160019 returns SUCCESSFUL charge, no error
 
 ---
 

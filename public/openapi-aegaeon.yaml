@@ -467,3 +467,25 @@ components:
             object: error
             code: bad_request
             message: either source, card or customer parameter must be supplied
+
+    # From official docs (https://docs.omise.co/charges-api)
+    ConfirmedAmountMismatch:
+      description: "Confirmed amount does not match expected amount"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Timeout:
+      description: "Payment request timed out"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InvalidAccount:
+      description: "Invalid account (alias for invalid_account_number)"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

@@ -280,6 +280,13 @@ export const DEIMOS_FIELDS: ChargeFieldInfo[] = [
   { name: 'branch', type: 'object', description: 'Branch information', nullable: true },
   { name: 'terminal', type: 'object', description: 'Terminal information', nullable: true },
   { name: 'device', type: 'object', description: 'Device information', nullable: true },
+  // Additional fields from official docs (https://docs.omise.co/charges-api)
+  { name: 'three_ds_info', type: 'object', description: '3DS authentication details', nullable: true },
+  { name: 'authenticated_by', type: 'string', description: 'Authentication method (PASSKEY or 3DS)', nullable: true },
+  { name: 'missing_3ds_fields', type: 'array', description: 'Array of missing 3DS fields', nullable: true },
+  { name: 'merchant_advice_code', type: 'string', description: 'Numerical merchant advice code', nullable: true },
+  { name: 'unmanaged_payment', type: 'object', description: 'Unmanaged payment information', nullable: true },
+  { name: 'ref_id', type: 'string', description: 'Idempotency reference ID', nullable: true },
 ];
 
 // Get fields for a specific version
@@ -329,19 +336,22 @@ export const API_ERROR_CODES: ErrorCodeInfo[] = [
 ];
 
 // Payment failure codes (returned in failure_code field when status=failed)
-// These are documented at https://www.omise.co/api-errors
+// Source: https://docs.omise.co/charges-api (official documentation)
 export const PAYMENT_FAILURE_CODES: string[] = [
-  'failed_processing',
+  // Verified via API testing (2026-10-30)
   'insufficient_fund',
-  'invalid_account_number',
-  'payment_rejected',
   'stolen_or_lost_card',
+  'failed_processing',
+  'payment_rejected',
   'failed_fraud_check',
-  'invalid_security_code',
-  'expired_card',
+  'invalid_account_number',
+  // From official docs (not tested)
+  'confirmed_amount_mismatch',
+  'timeout',
   'insufficient_balance',
+  'invalid_account', // alias for invalid_account_number
   'payment_cancelled',
-  'blocked_card',
+  'expired_card',
 ];
 
 // ============================================================================

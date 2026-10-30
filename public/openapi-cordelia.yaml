@@ -669,8 +669,26 @@ components:
             code: bad_request
             message: either source, card or customer parameter must be supplied
 
-    # NOTE: The following error codes are NOT verified / do not exist as documented:
-    # - invalid_security_code: Test card returns successful charge
-    # - expired_card: Test card returns payment_rejected instead
-    # - insufficient_balance: Unverified
-    # - payment_cancelled: Unverified
+    # From official docs (https://docs.omise.co/charges-api)
+    ConfirmedAmountMismatch:
+      description: "Confirmed amount does not match expected amount"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Timeout:
+      description: "Payment request timed out"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InvalidAccount:
+      description: "Invalid account (alias for invalid_account_number)"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    # NOTE: Some error codes could not be verified via test cards

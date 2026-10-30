@@ -873,8 +873,40 @@ components:
             code: invalid_account_number
             message: the account number is invalid
 
-    # NOTE: The following error codes do NOT exist as documented
-    # - invalid_card_token: Returns not_found (404) instead
-    # - missing_card: Returns bad_request (400) with message "either source, card or customer parameter must be supplied"
+    # From official docs (https://docs.omise.co/charges-api)
+    ConfirmedAmountMismatch:
+      description: "Confirmed amount does not match expected amount"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: confirmed_amount_mismatch
+            message: confirmed amount does not match
+
+    Timeout:
+      description: "Payment request timed out"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: timeout
+            message: request timed out
+
+    InvalidAccount:
+      description: "Invalid account (alias for invalid_account_number)"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: invalid_account
+            message: the account is invalid
+
+    # NOTE: The following error codes could not be verified via test cards
     # - expired_card: Test card returns payment_rejected instead
     # - invalid_security_code: Test card returns successful charge instead

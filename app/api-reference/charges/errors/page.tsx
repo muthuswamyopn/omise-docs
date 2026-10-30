@@ -174,6 +174,31 @@ const paymentFailures: ErrorCode[] = [
     resolution: 'Ask the customer to retry the payment if they wish to continue.',
     verified: false,
   },
+  // From official docs (https://docs.omise.co/charges-api)
+  {
+    code: 'confirmed_amount_mismatch',
+    httpStatus: 402,
+    description: 'The confirmed amount does not match the expected amount.',
+    whenOccurs: 'The amount confirmed by the payment provider differs from the charge amount.',
+    resolution: 'Verify the charge amount and retry or contact support.',
+    verified: false,
+  },
+  {
+    code: 'timeout',
+    httpStatus: 402,
+    description: 'The payment request timed out.',
+    whenOccurs: 'The payment provider did not respond within the expected time.',
+    resolution: 'Ask the customer to retry the payment.',
+    verified: false,
+  },
+  {
+    code: 'invalid_account',
+    httpStatus: 402,
+    description: 'The account is invalid (alias for invalid_account_number).',
+    whenOccurs: 'The account number does not correspond to a valid account.',
+    resolution: 'Verify the account details or use a different payment method.',
+    verified: false,
+  },
 ];
 
 const httpStatusCodes = [

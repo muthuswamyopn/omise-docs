@@ -100,17 +100,20 @@ export const accountAttributes = [
   { name: 'created_at', type: 'datetime', desc: 'Account creation timestamp (ISO 8601)' },
 ];
 
-// Balance attributes
+// Balance attributes (all fields are OUTPUT-only - Balance API is read-only)
+// Version differences:
+// - Deimos (2019-05-29): transferable, reserve, created_at
+// - Cordelia/Aegaeon: available (instead of transferable), reserve_amount (instead of reserve), no created_at
 export const balanceAttributes = [
-  { name: 'object', type: 'string', desc: 'Object type, always "balance"' },
-  { name: 'livemode', type: 'boolean', desc: 'Whether this is live mode balance' },
-  { name: 'location', type: 'string', desc: 'API path to retrieve the balance' },
-  { name: 'currency', type: 'string', desc: 'Three-letter ISO 4217 currency code' },
-  { name: 'total', type: 'integer', desc: 'Total balance in smallest currency unit (after fees deducted)' },
-  { name: 'transferable', type: 'integer', desc: 'Amount available for transfer' },
-  { name: 'reserve', type: 'integer', desc: 'Amount held in reserve' },
-  { name: 'on_hold', type: 'integer', desc: 'Amount currently on hold' },
-  { name: 'created_at', type: 'datetime', desc: 'Balance record creation timestamp' },
+  { name: 'object', type: 'string', desc: 'Object type, always "balance"', io: 'output' },
+  { name: 'livemode', type: 'boolean', desc: 'Whether this is live mode balance', io: 'output' },
+  { name: 'location', type: 'string', desc: 'API path to retrieve the balance', io: 'output' },
+  { name: 'currency', type: 'string', desc: 'Three-letter ISO 4217 currency code', io: 'output' },
+  { name: 'total', type: 'integer', desc: 'Total balance in smallest currency unit (after fees deducted)', io: 'output' },
+  { name: 'transferable', type: 'integer', desc: 'Amount available for transfer (Deimos). Called "available" in older versions.', io: 'output' },
+  { name: 'reserve', type: 'integer', desc: 'Amount held in reserve (Deimos). Called "reserve_amount" in older versions.', io: 'output' },
+  { name: 'on_hold', type: 'integer', desc: 'Amount temporarily on hold (pending disputes/reviews)', io: 'output' },
+  { name: 'created_at', type: 'datetime', desc: 'Balance record creation timestamp (Deimos only)', io: 'output' },
 ];
 
 // Capability attributes

@@ -1,4 +1,4 @@
-# Verified Omise Charge API Data
+# Verified Omise API Data
 
 **Verified on:** 2026-10-30
 **API Key:** skey_test_63mhuytgr8d72dozrf4 (test mode)
@@ -209,6 +209,46 @@ All other fields in the charge response are output-only:
 `partially_refundable`, `can_perform_void`, `approval_code`, `acquirer_reference_number`,
 `merchant_advice`, `multi_capture`, `three_ds_info`, `branch`, `terminal`, `device`,
 `linked_account` (response), `schedule`, `link`, `transaction_fees`, etc.
+
+---
+
+## Balance API (Verified 2026-10-30)
+
+### Balance Object Fields by Version
+
+**Deimos (2019-05-29) - 9 fields:**
+```
+object, livemode, location, currency, total, transferable, reserve, on_hold, created_at
+```
+
+**Cordelia (2017-11-02) / Aegaeon (2014-07-27) - 8 fields:**
+```
+object, livemode, location, currency, total, available, reserve_amount, on_hold
+```
+
+### Key Differences Between Versions
+
+| Deimos | Older Versions | Description |
+|--------|----------------|-------------|
+| `transferable` | `available` | Amount available for transfer |
+| `reserve` | `reserve_amount` | Amount held in reserve |
+| `created_at` | (not present) | Balance record timestamp |
+
+### Balance API - Input/Output Fields
+
+The Balance API is **read-only** (GET only). All fields are OUTPUT:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `object` | string | Always "balance" |
+| `livemode` | boolean | Whether live mode |
+| `location` | string | API path "/balance" |
+| `currency` | string | ISO 4217 currency code (e.g., "THB") |
+| `total` | integer | Total balance after fees |
+| `transferable` | integer | Amount available for transfer (Deimos) |
+| `reserve` | integer | Amount held in reserve (Deimos) |
+| `on_hold` | integer | Amount on hold (disputes/reviews) |
+| `created_at` | datetime | Timestamp (Deimos only) |
 
 ---
 

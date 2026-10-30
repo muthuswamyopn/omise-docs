@@ -34,6 +34,24 @@ export default function BalanceOverviewPage() {
           </div>
         </div>
 
+        {/* Read-only API Note */}
+        <div style={{ background: '#eff6ff', border: '1px solid #3b82f6', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
+          <div style={{ fontSize: '14px', color: '#1e40af', lineHeight: 1.6 }}>
+            <strong>Read-Only API:</strong> The Balance API only supports retrieval (GET). All fields are <span style={{ display: 'inline-block', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>OUTPUT</span> only.
+          </div>
+        </div>
+
+        {/* Version Differences */}
+        <div style={{ background: '#faf5ff', border: '1px solid #a855f7', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
+          <div style={{ fontSize: '14px', color: '#6b21a8', lineHeight: 1.6 }}>
+            <strong>Version Differences:</strong><br/>
+            <span style={{ fontFamily: "'SF Mono', Monaco, monospace", fontSize: '12px' }}>
+              Deimos (2019-05-29): <code>transferable</code>, <code>reserve</code>, <code>created_at</code><br/>
+              Older versions: <code>available</code>, <code>reserve_amount</code>, no <code>created_at</code>
+            </span>
+          </div>
+        </div>
+
         {/* Error Handling Reference */}
         <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
           <div style={{ fontSize: '14px', color: '#78350f', lineHeight: 1.6 }}>
@@ -84,10 +102,15 @@ export default function BalanceOverviewPage() {
         {/* The Balance Object */}
         <h2>The Balance Object</h2>
         <div className="attributes-section">
-          {balanceAttributes.map(attr => (
+          {balanceAttributes.map((attr: { name: string; type: string; desc: string; io?: string }) => (
             <div key={attr.name} className="attribute-row">
               <div>
-                <div className="attribute-name">{attr.name}</div>
+                <div className="attribute-name">
+                  {attr.name}
+                  {attr.io === 'output' && (
+                    <span style={{ marginLeft: '8px', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>OUTPUT</span>
+                  )}
+                </div>
                 <div className="attribute-meta">{attr.type}</div>
               </div>
               <div className="attribute-desc">{attr.desc}</div>

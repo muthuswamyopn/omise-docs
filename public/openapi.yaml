@@ -448,43 +448,58 @@ components:
   schemas:
     Balance:
       type: object
-      description: Represents the current balance of your Omise account
+      description: |
+        Represents the current balance of your Omise account.
+        This is a READ-ONLY API - all fields are output only.
+
+        VERSION DIFFERENCES:
+        - Deimos (2019-05-29): transferable, reserve, created_at
+        - Older versions: available (not transferable), reserve_amount (not reserve), no created_at
       properties:
         object:
           type: string
           enum: [balance]
           description: Object type, always "balance"
+          readOnly: true
         livemode:
           type: boolean
           description: Whether this is live mode balance (true) or test mode (false)
+          readOnly: true
         location:
           type: string
           description: API path to retrieve the balance
           example: /balance
+          readOnly: true
         currency:
           type: string
           description: Three-letter ISO 4217 currency code
           example: THB
+          readOnly: true
         total:
           type: integer
           description: Total balance in smallest currency unit (after fees deducted)
           example: 1656795
+          readOnly: true
         transferable:
           type: integer
-          description: Amount available for immediate transfer to your bank account
+          description: Amount available for immediate transfer (Deimos). Called "available" in older versions.
           example: 1656795
+          readOnly: true
         reserve:
           type: integer
-          description: Funds held in reserve as a security buffer
+          description: Funds held in reserve (Deimos). Called "reserve_amount" in older versions.
           example: 0
+          readOnly: true
         on_hold:
           type: integer
           description: Funds temporarily held due to pending disputes or reviews
           example: 0
+          readOnly: true
         created_at:
           type: string
           format: date-time
-          description: Balance record creation timestamp (ISO 8601)
+          description: Balance record creation timestamp (Deimos only, ISO 8601)
+          readOnly: true
 
     Account:
       type: object

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SidebarNew from './SidebarNew';
 import Notice from './Notice';
@@ -9,12 +9,125 @@ import { capabilityEndpoints, capabilityCodeExamples, capabilityResponseExample,
 import { API_VERSIONS } from '../lib/apiVersions';
 import { useVersion } from '../context/VersionContext';
 
+// Try It Out form for Capability API (uses PUBLIC key)
+function TryItForm() {
+  const [publicKey, setPublicKey] = useState('pkey_test_');
+  const [isLoading, setIsLoading] = useState(false);
+  const [response, setResponse] = useState<string | null>(null);
+  const [rateLimit, setRateLimit] = useState<{ ip: string; used: number; remaining: number } | null>(null);
+
+  useEffect(() => {
+    fetch('/api/rate-limit')
+      .then(res => res.json())
+      .then(data => setRateLimit(data))
+      .catch(() => {});
+  }, []);
+
+  const handleSubmit = async () => {
+    if (!publicKey.startsWith('pkey_test_')) {
+      setResponse(JSON.stringify({
+        error: 'Invalid key type',
+        message: 'The Capability API requires a public key (pkey_test_...). For security, only test public keys are allowed on this documentation site.'
+      }, null, 2));
+      return;
+    }
+
+    setIsLoading(true);
+    setResponse(null);
+
+    try {
+      const res = await fetch('/api/proxy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          url: 'https://api.omise.co/capability',
+          method: 'GET',
+          secretKey: publicKey, // The proxy will handle this as auth
+          params: {},
+        }),
+      });
+
+      const data = await res.json();
+      setResponse(JSON.stringify(data, null, 2));
+
+      const remaining = res.headers.get('X-RateLimit-Remaining');
+      if (remaining && rateLimit) {
+        setRateLimit({ ...rateLimit, used: 200 - parseInt(remaining), remaining: parseInt(remaining) });
+      }
+    } catch (error) {
+      setResponse(JSON.stringify({ error: 'Request failed. Check your public key.' }, null, 2));
+    }
+    setIsLoading(false);
+  };
+
+  return (
+    <div style={{ background: '#f6f9fc', borderRadius: '8px', padding: '24px', marginTop: '24px', border: '1px solid #e3e8ee' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <div style={{ fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#1A1F71' }}>
+          Try It Out
+        </div>
+        {rateLimit && (
+          <div style={{ fontSize: '12px', color: '#697386', fontFamily: "'SF Mono', Monaco, monospace" }}>
+            <span style={{ color: '#8792a2' }}>IP:</span> {rateLimit.ip}
+            <span style={{ margin: '0 12px', color: '#e3e8ee' }}>|</span>
+            <span style={{ color: '#8792a2' }}>Used:</span> <span style={{ color: '#1a1a1a', fontWeight: 600 }}>{rateLimit.used}</span>
+            <span style={{ margin: '0 12px', color: '#e3e8ee' }}>|</span>
+            <span style={{ color: '#8792a2' }}>Remaining:</span> <span style={{ color: rateLimit.remaining < 20 ? '#cd3d64' : '#0e6245', fontWeight: 600 }}>{rateLimit.remaining}</span>
+          </div>
+        )}
+      </div>
+
+      <div style={{ background: '#cbf4c9', border: '1px solid #0e6245', borderRadius: '6px', padding: '12px 16px', marginBottom: '20px', fontSize: '13px', color: '#0e6245' }}>
+        <strong>Public key required.</strong> This endpoint uses your public key (pkey_test_...), not your secret key.
+      </div>
+
+      <div style={{ marginBottom: '20px' }}>
+        <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#1a1a1a', marginBottom: '8px' }}>
+          Public Key
+          <span style={{ fontWeight: 400, color: '#697386', marginLeft: '8px', fontSize: '13px' }}>required</span>
+        </label>
+        <input
+          type="text"
+          value={publicKey}
+          onChange={(e) => setPublicKey(e.target.value)}
+          placeholder="pkey_test_..."
+          style={{ width: '100%', padding: '12px 14px', background: '#fff', border: '2px solid #e3e8ee', borderRadius: '6px', fontSize: '14px', fontFamily: "'SF Mono', Monaco, monospace" }}
+        />
+      </div>
+
+      <button
+        onClick={handleSubmit}
+        disabled={isLoading}
+        style={{ width: '100%', padding: '14px', background: '#1A1F71', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '15px', fontWeight: 600, opacity: isLoading ? 0.7 : 1 }}
+      >
+        {isLoading ? 'Sending...' : 'Send GET Request'}
+      </button>
+
+      {response && (
+        <div style={{ marginTop: '20px', background: '#1a2332', borderRadius: '8px', overflow: 'hidden' }}>
+          <div style={{ padding: '12px 16px', background: 'rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: response.includes('"error"') ? '#ff6b6b' : '#3ecf8e' }}>
+              {response.includes('"error"') ? 'Error' : '200 OK'}
+            </span>
+          </div>
+          <pre className="scrollbar-visible" style={{ padding: '16px', margin: 0, fontSize: '13px', color: '#67e8f9', overflow: 'auto', maxHeight: '350px', fontFamily: "'SF Mono', Monaco, monospace" }}>
+            {response}
+          </pre>
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface CapabilityEndpointPageProps {
   endpointKey: string;
 }
 
 export default function CapabilityEndpointPage({ endpointKey }: CapabilityEndpointPageProps) {
   const [activeLang, setActiveLang] = useState('curl');
+  const [showTryIt, setShowTryIt] = useState(false);
   const { currentVersion } = useVersion();
 
   const config = capabilityEndpoints[endpointKey];
@@ -98,6 +211,16 @@ export default function CapabilityEndpointPage({ endpointKey }: CapabilityEndpoi
             This endpoint has no parameters.
           </div>
         )}
+
+        {/* Try It Button */}
+        <button
+          onClick={() => setShowTryIt(!showTryIt)}
+          style={{ padding: '14px 28px', background: showTryIt ? '#1A1F71' : '#fff', color: showTryIt ? '#fff' : '#1A1F71', border: '2px solid #1A1F71', borderRadius: '6px', cursor: 'pointer', fontSize: '15px', fontWeight: 600, marginTop: '24px' }}
+        >
+          {showTryIt ? 'Hide API Tester' : 'Try it out'}
+        </button>
+
+        {showTryIt && <TryItForm />}
 
         {/* Error Handling Notice */}
         <div style={{ marginTop: '24px' }}>

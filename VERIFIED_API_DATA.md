@@ -93,8 +93,15 @@ source_of_fund, status, terminal, transaction, transaction_fees, voided
 - `offsite`
 - `source_of_fund`
 - `reference`
-- `captured` (boolean, in Aegaeon only)
-- `captured_at` (in Aegaeon only)
+- `captured` (boolean, in Aegaeon only - use `captured_amount > 0` in Cordelia/Deimos)
+- `captured_at` (in Aegaeon only - no replacement in newer versions)
+
+### How to determine capture status by version
+| Version | Method |
+|---------|--------|
+| Aegaeon | Check `captured` boolean |
+| Cordelia/Deimos | Check `captured_amount > 0` |
+| Bestla | Check `status === 'successful'` and `capturable === false` (no `captured_amount` field) |
 
 ---
 
@@ -152,6 +159,56 @@ source_of_fund, status, terminal, transaction, transaction_fees, voided
 - ❌ `invalid_card_token` - Does NOT exist for invalid token. Returns `not_found` instead.
 - ❌ `expired_card` - Test card 4111111111170018 returns `payment_rejected`, NOT `expired_card`
 - ❌ `invalid_security_code` - Test card 4111111111160019 returns SUCCESSFUL charge, no error
+
+---
+
+## Input vs Output Fields (from official docs)
+
+### Create Charge - Input Fields (POST /charges)
+| Field | Required | Notes |
+|-------|----------|-------|
+| `amount` | **Yes** | Amount in smallest currency unit |
+| `currency` | **Yes** | Currency code (thb, jpy, usd, etc.) |
+| `card` | Conditional | Card token (one of card/customer/source required) |
+| `customer` | Conditional | Customer ID with saved card |
+| `source` | Conditional | Source ID or inline source object |
+| `capture` | Optional | Auto-capture (default: true) |
+| `authorization_type` | Optional | `pre_auth` or `final_auth` |
+| `description` | Optional | Charge description |
+| `metadata` | Optional | Custom key-value pairs |
+| `return_uri` | Conditional | Required for redirect-based payments |
+| `ip` | Optional | Customer IP for fraud analysis |
+| `expires_at` | Optional | Custom expiration (ISO 8601) |
+| `platform_fee` | Optional | Marketplace fee config |
+| `zero_interest_installments` | Optional | Merchant absorbs interest |
+| `webhook_endpoints` | Optional | Additional webhook URLs |
+| `first_charge` | Optional | First charge ID for recurring |
+| `transaction_indicator` | Optional | `MIT` or `CIT` |
+| `recurring_reason` | Optional | Reason for credential storage |
+| `ref_id` | Optional | Idempotency reference |
+
+### Update Charge - Input Fields (PATCH /charges/:id)
+| Field | Notes |
+|-------|-------|
+| `description` | Only modifiable after creation |
+| `metadata` | Only modifiable after creation |
+
+### Capture Charge - Input Fields (POST /charges/:id/capture)
+| Field | Notes |
+|-------|-------|
+| `capture_amount` | For partial capture (pre_auth only) |
+
+### Output-Only Fields (NOT accepted as input)
+All other fields in the charge response are output-only:
+`id`, `object`, `location`, `livemode`, `status`, `authorized`, `authorized_amount`,
+`authorized_at`, `capturable`, `capture`, `captured_amount`, `reversible`, `reversed`,
+`reversed_at`, `refundable`, `refunded_amount`, `card` (object), `failure_code`,
+`failure_message`, `created_at`, `paid_at`, `paid`, `authorize_uri`, `dispute`,
+`transaction`, `refunds`, `disputable`, `voided`, `expired`, `expired_at`, `expires_at`,
+`fee`, `fee_vat`, `net`, `interest`, `interest_vat`, `funding_amount`, `funding_currency`,
+`partially_refundable`, `can_perform_void`, `approval_code`, `acquirer_reference_number`,
+`merchant_advice`, `multi_capture`, `three_ds_info`, `branch`, `terminal`, `device`,
+`linked_account` (response), `schedule`, `link`, `transaction_fees`, etc.
 
 ---
 

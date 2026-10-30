@@ -4,32 +4,36 @@ import Link from 'next/link';
 import Sidebar from '../components/Sidebar';
 import { endpoints, methodColors } from '../lib/chargeData';
 
+// Fields marked as 'input' can be set when creating a charge
+// Fields marked as 'editable' can be updated after creation
+// Fields marked as 'output' are read-only (set by API)
 const chargeAttributes = [
-  { name: 'id', type: 'string', desc: 'Charge identifier matching /chrg(_test)?_[0-9a-z]+/' },
-  { name: 'object', type: 'string', desc: 'Object type, always "charge"' },
-  { name: 'amount', type: 'integer', desc: 'Charge amount in smallest unit of currency' },
-  { name: 'net', type: 'integer', desc: 'Funding amount after fees, interest, and VAT deducted' },
-  { name: 'fee', type: 'integer', desc: 'Omise processing fee amount' },
-  { name: 'fee_vat', type: 'integer', desc: 'VAT applied to fee' },
-  { name: 'currency', type: 'string', desc: 'Three-letter ISO 4217 currency code' },
-  { name: 'status', type: 'string', desc: 'Charge status: pending, successful, failed, expired, reversed' },
-  { name: 'authorized', type: 'boolean', desc: 'Whether charge has been authorized' },
-  { name: 'paid', type: 'boolean', desc: 'Whether charge has been captured (paid)' },
-  { name: 'reversed', type: 'boolean', desc: 'Whether authorization has been reversed' },
-  { name: 'capturable', type: 'boolean', desc: 'Whether charge can be captured (paid)' },
-  { name: 'reversible', type: 'boolean', desc: 'Whether authorization can be reversed' },
-  { name: 'refundable', type: 'boolean', desc: 'Whether charge can be refunded' },
-  { name: 'expired', type: 'boolean', desc: 'Whether charge has expired' },
-  { name: 'card', type: 'object', desc: 'Card that was charged (if card payment)' },
-  { name: 'source', type: 'object', desc: 'Source that was charged (if source payment)' },
-  { name: 'customer', type: 'string', desc: 'Customer associated with charge' },
-  { name: 'description', type: 'string', desc: 'Charge description provided by merchant' },
-  { name: 'metadata', type: 'object', desc: 'Custom metadata key-value pairs' },
-  { name: 'return_uri', type: 'string', desc: 'URI customer is redirected to after authorization' },
-  { name: 'authorize_uri', type: 'string', desc: 'URI for payment authorization (3DS, redirects)' },
-  { name: 'created_at', type: 'datetime', desc: 'UTC datetime of charge creation (ISO 8601)' },
-  { name: 'paid_at', type: 'datetime', desc: 'UTC datetime of payment (ISO 8601)' },
-  { name: 'expires_at', type: 'datetime', desc: 'UTC datetime of expected expiration (ISO 8601)' },
+  { name: 'id', type: 'string', desc: 'Charge identifier matching /chrg(_test)?_[0-9a-z]+/', io: 'output' },
+  { name: 'object', type: 'string', desc: 'Object type, always "charge"', io: 'output' },
+  { name: 'amount', type: 'integer', desc: 'Charge amount in smallest unit of currency', io: 'input' },
+  { name: 'currency', type: 'string', desc: 'Three-letter ISO 4217 currency code', io: 'input' },
+  { name: 'status', type: 'string', desc: 'Charge status: pending, successful, failed, expired, reversed', io: 'output' },
+  { name: 'authorized', type: 'boolean', desc: 'Whether charge has been authorized', io: 'output' },
+  { name: 'captured_amount', type: 'integer', desc: 'Amount captured (use this to check if captured: captured_amount > 0)', io: 'output' },
+  { name: 'capturable', type: 'boolean', desc: 'Whether charge can still be captured', io: 'output' },
+  { name: 'reversed', type: 'boolean', desc: 'Whether authorization has been reversed', io: 'output' },
+  { name: 'reversible', type: 'boolean', desc: 'Whether authorization can be reversed', io: 'output' },
+  { name: 'refundable', type: 'boolean', desc: 'Whether charge can be refunded', io: 'output' },
+  { name: 'refunded_amount', type: 'integer', desc: 'Total amount refunded', io: 'output' },
+  { name: 'expired', type: 'boolean', desc: 'Whether charge has expired', io: 'output' },
+  { name: 'net', type: 'integer', desc: 'Funding amount after fees, interest, and VAT deducted', io: 'output' },
+  { name: 'fee', type: 'integer', desc: 'Omise processing fee amount', io: 'output' },
+  { name: 'fee_vat', type: 'integer', desc: 'VAT applied to fee', io: 'output' },
+  { name: 'card', type: 'object', desc: 'Card that was charged (set via card token at creation)', io: 'output' },
+  { name: 'source', type: 'object', desc: 'Source that was charged (set via source at creation)', io: 'output' },
+  { name: 'customer', type: 'string', desc: 'Customer associated with charge', io: 'input' },
+  { name: 'description', type: 'string', desc: 'Charge description (can be updated after creation)', io: 'editable' },
+  { name: 'metadata', type: 'object', desc: 'Custom metadata key-value pairs (can be updated after creation)', io: 'editable' },
+  { name: 'return_uri', type: 'string', desc: 'URI customer is redirected to after authorization', io: 'input' },
+  { name: 'authorize_uri', type: 'string', desc: 'URI for payment authorization (3DS, redirects)', io: 'output' },
+  { name: 'created_at', type: 'datetime', desc: 'UTC datetime of charge creation (ISO 8601)', io: 'output' },
+  { name: 'paid_at', type: 'datetime', desc: 'UTC datetime of payment (ISO 8601)', io: 'output' },
+  { name: 'expires_at', type: 'datetime', desc: 'UTC datetime of expected expiration (ISO 8601)', io: 'input' },
 ];
 
 const endpointOrder = ['create', 'retrieve', 'list', 'update', 'capture', 'reverse', 'expire', 'mark-as-paid', 'mark-as-failed'];
@@ -132,13 +136,32 @@ export default function ChargesOverviewPage() {
           })}
         </div>
 
+        {/* Input vs Output Info */}
+        <div style={{ background: '#eff6ff', border: '1px solid #3b82f6', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
+          <div style={{ fontSize: '14px', color: '#1e40af', lineHeight: 1.6 }}>
+            <strong>Input vs Output Fields:</strong><br/>
+            <span style={{ display: 'inline-block', padding: '2px 6px', background: '#dcfce7', color: '#166534', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>INPUT</span> Can be set when creating a charge<br/>
+            <span style={{ display: 'inline-block', padding: '2px 6px', background: '#fef3c7', color: '#92400e', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>EDITABLE</span> Can be updated after creation (via PATCH)<br/>
+            <span style={{ display: 'inline-block', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>OUTPUT</span> Read-only, set by API<br/><br/>
+            <strong>Checking capture status:</strong> Use <code style={{ background: '#e5e7eb', padding: '2px 6px', borderRadius: '4px' }}>captured_amount &gt; 0</code> (the <code>captured</code> boolean only exists in API version Aegaeon)
+          </div>
+        </div>
+
         {/* The Charge Object */}
         <h2>The Charge Object</h2>
         <div className="attributes-section">
           {chargeAttributes.map(attr => (
             <div key={attr.name} className="attribute-row">
               <div>
-                <div className="attribute-name">{attr.name}</div>
+                <div className="attribute-name">
+                  {attr.name}
+                  {attr.io === 'input' && (
+                    <span style={{ marginLeft: '8px', padding: '2px 6px', background: '#dcfce7', color: '#166534', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>INPUT</span>
+                  )}
+                  {attr.io === 'editable' && (
+                    <span style={{ marginLeft: '8px', padding: '2px 6px', background: '#fef3c7', color: '#92400e', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>EDITABLE</span>
+                  )}
+                </div>
                 <div className="attribute-meta">{attr.type}</div>
               </div>
               <div className="attribute-desc">{attr.desc}</div>
@@ -166,30 +189,36 @@ export default function ChargesOverviewPage() {
   "object": "charge",
   "id": "chrg_test_no1t4tnemucod0e51mo",
   "location": "/charges/chrg_test_no1t4tnemucod0e51mo",
+  "livemode": false,
   "amount": 100000,
+  "captured_amount": 100000,
+  "authorized_amount": 100000,
   "net": 96350,
   "fee": 3650,
   "fee_vat": 256,
   "interest": 0,
   "interest_vat": 0,
   "funding_amount": 100000,
+  "funding_currency": "thb",
   "refunded_amount": 0,
   "currency": "thb",
-  "funding_currency": "thb",
   "description": "Order #12345",
   "metadata": {
     "order_id": "12345"
   },
   "status": "successful",
   "authorized": true,
-  "reversed": false,
-  "captured": true,
-  "paid": true,
   "capturable": false,
+  "reversed": false,
   "reversible": false,
   "refundable": true,
   "expired": false,
-  "expires_at": "2024-01-22T10:30:00Z",
+  "voided": false,
+  "paid": true,
+  "disputable": true,
+  "created_at": "2024-01-22T10:00:00Z",
+  "paid_at": "2024-01-22T10:00:05Z",
+  "expires_at": "2024-01-29T10:00:00Z",
   "transaction": "trxn_test_no1t4tnemucod0e51mo",
   "card": {
     "object": "card",

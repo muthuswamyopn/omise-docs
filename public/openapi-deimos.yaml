@@ -280,21 +280,34 @@ components:
         pattern: ^chrg_(test_)?[a-z0-9]+$
 
   schemas:
+    # =============================================================
+    # INPUT SCHEMAS (Request Body)
+    # =============================================================
     CreateChargeRequest:
       type: object
+      description: |
+        Request body for creating a charge.
+        One of card, customer, or source is required.
       required: [amount, currency]
       properties:
+        # Required fields
         amount:
           type: integer
-          minimum: 1
+          minimum: 100
+          description: Amount in smallest currency unit (e.g., satangs for THB)
         currency:
           type: string
           enum: [thb, jpy, usd, eur, gbp, sgd, myr, idr, php]
+          description: ISO 4217 currency code
+        # Payment method (one required)
         card:
           type: string
+          description: Card token from Omise.js (one-time use)
         customer:
           type: string
+          description: Customer ID to charge their default card
         source:
+          description: Source ID or inline source object for alternative payments
           oneOf:
             - type: string
             - type: object
@@ -302,23 +315,31 @@ components:
                 type:
                   type: string
                   enum: [promptpay, truemoney, rabbit_linepay, shopeepay, grabpay, boost, touch_n_go, duitnow_qr, fpx, paynow, mobile_banking_bay, mobile_banking_bbl, mobile_banking_kbank, mobile_banking_ktb, mobile_banking_scb, alipay_cn, alipay_hk, dana, gcash, kakaopay, wechat_pay, paypay, atome, installment_bay, installment_bbl, installment_kbank, installment_ktc, installment_scb, installment_first_choice]
+        # Optional fields
         capture:
           type: boolean
           default: true
+          description: Auto-capture after authorization (default true)
         authorization_type:
           type: string
           enum: [pre_auth, final_auth]
+          description: pre_auth allows partial capture, final_auth captures full amount
         return_uri:
           type: string
           format: uri
+          description: URL to redirect after authorization (required for redirect-based payments)
         description:
           type: string
+          description: Charge description (helps with fraud analysis)
         metadata:
           type: object
+          description: Custom key-value pairs (max 15,000 chars)
         ip:
           type: string
+          description: Customer IP address (helps with fraud analysis)
         platform_fee:
           type: object
+          description: Marketplace platform fee configuration
           properties:
             fixed:
               type: integer
@@ -326,72 +347,118 @@ components:
               type: number
         zero_interest_installments:
           type: boolean
+          description: Merchant absorbs installment interest
         expires_at:
           type: string
           format: date-time
+          description: Custom expiration time (ISO 8601 UTC)
         webhook_endpoints:
           type: array
           items:
             type: string
-        # New in Deimos
-        idempotency_key:
-          type: string
-          description: "New in Deimos: Prevent duplicate charges"
+          description: Additional webhook URLs (max 2)
         first_charge:
-          type: boolean
-          description: "New in Deimos: First in recurring series"
+          type: string
+          description: First charge ID for recurring payment series
         transaction_indicator:
           type: string
-          description: "New in Deimos: MIT/CIT indicator"
+          enum: [MIT, CIT]
+          description: Merchant-Initiated or Customer-Initiated Transaction
         recurring_reason:
           type: string
-          description: "New in Deimos: Reason for recurring"
+          description: Reason for credential storage (subscription, installment, etc.)
         ref_id:
           type: string
-          description: "New in Deimos: Merchant reference ID"
-        statement_descriptor:
+          description: Idempotency reference ID
+
+    UpdateChargeRequest:
+      type: object
+      description: Only description and metadata can be updated after creation
+      properties:
+        description:
           type: string
-          description: "New in Deimos: Custom statement descriptor"
+        metadata:
+          type: object
+
+    CaptureChargeRequest:
+      type: object
+      description: Request body for capturing an authorized charge
+      properties:
+        capture_amount:
+          type: integer
+          description: Amount to capture (for partial capture with pre_auth)
+
+    # =============================================================
+    # OUTPUT SCHEMAS (Response Body)
+    # To check if captured: use captured_amount > 0
+    # =============================================================
 
     Charge:
       type: object
+      description: |
+        Charge object returned in API responses.
+        All fields are OUTPUT-ONLY (read-only) except description and metadata which can be updated.
+
+        HOW TO CHECK CAPTURE STATUS (Deimos):
+        - Use `captured_amount > 0` to check if captured
+        - The `captured` boolean field does NOT exist in Deimos (only in Aegaeon)
       properties:
+        # Identifiers (output-only)
         object:
           type: string
           enum: [charge]
+          readOnly: true
         id:
           type: string
+          readOnly: true
         location:
           type: string
+          readOnly: true
         livemode:
           type: boolean
+          readOnly: true
+        # Amount fields (output-only, amount/currency set at creation)
         amount:
           type: integer
+          readOnly: true
         currency:
           type: string
+          readOnly: true
+        # Editable fields (can be updated via PATCH)
         description:
           type: string
           nullable: true
         metadata:
           type: object
+        # Status fields (all output-only)
         status:
           type: string
           enum: [pending, successful, failed, expired, reversed]
+          readOnly: true
         authorized:
           type: boolean
+          readOnly: true
         capture:
           type: boolean
+          readOnly: true
+          description: Whether auto-capture was requested
         capturable:
           type: boolean
+          readOnly: true
+          description: Whether charge can still be captured
         reversible:
           type: boolean
+          readOnly: true
         reversed:
           type: boolean
+          readOnly: true
         refundable:
           type: boolean
+          readOnly: true
         refunded_amount:
           type: integer
-          description: "Deimos uses refunded_amount (not refunded)"
+          readOnly: true
+          description: "Total refunded amount (Deimos uses refunded_amount, not refunded)"
         card:
           $ref: '#/components/schemas/Card'
         customer:
@@ -759,13 +826,6 @@ components:
 
     PaymentRejected:
       description: Payment rejected
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-
-    Timeout:
-      description: Request timeout
       content:
         application/json:
           schema:

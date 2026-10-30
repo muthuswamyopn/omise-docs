@@ -213,6 +213,13 @@ components:
 
     Charge:
       type: object
+      description: |
+        Charge object returned in API responses.
+
+        HOW TO CHECK CAPTURE STATUS (Aegaeon):
+        - Use `captured` boolean field (true/false)
+        - Also has `captured_at` timestamp when captured
+        - Note: `captured` and `captured_at` were removed in newer API versions
       properties:
         object:
           type: string

@@ -216,6 +216,12 @@ components:
 
     Charge:
       type: object
+      description: |
+        Charge object returned in API responses.
+
+        HOW TO CHECK CAPTURE STATUS (Bestla):
+        - Bestla does NOT have `captured` boolean OR `captured_amount` field
+        - Check `status === 'successful'` AND `capturable === false` to determine if captured
       properties:
         object:
           type: string
@@ -239,8 +245,6 @@ components:
           type: string
           enum: [pending, successful, failed, expired, reversed]
         authorized:
-          type: boolean
-        captured:
           type: boolean
         capture:
           type: boolean

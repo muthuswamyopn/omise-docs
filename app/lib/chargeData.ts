@@ -38,7 +38,7 @@ When \`capture\` is set to \`false\`, the charge is only authorized and must be 
       { name: 'source', type: 'string', required: 'conditional', desc: 'Payment source token for alternative payment methods (PromptPay, TrueMoney, etc.).', default: '' },
       { name: 'customer', type: 'string', required: 'conditional', desc: 'Customer ID (cust_test_...) with a saved default card.', default: '' },
       { name: 'return_uri', type: 'uri', required: 'conditional', desc: 'URL to redirect customer after 3-D Secure authentication or redirect-based payment completion. Required for 3DS and redirect flows.', default: '' },
-      { name: 'capture', type: 'boolean', required: false, desc: 'Whether to immediately capture the charge. Set to false for pre-authorization.', default: 'true', options: ['true', 'false'] },
+      { name: 'capture', type: 'boolean', required: false, desc: 'Whether to automatically capture the charge (default: true). Set to false for pre-authorization.', default: 'true', options: ['true', 'false'] },
       { name: 'description', type: 'string', required: false, desc: 'Merchant-facing transaction description for your records.', default: '' },
       { name: 'metadata', type: 'object', required: false, desc: 'Custom key-value pairs to store additional information about the charge.', default: '' },
       { name: 'expires_at', type: 'date-time', required: false, desc: 'ISO 8601 timestamp when the charge should expire if not completed.', default: '' },
@@ -79,11 +79,11 @@ Note: You cannot modify the amount, currency, or payment method of an existing c
 
 Use pagination parameters to navigate through large result sets. The response includes the total count and links for navigation.`,
     params: [
-      { name: 'limit', type: 'integer', required: false, desc: 'Number of records per page (1-100)', default: '20' },
-      { name: 'offset', type: 'integer', required: false, desc: 'Number of records to skip for pagination', default: '0' },
+      { name: 'limit', type: 'integer', required: false, desc: 'Number of records per page, 1-100 (default: 20)', default: '20' },
+      { name: 'offset', type: 'integer', required: false, desc: 'Number of records to skip for pagination (default: 0)', default: '0' },
       { name: 'from', type: 'date-time', required: false, desc: 'Filter charges created on or after this ISO 8601 timestamp', default: '' },
       { name: 'to', type: 'date-time', required: false, desc: 'Filter charges created before this ISO 8601 timestamp', default: '' },
-      { name: 'order', type: 'string', required: false, desc: 'Sort order by creation date', default: 'chronological', options: ['chronological', 'reverse_chronological'] },
+      { name: 'order', type: 'string', required: false, desc: 'Sort order by creation date (default: chronological)', default: 'chronological', options: ['chronological', 'reverse_chronological'] },
     ]
   },
   capture: {

@@ -281,6 +281,12 @@ components:
 
     Charge:
       type: object
+      description: |
+        Charge object returned in API responses.
+
+        HOW TO CHECK CAPTURE STATUS (Cordelia):
+        - Use `captured_amount > 0` to check if captured
+        - The `captured` boolean field does NOT exist in Cordelia (only in Aegaeon)
       properties:
         object:
           type: string
@@ -304,8 +310,6 @@ components:
           type: string
           enum: [pending, successful, failed, expired, reversed]
         authorized:
-          type: boolean
-        captured:
           type: boolean
         capture:
           type: boolean
@@ -404,21 +408,6 @@ components:
         funding_currency:
           type: string
           description: "New in Cordelia: Settlement currency"
-        net:
-          type: integer
-          description: "New in Cordelia: Net amount after fees"
-        fee:
-          type: integer
-          description: "New in Cordelia: Processing fee"
-        fee_vat:
-          type: integer
-          description: "New in Cordelia: VAT on fee"
-        interest:
-          type: integer
-          description: "New in Cordelia: Installment interest"
-        interest_vat:
-          type: integer
-          description: "New in Cordelia: VAT on interest"
         partially_refundable:
           type: boolean
           description: "New in Cordelia: Partial refund allowed"

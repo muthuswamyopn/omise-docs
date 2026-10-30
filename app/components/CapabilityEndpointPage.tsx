@@ -172,8 +172,8 @@ export default function CapabilityEndpointPage({ endpointKey }: CapabilityEndpoi
         {/* Authentication Notice */}
         <div style={{ marginBottom: '24px' }}>
           <Notice type="note" title="Authentication">
-            This endpoint requires your <strong>public key</strong> (pkey_...) for authentication.
-            Secret keys are not accepted. This allows safe client-side usage.
+            This endpoint accepts both <strong>public keys</strong> (pkey_...) and <strong>secret keys</strong> (skey_...).
+            Public key is recommended for client-side code since it can be safely exposed.
           </Notice>
         </div>
 
@@ -265,7 +265,7 @@ export default function CapabilityEndpointPage({ endpointKey }: CapabilityEndpoi
             fontSize: '12px',
             color: '#3ecf8e',
           }}>
-            Requires <strong>public key</strong> authentication
+            Accepts <strong>public</strong> or <strong>secret</strong> key
           </div>
         </div>
 

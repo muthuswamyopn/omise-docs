@@ -15,9 +15,9 @@ const apiErrors: ErrorCode[] = [
   {
     code: 'authentication_failure',
     httpStatus: 401,
-    description: 'The public key is invalid or missing.',
-    whenOccurs: 'The Authorization header is missing, malformed, or contains an invalid key. The Capability API requires a public key (pkey_...). Secret keys are not accepted.',
-    resolution: 'Verify your public key is correct and properly formatted. Use HTTP Basic Auth with your public key as the username and an empty password.',
+    description: 'The API key is invalid or missing.',
+    whenOccurs: 'The Authorization header is missing, malformed, or contains an invalid key.',
+    resolution: 'Verify your API key is correct and properly formatted. Use HTTP Basic Auth with your public or secret key as the username and an empty password.',
   },
   {
     code: 'not_found',
@@ -128,8 +128,8 @@ export default function CapabilityErrorsPage() {
         {/* Authentication Notice */}
         <div style={{ background: '#cbf4c9', border: '1px solid #0e6245', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
           <div style={{ fontSize: '14px', color: '#0e6245', lineHeight: 1.6 }}>
-            <strong>Note:</strong> The Capability API requires <strong>public key</strong> authentication.
-            Secret keys are not accepted. This allows safe client-side usage.
+            <strong>Note:</strong> The Capability API accepts both <strong>public keys</strong> (pkey_...) and <strong>secret keys</strong> (skey_...).
+            Public key is recommended for client-side code since it can be safely exposed.
           </div>
         </div>
 
@@ -228,7 +228,7 @@ export default function CapabilityErrorsPage() {
             fontSize: '12px',
             color: '#3ecf8e',
           }}>
-            Requires <strong>public key</strong> authentication
+            Accepts <strong>public</strong> or <strong>secret</strong> key
           </div>
         </div>
 

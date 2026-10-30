@@ -116,8 +116,8 @@ paths:
       description: |
         Retrieve available payment methods, limits, and features for your account.
 
-        **Authentication:** This endpoint requires a public key. Secret keys are not accepted.
-        This allows safe client-side usage.
+        **Authentication:** Accepts both public keys (pkey_...) and secret keys (skey_...).
+        Public key is recommended for client-side usage.
 
         The response includes:
         - **payment_methods** - Available payment methods with currencies and terms
@@ -129,6 +129,7 @@ paths:
       tags: [Capability]
       security:
         - publicKey: []
+        - secretKey: []
       responses:
         '200':
           description: Account capabilities

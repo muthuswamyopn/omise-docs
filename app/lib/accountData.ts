@@ -241,7 +241,8 @@ export function getParamsForVersion(params: EndpointParam[], codename: string): 
 
 // ============================================================================
 // CAPABILITY API
-// NOTE: Requires PUBLIC KEY authentication (secret keys not accepted)
+// NOTE: Accepts both public keys (pkey_...) and secret keys (skey_...)
+// Public key recommended for client-side usage
 // ============================================================================
 
 // Capability API endpoints
@@ -253,8 +254,8 @@ export const capabilityEndpoints: Record<string, EndpointConfig> = {
     description: 'Retrieves your account capabilities including payment methods and limits.',
     longDescription: `Returns information about what payment methods and features are available for your account.
 
-This endpoint requires **public key** authentication. Secret keys are not accepted.
-This allows safe client-side usage.
+This endpoint accepts both **public keys** (pkey_...) and **secret keys** (skey_...).
+Public key is recommended for client-side usage since it can be safely exposed.
 
 The response includes:
 • Available payment methods with their supported currencies
@@ -439,7 +440,7 @@ Console.WriteLine(balance.Total);`,
   },
 };
 
-// NOTE: Capability API uses PUBLIC KEY (not secret key)
+// NOTE: Capability API accepts both public and secret keys (public recommended)
 export const capabilityCodeExamples: Record<string, Record<string, string>> = {
   retrieve: {
     curl: `curl https://api.omise.co/capability \\

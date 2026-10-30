@@ -239,17 +239,55 @@ export function getParamsForVersion(params: EndpointParam[], codename: string): 
   });
 }
 
-// Capability attributes
-export const capabilityAttributes = [
-  { name: 'object', type: 'string', desc: 'Object type, always "capability"' },
-  { name: 'location', type: 'string', desc: 'API path to retrieve capabilities' },
-  { name: 'country', type: 'string', desc: 'Two-letter ISO 3166 country code' },
-  { name: 'banks', type: 'array', desc: 'List of supported bank codes' },
-  { name: 'payment_methods', type: 'array', desc: 'Available payment methods with their configurations' },
-  { name: 'tokenization_methods', type: 'array', desc: 'Supported tokenization methods (e.g., googlepay, applepay)' },
-  { name: 'limits', type: 'object', desc: 'Transaction limits for charges, transfers, and installments' },
-  { name: 'zero_interest_installments', type: 'boolean', desc: 'Whether zero interest installments are available' },
+// ============================================================================
+// CAPABILITY API
+// Note: Uses PUBLIC KEY authentication (not secret key)
+// ============================================================================
+
+// Capability API endpoints
+export const capabilityEndpoints: Record<string, EndpointConfig> = {
+  retrieve: {
+    method: 'GET',
+    path: 'https://api.omise.co/capability',
+    title: 'Retrieve capability',
+    description: 'Retrieves your account capabilities including payment methods and limits.',
+    longDescription: `Returns information about what payment methods and features are available for your account.
+
+This endpoint uses your **public key** for authentication (not secret key).
+
+The response includes:
+• Available payment methods with their supported currencies
+• Transaction limits for charges, transfers, and installments
+• Supported banks for transfer recipients
+• Tokenization methods (Apple Pay, Google Pay)`,
+    params: []
+  },
+};
+
+// Capability attributes - 8 fields (verified from official schema)
+export interface CapabilityFieldInfo {
+  name: string;
+  type: string;
+  description: string;
+}
+
+export const CAPABILITY_FIELDS: CapabilityFieldInfo[] = [
+  { name: 'object', type: 'string', description: 'Object type, always "capability"' },
+  { name: 'location', type: 'string', description: 'API path "/capability"' },
+  { name: 'country', type: 'string', description: 'Two-letter ISO 3166 country code where account is registered' },
+  { name: 'banks', type: 'array', description: 'List of supported bank codes for transfer recipients' },
+  { name: 'payment_methods', type: 'array', description: 'Available payment methods with currencies, card brands, and terms' },
+  { name: 'tokenization_methods', type: 'array', description: 'Supported tokenization: "googlepay", "applepay", or null' },
+  { name: 'limits', type: 'object', description: 'Min/max for charge_amount, transfer_amount, installment_amount' },
+  { name: 'zero_interest_installments', type: 'boolean', description: 'Whether merchant absorbs installment interest costs' },
 ];
+
+// Legacy export for backward compatibility
+export const capabilityAttributes = CAPABILITY_FIELDS.map(f => ({
+  name: f.name,
+  type: f.type,
+  desc: f.description,
+}));
 
 // Code examples
 export const accountCodeExamples: Record<string, Record<string, string>> = {
@@ -374,23 +412,59 @@ Console.WriteLine(balance.Total);`,
   },
 };
 
+// NOTE: Capability API uses PUBLIC KEY (not secret key)
 export const capabilityCodeExamples: Record<string, Record<string, string>> = {
   retrieve: {
     curl: `curl https://api.omise.co/capability \\
-  -u $OMISE_SECRET_KEY:`,
-    ruby: `capability = Omise::Capability.retrieve
+  -u $OMISE_PUBLIC_KEY:`,
+    ruby: `# Note: Uses public key
+Omise.api_key = "pkey_test_..."
+
+capability = Omise::Capability.retrieve
 puts capability.payment_methods`,
-    python: `capability = omise.Capability.retrieve()
+    python: `import omise
+
+# Note: Uses public key
+omise.api_public_key = "pkey_test_..."
+
+capability = omise.Capability.retrieve()
 print(capability.payment_methods)`,
-    node: `const capability = await omise.capability.retrieve();
+    node: `const omise = require('omise')({
+  publicKey: 'pkey_test_...'  // Note: public key
+});
+
+const capability = await omise.capability.retrieve();
 console.log(capability.payment_methods);`,
-    php: `$capability = OmiseCapability::retrieve();
+    php: `<?php
+require_once 'vendor/autoload.php';
+
+// Note: Uses public key
+Omise::setPublicKey('pkey_test_...');
+
+$capability = OmiseCapability::retrieve();
 print_r($capability['payment_methods']);`,
-    go: `capability, _ := client.Capability.Retrieve()
+    go: `package main
+
+import "github.com/omise/omise-go"
+
+// Note: Uses public key
+client, _ := omise.NewClient("pkey_test_...", "")
+capability, _ := client.Capability.Retrieve()
 fmt.Println(capability.PaymentMethods)`,
-    java: `Capability capability = client.capability().retrieve();
+    java: `import co.omise.Client;
+import co.omise.models.Capability;
+
+// Note: Uses public key
+Client client = new Client.Builder()
+    .publicKey("pkey_test_...")
+    .build();
+Capability capability = client.capability().retrieve();
 System.out.println(capability.getPaymentMethods());`,
-    csharp: `var capability = await client.Capability.GetAsync();
+    csharp: `using Omise;
+
+// Note: Uses public key
+var client = new OmiseClient(publicKey: "pkey_test_...");
+var capability = await client.Capability.GetAsync();
 Console.WriteLine(capability.PaymentMethods);`,
   },
 };
@@ -481,20 +555,17 @@ export const capabilityResponseExample = `{
   "location": "/capability",
   "country": "TH",
   "banks": [
-    "bbl",
-    "kbank",
-    "ktb",
-    "scb",
-    "bay"
+    "bbl", "kbank", "ktb", "scb", "bay",
+    "gsb", "tmb", "cimb", "uob", "tisco"
   ],
   "limits": {
     "charge_amount": {
-      "max": 15000000,
-      "min": 100
+      "min": 2000,
+      "max": 15000000
     },
     "transfer_amount": {
-      "max": 200000000000,
-      "min": 2000
+      "min": 3000,
+      "max": 5000000000
     },
     "installment_amount": {
       "min": 200000
@@ -504,18 +575,38 @@ export const capabilityResponseExample = `{
     {
       "object": "payment_method",
       "name": "card",
-      "currencies": ["THB", "USD", "EUR"],
-      "card_brands": ["Visa", "MasterCard", "JCB"]
+      "currencies": ["THB", "JPY", "USD", "EUR", "GBP", "SGD"],
+      "card_brands": ["Visa", "MasterCard", "JCB", "AMEX"],
+      "installment_terms": null,
+      "banks": [],
+      "provider": null
     },
     {
       "object": "payment_method",
       "name": "promptpay",
-      "currencies": ["THB"]
+      "currencies": ["THB"],
+      "card_brands": null,
+      "installment_terms": null,
+      "banks": [],
+      "provider": null
     },
     {
       "object": "payment_method",
       "name": "truemoney",
-      "currencies": ["THB"]
+      "currencies": ["THB"],
+      "card_brands": null,
+      "installment_terms": null,
+      "banks": [],
+      "provider": null
+    },
+    {
+      "object": "payment_method",
+      "name": "installment_bay",
+      "currencies": ["THB"],
+      "card_brands": null,
+      "installment_terms": [3, 4, 6, 9, 10],
+      "banks": [],
+      "provider": null
     }
   ],
   "tokenization_methods": [

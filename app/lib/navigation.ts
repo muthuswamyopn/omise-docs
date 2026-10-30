@@ -291,9 +291,16 @@ export const navigation: NavigationSection[] = [
               { name: lc('Error Codes', 'รหัสข้อผิดพลาด', 'エラーコード'), href: '/api-reference/balance/errors' },
             ],
           },
+          {
+            name: lc('Capability', 'Capability', 'Capability'),
+            href: '/api-reference/capabilities',
+            items: [
+              { name: lc('Retrieve Capability', 'ดึงข้อมูล Capability', 'Capabilityを取得'), href: '/api-reference/capabilities/retrieve', method: 'GET' as const },
+              { name: lc('Error Codes', 'รหัสข้อผิดพลาด', 'エラーコード'), href: '/api-reference/capabilities/errors' },
+            ],
+          },
         ],
       },
-      { name: lc('Capabilities', 'Capabilities', 'Capability'), href: '/api-reference/capabilities' },
       {
         name: lc('Scheduling', 'การตั้งเวลา', 'スケジューリング'),
         href: '/api-reference/schedules',

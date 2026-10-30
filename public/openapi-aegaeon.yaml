@@ -265,9 +265,10 @@ components:
         failure_message:
           type: string
           nullable: true
-        created_at:
+        created:
           type: string
           format: date-time
+          description: "Aegaeon uses 'created' (Deimos changed to 'created_at')"
         paid_at:
           type: string
           format: date-time
@@ -387,7 +388,9 @@ components:
             code: failed_reverse
             message: charge cannot be reversed
 
-    # Failure codes available in Aegaeon
+    # Verified Payment Failure Codes (tested via 3DS flow on 2026-10-30)
+    # Error codes are NOT version-specific - same across all API versions
+
     FailedProcessing:
       description: General processing failure
       content:
@@ -397,7 +400,7 @@ components:
           example:
             object: error
             code: failed_processing
-            message: payment processing failed
+            message: failed processing
 
     InsufficientFund:
       description: Insufficient funds
@@ -408,7 +411,7 @@ components:
           example:
             object: error
             code: insufficient_fund
-            message: insufficient funds
+            message: insufficient funds in the account or the card has reached the credit limit
 
     InvalidAccountNumber:
       description: Invalid card number
@@ -419,7 +422,7 @@ components:
           example:
             object: error
             code: invalid_account_number
-            message: invalid card number
+            message: the account number is invalid
 
     PaymentRejected:
       description: Payment rejected by provider
@@ -430,15 +433,37 @@ components:
           example:
             object: error
             code: payment_rejected
-            message: payment was rejected
+            message: payment rejected
 
-    Timeout:
-      description: Request timeout
+    StolenOrLostCard:
+      description: Card reported stolen or lost
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
             object: error
-            code: timeout
-            message: request timed out
+            code: stolen_or_lost_card
+            message: card is stolen or lost
+
+    FailedFraudCheck:
+      description: Failed fraud check
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: failed_fraud_check
+            message: failed fraud check
+
+    BadRequest:
+      description: Bad request - missing required parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: bad_request
+            message: either source, card or customer parameter must be supplied

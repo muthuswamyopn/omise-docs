@@ -391,8 +391,9 @@ components:
           type: boolean
         refundable:
           type: boolean
-        refunded:
+        refunded_amount:
           type: integer
+          description: "Deimos uses refunded_amount (not refunded)"
         card:
           $ref: '#/components/schemas/Card'
         customer:
@@ -809,9 +810,9 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
 
-    # New in Deimos
+    # Verified Payment Failure Codes (tested via 3DS flow on 2026-10-30)
     StolenOrLostCard:
-      description: "New in Deimos: Card reported stolen or lost"
+      description: "Card reported stolen or lost"
       content:
         application/json:
           schema:
@@ -819,70 +820,65 @@ components:
           example:
             object: error
             code: stolen_or_lost_card
-            message: card has been reported stolen or lost
+            message: card is stolen or lost
 
-    BlockedCard:
-      description: "New in Deimos: Card is blocked"
+    FailedFraudCheckVerified:
+      description: "Failed fraud check"
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
             object: error
-            code: blocked_card
-            message: card is blocked
+            code: failed_fraud_check
+            message: failed fraud check
 
-    InvalidCard:
-      description: "New in Deimos: Invalid card"
+    InsufficientFundVerified:
+      description: "Insufficient funds"
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
             object: error
-            code: invalid_card
-            message: invalid card information
+            code: insufficient_fund
+            message: insufficient funds in the account or the card has reached the credit limit
 
-    InvalidCardToken:
-      description: "New in Deimos: Invalid or expired token"
+    FailedProcessingVerified:
+      description: "Failed processing"
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
             object: error
-            code: invalid_card_token
-            message: card token is invalid or expired
+            code: failed_processing
+            message: failed processing
 
-    UsedToken:
-      description: "New in Deimos: Token already used"
+    PaymentRejectedVerified:
+      description: "Payment rejected"
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
             object: error
-            code: used_token
-            message: token has already been used
+            code: payment_rejected
+            message: payment rejected
 
-    InvalidSource:
-      description: "New in Deimos: Invalid payment source"
+    InvalidAccountNumberVerified:
+      description: "Invalid account number"
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
             object: error
-            code: invalid_source
-            message: source is invalid or expired
+            code: invalid_account_number
+            message: the account number is invalid
 
-    MissingCard:
-      description: "New in Deimos: No payment method provided"
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            object: error
-            code: missing_card
-            message: no card or source provided
+    # NOTE: The following error codes do NOT exist as documented
+    # - invalid_card_token: Returns not_found (404) instead
+    # - missing_card: Returns bad_request (400) with message "either source, card or customer parameter must be supplied"
+    # - expired_card: Test card returns payment_rejected instead
+    # - invalid_security_code: Test card returns successful charge instead

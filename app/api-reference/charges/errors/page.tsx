@@ -5,7 +5,7 @@ import SidebarNew from '../../../components/SidebarNew';
 
 // ============================================================================
 // VERIFIED ERROR CODES
-// Source: Direct API testing on 2026-10-29
+// Source: Direct API testing on 2026-10-30 via 3DS flow completion
 // NOTE: Error codes are NOT version-specific - same across all versions
 // ============================================================================
 
@@ -91,38 +91,15 @@ const chargeErrors: ErrorCode[] = [
 ];
 
 // Payment Failure Codes - These appear in failure_code when status=failed
+// Verified via 3DS flow on 2026-10-30 using test cards
 const paymentFailures: ErrorCode[] = [
-  {
-    code: 'failed_processing',
-    httpStatus: 402,
-    description: 'The system encountered a general processing failure.',
-    whenOccurs: 'The system cannot process the payment for unspecified reasons.',
-    resolution: 'Retry the payment or ask the customer to use a different payment method.',
-    verified: false,
-  },
   {
     code: 'insufficient_fund',
     httpStatus: 402,
     description: 'The card has insufficient funds or reached its credit limit.',
     whenOccurs: 'The cardholder\'s account does not have enough available balance or credit.',
     resolution: 'Ask the customer to use a different payment method or contact their bank.',
-    verified: false,
-  },
-  {
-    code: 'invalid_account_number',
-    httpStatus: 402,
-    description: 'The card account number is invalid.',
-    whenOccurs: 'The card number does not correspond to a valid account.',
-    resolution: 'Verify the card number is correct or use a different card.',
-    verified: false,
-  },
-  {
-    code: 'payment_rejected',
-    httpStatus: 402,
-    description: 'The payment provider rejected the payment.',
-    whenOccurs: 'The bank or payment provider declines the transaction for various reasons.',
-    resolution: 'Ask the customer to contact their bank for details or try a different payment method.',
-    verified: false,
+    verified: true, // Test card: 4111111111140011
   },
   {
     code: 'stolen_or_lost_card',
@@ -130,7 +107,23 @@ const paymentFailures: ErrorCode[] = [
     description: 'The card issuer reported this card as stolen or lost.',
     whenOccurs: 'The card issuer flagged the card as compromised.',
     resolution: 'The customer must contact their bank and use a different payment method.',
-    verified: false,
+    verified: true, // Test card: 4111111111130012
+  },
+  {
+    code: 'failed_processing',
+    httpStatus: 402,
+    description: 'The system encountered a general processing failure.',
+    whenOccurs: 'The system cannot process the payment for unspecified reasons.',
+    resolution: 'Retry the payment or ask the customer to use a different payment method.',
+    verified: true, // Test card: 4111111111120013
+  },
+  {
+    code: 'payment_rejected',
+    httpStatus: 402,
+    description: 'The payment provider rejected the payment.',
+    whenOccurs: 'The bank or payment provider declines the transaction for various reasons.',
+    resolution: 'Ask the customer to contact their bank for details or try a different payment method.',
+    verified: true, // Test card: 4111111111110014
   },
   {
     code: 'failed_fraud_check',
@@ -138,7 +131,24 @@ const paymentFailures: ErrorCode[] = [
     description: 'The transaction failed fraud detection checks.',
     whenOccurs: 'The payment triggers fraud prevention rules at the bank or Omise.',
     resolution: 'Ask the customer to verify their identity with their bank or try a different payment method.',
-    verified: false,
+    verified: true, // Test card: 4111111111190016
+  },
+  {
+    code: 'invalid_account_number',
+    httpStatus: 402,
+    description: 'The card account number is invalid.',
+    whenOccurs: 'The card number does not correspond to a valid account.',
+    resolution: 'Verify the card number is correct or use a different card.',
+    verified: true, // Test card: 4111111111180017
+  },
+  // NOTE: The following codes are NOT verified - test cards did not return expected errors
+  {
+    code: 'expired_card',
+    httpStatus: 402,
+    description: 'The card has expired.',
+    whenOccurs: 'The card\'s expiration date has passed.',
+    resolution: 'Ask the customer to use a valid, non-expired card.',
+    verified: false, // Test card 4111111111170018 returns payment_rejected instead
   },
   {
     code: 'invalid_security_code',
@@ -146,15 +156,7 @@ const paymentFailures: ErrorCode[] = [
     description: 'The security code (CVV/CVC) is incorrect.',
     whenOccurs: 'The CVV/CVC does not match the card.',
     resolution: 'Ask the customer to verify and re-enter their security code.',
-    verified: false,
-  },
-  {
-    code: 'expired_card',
-    httpStatus: 402,
-    description: 'The card has expired.',
-    whenOccurs: 'The card\'s expiration date has passed.',
-    resolution: 'Ask the customer to use a valid, non-expired card.',
-    verified: false,
+    verified: false, // Test card 4111111111160019 returns successful charge
   },
   {
     code: 'insufficient_balance',
@@ -170,14 +172,6 @@ const paymentFailures: ErrorCode[] = [
     description: 'The customer cancelled the payment.',
     whenOccurs: 'The customer cancelled the payment during authorization.',
     resolution: 'Ask the customer to retry the payment if they wish to continue.',
-    verified: false,
-  },
-  {
-    code: 'blocked_card',
-    httpStatus: 402,
-    description: 'The card has been blocked by the issuer.',
-    whenOccurs: 'The card issuer has blocked the card from making transactions.',
-    resolution: 'The customer should contact their bank to unblock the card or use a different payment method.',
     verified: false,
   },
 ];
@@ -479,7 +473,7 @@ export default function ErrorsPage() {
 
         <div style={{ marginBottom: '24px' }}>
           <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px', padding: '0 16px' }}>
-            Payment Failed
+            Payment Failed (Verified)
           </div>
           <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden', margin: '0 8px' }}>
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
@@ -488,10 +482,10 @@ export default function ErrorsPage() {
             <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
 {`{
   "object": "charge",
-  "id": "chrg_test_xxx",
+  "id": "chrg_test_69ie9n6ieysx3zgonqk",
   "status": "failed",
   "failure_code": "insufficient_fund",
-  "failure_message": "insufficient funds in the account"
+  "failure_message": "insufficient funds in the account or the card has reached the credit limit"
 }`}
             </pre>
           </div>

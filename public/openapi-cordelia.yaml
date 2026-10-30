@@ -333,9 +333,10 @@ components:
         failure_message:
           type: string
           nullable: true
-        created_at:
+        created:
           type: string
           format: date-time
+          description: "Cordelia uses 'created' (Deimos changed to 'created_at')"
         paid_at:
           type: string
           format: date-time
@@ -592,7 +593,8 @@ components:
             code: failed_expire
             message: charge cannot be expired
 
-    # All failure codes from previous versions plus Cordelia
+    # Verified Payment Failure Codes (tested via 3DS flow on 2026-10-30)
+    # Error codes are NOT version-specific - same across all API versions
     FailedProcessing:
       description: General processing failure
       content:
@@ -602,7 +604,7 @@ components:
           example:
             object: error
             code: failed_processing
-            message: payment processing failed
+            message: failed processing
 
     InsufficientFund:
       description: Insufficient funds
@@ -610,6 +612,10 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: insufficient_fund
+            message: insufficient funds in the account or the card has reached the credit limit
 
     InvalidAccountNumber:
       description: Invalid card number
@@ -617,6 +623,10 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: invalid_account_number
+            message: the account number is invalid
 
     PaymentRejected:
       description: Payment rejected
@@ -624,13 +634,21 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: payment_rejected
+            message: payment rejected
 
-    Timeout:
-      description: Request timeout
+    StolenOrLostCard:
+      description: Card reported stolen or lost
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: stolen_or_lost_card
+            message: card is stolen or lost
 
     FailedFraudCheck:
       description: Failed fraud check
@@ -638,31 +656,24 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: failed_fraud_check
+            message: failed fraud check
 
-    InsufficientBalance:
-      description: Insufficient balance
+    BadRequest:
+      description: Bad request - missing required parameters
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: bad_request
+            message: either source, card or customer parameter must be supplied
 
-    InvalidSecurityCode:
-      description: Invalid CVV/CVC
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-
-    PaymentCancelled:
-      description: Payment cancelled
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-
-    ExpiredCard:
-      description: Card expired
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    # NOTE: The following error codes are NOT verified / do not exist as documented:
+    # - invalid_security_code: Test card returns successful charge
+    # - expired_card: Test card returns payment_rejected instead
+    # - insufficient_balance: Unverified
+    # - payment_cancelled: Unverified

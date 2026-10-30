@@ -268,9 +268,10 @@ components:
         failure_message:
           type: string
           nullable: true
-        created_at:
+        created:
           type: string
           format: date-time
+          description: "Bestla uses 'created' (Deimos changed to 'created_at')"
         paid_at:
           type: string
           format: date-time
@@ -447,7 +448,8 @@ components:
             code: failed_reverse
             message: charge cannot be reversed
 
-    # Aegaeon failure codes
+    # Verified Payment Failure Codes (tested via 3DS flow on 2026-10-30)
+    # Error codes are NOT version-specific - same across all API versions
     FailedProcessing:
       description: General processing failure
       content:
@@ -457,7 +459,7 @@ components:
           example:
             object: error
             code: failed_processing
-            message: payment processing failed
+            message: failed processing
 
     InsufficientFund:
       description: Insufficient funds
@@ -468,7 +470,7 @@ components:
           example:
             object: error
             code: insufficient_fund
-            message: insufficient funds
+            message: insufficient funds in the account or the card has reached the credit limit
 
     InvalidAccountNumber:
       description: Invalid card number
@@ -479,7 +481,7 @@ components:
           example:
             object: error
             code: invalid_account_number
-            message: invalid card number
+            message: the account number is invalid
 
     PaymentRejected:
       description: Payment rejected
@@ -490,22 +492,21 @@ components:
           example:
             object: error
             code: payment_rejected
-            message: payment was rejected
+            message: payment rejected
 
-    Timeout:
-      description: Request timeout
+    StolenOrLostCard:
+      description: Card reported stolen or lost
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
             object: error
-            code: timeout
-            message: request timed out
+            code: stolen_or_lost_card
+            message: card is stolen or lost
 
-    # New in Bestla
     FailedFraudCheck:
-      description: "New in Bestla: Failed fraud check"
+      description: Failed fraud check
       content:
         application/json:
           schema:
@@ -513,48 +514,21 @@ components:
           example:
             object: error
             code: failed_fraud_check
-            message: transaction flagged as potentially fraudulent
+            message: failed fraud check
 
-    InsufficientBalance:
-      description: "New in Bestla: Insufficient balance"
+    BadRequest:
+      description: Bad request - missing required parameters
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
           example:
             object: error
-            code: insufficient_balance
-            message: insufficient balance
+            code: bad_request
+            message: either source, card or customer parameter must be supplied
 
-    InvalidSecurityCode:
-      description: "New in Bestla: Invalid CVV/CVC"
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            object: error
-            code: invalid_security_code
-            message: invalid security code
-
-    PaymentCancelled:
-      description: "New in Bestla: Payment cancelled"
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            object: error
-            code: payment_cancelled
-            message: payment was cancelled by customer
-
-    ExpiredCard:
-      description: "New in Bestla: Card expired"
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            object: error
-            code: expired_card
-            message: card has expired
+    # NOTE: The following error codes are NOT verified / do not exist as documented:
+    # - invalid_security_code: Test card returns successful charge
+    # - expired_card: Test card returns payment_rejected instead
+    # - insufficient_balance: Unverified
+    # - payment_cancelled: Unverified

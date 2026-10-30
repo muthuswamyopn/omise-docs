@@ -1,8 +1,8 @@
 # Verified Omise Charge API Data
 
-**Verified on:** 2026-10-29
+**Verified on:** 2026-10-30
 **API Key:** skey_test_63mhuytgr8d72dozrf4 (test mode)
-**Method:** Direct API calls with Omise-Version header
+**Method:** Direct API calls with Omise-Version header + 3DS flow completion
 
 ---
 
@@ -107,9 +107,21 @@ source_of_fund, status, terminal, transaction, transaction_fees, voided
 | `not_found` | 404 | Invalid charge/token ID | "charge {id} was not found" |
 | `bad_request` | 400 | Missing required params | "either source, card or customer parameter must be supplied" |
 
+### Payment Failure Codes (Tested via 3DS flow):
+| Failure Code | Test Card | Actual Message |
+|-------------|-----------|----------------|
+| `insufficient_fund` | 4111111111140011 | "insufficient funds in the account or the card has reached the credit limit" |
+| `stolen_or_lost_card` | 4111111111130012 | "card is stolen or lost" |
+| `failed_processing` | 4111111111120013 | "failed processing" |
+| `payment_rejected` | 4111111111110014 | "payment rejected" |
+| `failed_fraud_check` | 4111111111190016 | "failed fraud check" |
+| `invalid_account_number` | 4111111111180017 | "the account number is invalid" |
+
 ### CORRECTIONS from previous documentation:
 - ❌ `missing_card` - Does NOT exist. Returns `bad_request` instead.
 - ❌ `invalid_card_token` - Does NOT exist for invalid token. Returns `not_found` instead.
+- ❌ `expired_card` - Card 4111111111170018 returns `payment_rejected`, NOT `expired_card`
+- ❌ `invalid_security_code` - Card 4111111111160019 returns SUCCESSFUL charge, no error
 
 ---
 

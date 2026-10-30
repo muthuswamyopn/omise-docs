@@ -4,7 +4,10 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SidebarNew from './SidebarNew';
 import Notice from './Notice';
-import { accountEndpoints, accountCodeExamples, accountResponseExamples, languages, methodColors, EndpointConfig } from '../lib/accountData';
+import VersionSelector, { VersionDiff } from './VersionSelector';
+import { accountEndpoints, accountCodeExamples, accountResponseExamples, languages, methodColors, EndpointConfig, getParamsForVersion } from '../lib/accountData';
+import { API_VERSIONS } from '../lib/apiVersions';
+import { useVersion } from '../context/VersionContext';
 
 interface TryItFormProps {
   endpoint: string;
@@ -160,9 +163,14 @@ interface AccountEndpointPageProps {
 export default function AccountEndpointPage({ endpointKey }: AccountEndpointPageProps) {
   const [activeLang, setActiveLang] = useState('curl');
   const [showTryIt, setShowTryIt] = useState(false);
+  const { currentVersion } = useVersion();
 
   const config = accountEndpoints[endpointKey];
   const methodStyle = methodColors[config.method];
+  const versionInfo = API_VERSIONS.find(v => v.codename === currentVersion);
+
+  // Filter params based on selected version
+  const versionedParams = getParamsForVersion(config.params, currentVersion);
 
   const allEndpoints = ['retrieve', 'update', 'update-api-version'];
 
@@ -193,6 +201,10 @@ export default function AccountEndpointPage({ endpointKey }: AccountEndpointPage
           <span style={{ color: '#3c4257' }}>{config.path}</span>
         </div>
 
+        {/* Version Selector */}
+        <VersionSelector />
+        <VersionDiff />
+
         {/* Long Description */}
         {config.longDescription && (
           <div style={{ fontSize: '15px', color: '#3c4257', lineHeight: 1.7, marginBottom: '24px', whiteSpace: 'pre-line' }}>
@@ -206,11 +218,14 @@ export default function AccountEndpointPage({ endpointKey }: AccountEndpointPage
         )}
 
         {/* Parameters */}
-        {config.params.length > 0 && (
+        {versionedParams.length > 0 && (
           <>
             <h2>Parameters</h2>
+            <p style={{ fontSize: '14px', color: '#697386', marginBottom: '16px' }}>
+              {versionedParams.length} parameters available in {versionInfo?.label}
+            </p>
             <div className="params-section">
-              {config.params.map((param) => (
+              {versionedParams.map((param) => (
                 <div key={param.name} className="param-row">
                   <div className="param-header">
                     <span className="param-name">{param.name}</span>
@@ -244,7 +259,7 @@ export default function AccountEndpointPage({ endpointKey }: AccountEndpointPage
           {showTryIt ? 'Hide API Tester' : 'Try it out'}
         </button>
 
-        {showTryIt && <TryItForm endpoint={endpointKey} config={config} />}
+        {showTryIt && <TryItForm endpoint={endpointKey} config={{ ...config, params: versionedParams }} />}
 
         {/* Navigation to other endpoints */}
         <div style={{ marginTop: '48px', paddingTop: '24px', borderTop: '1px solid #e3e8ee' }}>

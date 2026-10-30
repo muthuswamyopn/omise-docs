@@ -6,6 +6,7 @@ export interface EndpointParam {
   required: boolean;
   desc: string;
   default?: string;
+  addedIn?: string; // Version codename when this param was added
 }
 
 export interface EndpointConfig {
@@ -58,11 +59,11 @@ Both test and live keys return the same account information, but some fields lik
 
 Only the fields you specify will be updated; other fields remain unchanged.`,
     params: [
-      { name: 'webhook_uri', type: 'string', required: false, desc: 'URL endpoint where Omise sends webhook notifications for events like charge completion.' },
-      { name: 'chain_enabled', type: 'boolean', required: false, desc: 'Whether to enable chain integration for multi-merchant setups.' },
-      { name: 'chain_return_uri', type: 'string', required: false, desc: 'URL to redirect users after chain transactions.' },
-      { name: 'zero_interest_installments', type: 'boolean', required: false, desc: 'Whether the merchant absorbs installment interest charges.' },
-      { name: 'metadata_export_keys', type: 'object', required: false, desc: 'Custom metadata keys to include in exports for charges, transfers, refunds, and disputes.' },
+      { name: 'webhook_uri', type: 'string', required: false, desc: 'URL endpoint where Omise sends webhook notifications for events like charge completion.', addedIn: 'aegaeon' },
+      { name: 'chain_enabled', type: 'boolean', required: false, desc: 'Whether to enable chain integration for multi-merchant setups.', addedIn: 'aegaeon' },
+      { name: 'chain_return_uri', type: 'string', required: false, desc: 'URL to redirect users after chain transactions.', addedIn: 'aegaeon' },
+      { name: 'zero_interest_installments', type: 'boolean', required: false, desc: 'Whether the merchant absorbs installment interest charges.', addedIn: 'cordelia' },
+      { name: 'metadata_export_keys', type: 'object', required: false, desc: 'Custom metadata keys to include in exports for charges, transfers, refunds, and disputes.', addedIn: 'aegaeon' },
     ]
   },
   'update-api-version': {
@@ -224,6 +225,18 @@ export const ACCOUNT_OLDER_FIELDS: AccountFieldInfo[] = [
 
 export function getAccountFieldsForVersion(codename: string): AccountFieldInfo[] {
   return codename === 'deimos' ? ACCOUNT_DEIMOS_FIELDS : ACCOUNT_OLDER_FIELDS;
+}
+
+// Helper to filter endpoint params by version
+const VERSION_ORDER = ['aegaeon', 'bestla', 'cordelia', 'deimos'];
+
+export function getParamsForVersion(params: EndpointParam[], codename: string): EndpointParam[] {
+  const versionIndex = VERSION_ORDER.indexOf(codename);
+  return params.filter(param => {
+    if (!param.addedIn) return true; // No version specified = available in all
+    const paramVersionIndex = VERSION_ORDER.indexOf(param.addedIn);
+    return paramVersionIndex <= versionIndex;
+  });
 }
 
 // Capability attributes

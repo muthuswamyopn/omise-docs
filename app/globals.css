@@ -424,10 +424,10 @@ code {
 
 .attribute-row {
   display: grid;
-  grid-template-columns: 180px 1fr;
+  grid-template-columns: minmax(200px, 300px) 1fr;
   padding: 16px 0;
   border-bottom: 1px solid #e3e8ee;
-  gap: 16px;
+  gap: 24px;
 }
 
 .attribute-row:first-child {
@@ -438,6 +438,7 @@ code {
   font-family: 'SF Mono', Monaco, 'Courier New', monospace;
   font-size: 13px;
   color: #1a1a1a;
+  word-break: break-word;
 }
 
 .attribute-meta {

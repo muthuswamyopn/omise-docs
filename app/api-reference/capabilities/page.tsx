@@ -5,6 +5,7 @@ import Link from 'next/link';
 import SidebarNew from '../../components/SidebarNew';
 import VersionSelector, { VersionDiff } from '../../components/VersionSelector';
 import Notice from '../../components/Notice';
+import LinkifiedText from '../../components/LinkifiedText';
 import { API_VERSIONS } from '../../lib/apiVersions';
 import {
   capabilityEndpoints,
@@ -162,7 +163,7 @@ export default function CapabilitiesPage() {
                 <div className="attribute-name">{attr.name}</div>
                 <div className="attribute-meta">{attr.type}</div>
               </div>
-              <div className="attribute-desc">{attr.description}</div>
+              <div className="attribute-desc"><LinkifiedText>{attr.description}</LinkifiedText></div>
             </div>
           ))}
         </div>
@@ -192,7 +193,7 @@ export default function CapabilitiesPage() {
               <div className="attribute-name">currencies</div>
               <div className="attribute-meta">array</div>
             </div>
-            <div className="attribute-desc">List of supported ISO 4217 currency codes</div>
+            <div className="attribute-desc"><LinkifiedText>List of supported ISO 4217 currency codes</LinkifiedText></div>
           </div>
           <div className="attribute-row">
             <div>

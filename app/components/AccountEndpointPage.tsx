@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SidebarNew from './SidebarNew';
 import Notice from './Notice';
+import LinkifiedText from './LinkifiedText';
 import VersionSelector, { VersionDiff } from './VersionSelector';
 import { accountEndpoints, accountCodeExamples, accountResponseExamples, languages, methodColors, EndpointConfig, getParamsForVersion } from '../lib/accountData';
 import { API_VERSIONS } from '../lib/apiVersions';
@@ -128,7 +129,7 @@ function TryItForm({ endpoint, config }: TryItFormProps) {
             placeholder={param.desc}
             style={{ width: '100%', padding: '12px 14px', background: '#fff', border: '2px solid #e3e8ee', borderRadius: '6px', fontSize: '14px', fontFamily: "'SF Mono', Monaco, monospace" }}
           />
-          <div style={{ fontSize: '13px', color: '#697386', marginTop: '6px' }}>{param.desc}</div>
+          <div style={{ fontSize: '13px', color: '#697386', marginTop: '6px' }}><LinkifiedText>{param.desc}</LinkifiedText></div>
         </div>
       ))}
 
@@ -236,7 +237,7 @@ export default function AccountEndpointPage({ endpointKey }: AccountEndpointPage
                       <span className="param-optional">optional</span>
                     )}
                   </div>
-                  <div className="param-desc">{param.desc}</div>
+                  <div className="param-desc"><LinkifiedText>{param.desc}</LinkifiedText></div>
                 </div>
               ))}
             </div>

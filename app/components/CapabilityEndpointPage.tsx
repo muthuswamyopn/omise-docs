@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SidebarNew from './SidebarNew';
 import Notice from './Notice';
+import LinkifiedText from './LinkifiedText';
 import VersionSelector, { VersionDiff } from './VersionSelector';
 import { capabilityEndpoints, capabilityCodeExamples, capabilityResponseExample, languages, methodColors, EndpointConfig } from '../lib/accountData';
 import { API_VERSIONS } from '../lib/apiVersions';
@@ -203,7 +204,7 @@ export default function CapabilityEndpointPage({ endpointKey }: CapabilityEndpoi
                       <span className="param-optional">optional</span>
                     )}
                   </div>
-                  <div className="param-desc">{param.desc}</div>
+                  <div className="param-desc"><LinkifiedText>{param.desc}</LinkifiedText></div>
                 </div>
               ))}
             </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import SidebarNew from './SidebarNew';
+import LinkifiedText from './LinkifiedText';
 import VersionSelector from './VersionSelector';
 import { endpoints, codeExamples, getVersionedResponse, languages, methodColors, EndpointConfig } from '../lib/chargeData';
 import { API_VERSIONS, ApiVersion } from '../lib/apiVersions';
@@ -168,7 +169,7 @@ function TryItForm({ endpoint, config, version, versionDate }: TryItFormProps) {
               style={{ width: '100%', padding: '12px 14px', background: '#fff', border: '2px solid #e3e8ee', borderRadius: '6px', fontSize: '14px', fontFamily: "'SF Mono', Monaco, monospace" }}
             />
           )}
-          <div style={{ fontSize: '13px', color: '#697386', marginTop: '6px' }}>{param.desc}</div>
+          <div style={{ fontSize: '13px', color: '#697386', marginTop: '6px' }}><LinkifiedText>{param.desc}</LinkifiedText></div>
         </div>
       ))}
       <button
@@ -389,7 +390,7 @@ export default function EndpointPage({ endpointKey, currentPage }: EndpointPageP
                     {param.required === 'conditional' && <span style={{ fontSize: '11px', fontWeight: 600, color: '#9c6f19', textTransform: 'uppercase' }}>conditional</span>}
                     {param.required === false && <span className="param-optional">optional</span>}
                   </div>
-                  <div className="param-desc">{param.desc}</div>
+                  <div className="param-desc"><LinkifiedText>{param.desc}</LinkifiedText></div>
                   {param.options && (
                     <div className="enum-values">
                       {param.options.map(opt => <span key={opt} className="enum-value">{opt}</span>)}

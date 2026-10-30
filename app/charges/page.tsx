@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Sidebar from '../components/Sidebar';
+import LinkifiedText from '../components/LinkifiedText';
 import { endpoints, methodColors } from '../lib/chargeData';
 
 // Charge attributes - All 62 fields from Deimos (2019-05-29)
@@ -187,7 +188,7 @@ export default function ChargesOverviewPage() {
                 <div className="attribute-name">{attr.name}</div>
                 <div className="attribute-meta">{attr.type}</div>
               </div>
-              <div className="attribute-desc">{attr.desc}</div>
+              <div className="attribute-desc"><LinkifiedText>{attr.desc}</LinkifiedText></div>
             </div>
           ))}
         </div>

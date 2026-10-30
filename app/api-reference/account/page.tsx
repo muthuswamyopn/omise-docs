@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import SidebarNew from '../../components/SidebarNew';
+import LinkifiedText from '../../components/LinkifiedText';
 import VersionSelector, { VersionDiff } from '../../components/VersionSelector';
 import { API_VERSIONS } from '../../lib/apiVersions';
 import {
@@ -146,7 +147,7 @@ export default function AccountOverviewPage() {
                 <div className="attribute-name">{attr.name}</div>
                 <div className="attribute-meta">{attr.type}</div>
               </div>
-              <div className="attribute-desc">{attr.description}</div>
+              <div className="attribute-desc"><LinkifiedText>{attr.description}</LinkifiedText></div>
             </div>
           ))}
         </div>

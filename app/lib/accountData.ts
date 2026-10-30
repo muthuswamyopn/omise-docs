@@ -550,22 +550,27 @@ export const balanceResponseExample = `{
   "created_at": "2024-01-15T10:30:00Z"
 }`;
 
+// Verified against real API response 2026-10-30
 export const capabilityResponseExample = `{
   "object": "capability",
   "location": "/capability",
   "country": "TH",
   "banks": [
-    "bbl", "kbank", "ktb", "scb", "bay",
-    "gsb", "tmb", "cimb", "uob", "tisco"
+    "test", "bbl", "kbank", "rbs", "ktb",
+    "jpm", "mufg", "ttb", "scb", "citi",
+    "smbc", "sc", "cimb", "uob", "bay",
+    "mega", "boa", "cacib", "gsb", "hsbc",
+    "db", "ghb", "baac", "mb", "bnp",
+    "ibank", "tisco", "kk", "icbc", "tcrb", "lhb"
   ],
   "limits": {
     "charge_amount": {
-      "min": 2000,
+      "min": 100,
       "max": 15000000
     },
     "transfer_amount": {
-      "min": 3000,
-      "max": 5000000000
+      "min": 2000,
+      "max": 200000000000
     },
     "installment_amount": {
       "min": 200000
@@ -575,9 +580,10 @@ export const capabilityResponseExample = `{
     {
       "object": "payment_method",
       "name": "card",
-      "currencies": ["THB", "JPY", "USD", "EUR", "GBP", "SGD"],
-      "card_brands": ["Visa", "MasterCard", "JCB", "AMEX"],
+      "currencies": ["THB", "JPY", "USD", "EUR", "GBP", "SGD", "AUD", "CHF", "CNY", "DKK", "HKD", "NOK", "SEK"],
+      "card_brands": ["JCB", "Visa", "MasterCard", "American Express", "UnionPay"],
       "installment_terms": null,
+      "loan_installment_terms": null,
       "banks": [],
       "provider": null
     },
@@ -587,6 +593,7 @@ export const capabilityResponseExample = `{
       "currencies": ["THB"],
       "card_brands": null,
       "installment_terms": null,
+      "loan_installment_terms": null,
       "banks": [],
       "provider": null
     },
@@ -596,15 +603,27 @@ export const capabilityResponseExample = `{
       "currencies": ["THB"],
       "card_brands": null,
       "installment_terms": null,
+      "loan_installment_terms": null,
       "banks": [],
       "provider": null
     },
     {
       "object": "payment_method",
-      "name": "installment_bay",
+      "name": "installment_wlb_kbank",
       "currencies": ["THB"],
       "card_brands": null,
-      "installment_terms": [3, 4, 6, 9, 10],
+      "installment_terms": [3, 4, 5, 6, 7, 8, 9, 10],
+      "loan_installment_terms": null,
+      "banks": [],
+      "provider": null
+    },
+    {
+      "object": "payment_method",
+      "name": "grabpay",
+      "currencies": ["THB"],
+      "card_brands": null,
+      "installment_terms": null,
+      "loan_installment_terms": null,
       "banks": [],
       "provider": null
     }

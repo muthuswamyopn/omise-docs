@@ -200,7 +200,14 @@ export default function CapabilitiesPage() {
               <div className="attribute-name">installment_terms</div>
               <div className="attribute-meta">array | null</div>
             </div>
-            <div className="attribute-desc">Available term lengths in months (e.g., [3, 4, 6, 9, 10])</div>
+            <div className="attribute-desc">Available term lengths in months (e.g., [3, 4, 5, 6, 7, 8, 9, 10])</div>
+          </div>
+          <div className="attribute-row">
+            <div>
+              <div className="attribute-name">loan_installment_terms</div>
+              <div className="attribute-meta">array | null</div>
+            </div>
+            <div className="attribute-desc">Available loan installment term lengths if applicable</div>
           </div>
           <div className="attribute-row">
             <div>
@@ -229,7 +236,7 @@ export default function CapabilitiesPage() {
               <div className="attribute-name">charge_amount.min</div>
               <div className="attribute-meta">integer</div>
             </div>
-            <div className="attribute-desc">Minimum charge amount (e.g., 2000 = 20 THB)</div>
+            <div className="attribute-desc">Minimum charge amount (e.g., 100 = 1 THB)</div>
           </div>
           <div className="attribute-row">
             <div>

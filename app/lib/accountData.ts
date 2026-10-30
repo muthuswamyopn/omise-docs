@@ -121,6 +121,111 @@ export const balanceAttributes = [
   { name: 'created_at', type: 'datetime', desc: 'Balance record creation timestamp (Deimos only)', io: 'output' },
 ];
 
+// ============================================================================
+// VERSION-SPECIFIC BALANCE FIELDS
+// Verified: 2026-10-30 via direct API calls
+// ============================================================================
+
+export interface BalanceFieldInfo {
+  name: string;
+  type: string;
+  description: string;
+}
+
+// Deimos (2019-05-29) - 9 fields
+export const BALANCE_DEIMOS_FIELDS: BalanceFieldInfo[] = [
+  { name: 'object', type: 'string', description: 'Object type, always "balance"' },
+  { name: 'livemode', type: 'boolean', description: 'Whether this is live mode balance' },
+  { name: 'location', type: 'string', description: 'API path "/balance"' },
+  { name: 'currency', type: 'string', description: 'ISO 4217 currency code (e.g., "THB")' },
+  { name: 'total', type: 'integer', description: 'Total balance after fees deducted' },
+  { name: 'transferable', type: 'integer', description: 'Amount available for immediate transfer to bank' },
+  { name: 'reserve', type: 'integer', description: 'Funds held by Omise as security buffer' },
+  { name: 'on_hold', type: 'integer', description: 'Funds held for pending disputes/reviews' },
+  { name: 'created_at', type: 'datetime', description: 'Balance record creation timestamp' },
+];
+
+// Cordelia/Bestla/Aegaeon (older versions) - 8 fields
+export const BALANCE_OLDER_FIELDS: BalanceFieldInfo[] = [
+  { name: 'object', type: 'string', description: 'Object type, always "balance"' },
+  { name: 'livemode', type: 'boolean', description: 'Whether this is live mode balance' },
+  { name: 'location', type: 'string', description: 'API path "/balance"' },
+  { name: 'currency', type: 'string', description: 'ISO 4217 currency code (e.g., "thb")' },
+  { name: 'total', type: 'integer', description: 'Total balance after fees deducted' },
+  { name: 'available', type: 'integer', description: 'Amount available for immediate transfer (renamed to "transferable" in Deimos)' },
+  { name: 'reserve_amount', type: 'integer', description: 'Funds held as security buffer (renamed to "reserve" in Deimos)' },
+  { name: 'on_hold', type: 'integer', description: 'Funds held for pending disputes/reviews' },
+];
+
+export function getBalanceFieldsForVersion(codename: string): BalanceFieldInfo[] {
+  return codename === 'deimos' ? BALANCE_DEIMOS_FIELDS : BALANCE_OLDER_FIELDS;
+}
+
+// ============================================================================
+// VERSION-SPECIFIC ACCOUNT FIELDS
+// Verified: 2026-10-30 via direct API calls
+// ============================================================================
+
+export interface AccountFieldInfo {
+  name: string;
+  type: string;
+  description: string;
+  io: 'input' | 'output';
+}
+
+// Deimos (2019-05-29) - 22 fields
+export const ACCOUNT_DEIMOS_FIELDS: AccountFieldInfo[] = [
+  { name: 'object', type: 'string', description: 'Always "account"', io: 'output' },
+  { name: 'id', type: 'string', description: 'Account ID (account_test_... format)', io: 'output' },
+  { name: 'team', type: 'string', description: 'Team identifier', io: 'output' },
+  { name: 'livemode', type: 'boolean', description: 'Whether live mode', io: 'output' },
+  { name: 'location', type: 'string', description: 'API path "/account"', io: 'output' },
+  { name: 'country', type: 'string', description: 'Two-letter ISO 3166 country code', io: 'output' },
+  { name: 'currency', type: 'string', description: 'Default currency (UPPERCASE)', io: 'output' },
+  { name: 'email', type: 'string', description: 'Primary email address', io: 'output' },
+  { name: 'supported_currencies', type: 'array', description: 'Available currencies for charges', io: 'output' },
+  { name: 'api_version', type: 'string', description: 'Current API version', io: 'output' },
+  { name: 'webhook_uri', type: 'string', description: 'URL for event notifications', io: 'input' },
+  { name: 'chain_enabled', type: 'boolean', description: 'Whether chain integration enabled', io: 'input' },
+  { name: 'chain_return_uri', type: 'string', description: 'Redirect URL for chain transactions', io: 'input' },
+  { name: 'chaining_allowed', type: 'boolean', description: 'Whether chaining is allowed', io: 'output' },
+  { name: 'zero_interest_installments', type: 'boolean', description: 'Merchant absorbs interest', io: 'input' },
+  { name: 'auto_activate_recipients', type: 'boolean', description: 'Auto-activate new recipients', io: 'output' },
+  { name: 'metadata_export_keys', type: 'object', description: 'Custom metadata keys for exports', io: 'input' },
+  { name: 'transfer_config', type: 'object', description: 'Transfer limits and fees', io: 'output' },
+  { name: 'last_updated_api_version', type: 'string', description: 'API version update date', io: 'output' },
+  { name: 'restricted_recipient_management', type: 'boolean', description: 'Recipient management restricted', io: 'output' },
+  { name: 'paas_enabled', type: 'boolean', description: 'Platform as a Service enabled', io: 'output' },
+  { name: 'created_at', type: 'datetime', description: 'Creation timestamp', io: 'output' },
+];
+
+// Cordelia/Bestla/Aegaeon (older versions) - 19 fields
+export const ACCOUNT_OLDER_FIELDS: AccountFieldInfo[] = [
+  { name: 'object', type: 'string', description: 'Always "account"', io: 'output' },
+  { name: 'id', type: 'string', description: 'Account ID (acct_... format)', io: 'output' },
+  { name: 'livemode', type: 'boolean', description: 'Whether live mode', io: 'output' },
+  { name: 'location', type: 'string', description: 'API path "/account"', io: 'output' },
+  { name: 'country', type: 'string', description: 'Two-letter ISO 3166 country code', io: 'output' },
+  { name: 'currency', type: 'string', description: 'Default currency (lowercase)', io: 'output' },
+  { name: 'email', type: 'string', description: 'Primary email address', io: 'output' },
+  { name: 'supported_currencies', type: 'array', description: 'Available currencies for charges', io: 'output' },
+  { name: 'api_version', type: 'string', description: 'Current API version', io: 'output' },
+  { name: 'webhook_uri', type: 'string', description: 'URL for event notifications', io: 'input' },
+  { name: 'chain_enabled', type: 'boolean', description: 'Whether chain integration enabled', io: 'input' },
+  { name: 'chain_return_uri', type: 'string', description: 'Redirect URL for chain transactions', io: 'input' },
+  { name: 'chaining_allowed', type: 'boolean', description: 'Whether chaining is allowed', io: 'output' },
+  { name: 'zero_interest_installments', type: 'boolean', description: 'Merchant absorbs interest (Cordelia+)', io: 'input' },
+  { name: 'auto_activate_recipients', type: 'boolean', description: 'Auto-activate new recipients', io: 'output' },
+  { name: 'metadata_export_keys', type: 'object', description: 'Custom metadata keys for exports', io: 'input' },
+  { name: 'transfer_config', type: 'object', description: 'Transfer limits and fees', io: 'output' },
+  { name: 'last_updated_api_version', type: 'string', description: 'API version update date', io: 'output' },
+  { name: 'created', type: 'datetime', description: 'Creation timestamp', io: 'output' },
+];
+
+export function getAccountFieldsForVersion(codename: string): AccountFieldInfo[] {
+  return codename === 'deimos' ? ACCOUNT_DEIMOS_FIELDS : ACCOUNT_OLDER_FIELDS;
+}
+
 // Capability attributes
 export const capabilityAttributes = [
   { name: 'object', type: 'string', desc: 'Object type, always "capability"' },

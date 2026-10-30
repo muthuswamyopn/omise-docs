@@ -37,7 +37,7 @@ export default function BalanceOverviewPage() {
         {/* Read-only API Note */}
         <div style={{ background: '#eff6ff', border: '1px solid #3b82f6', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
           <div style={{ fontSize: '14px', color: '#1e40af', lineHeight: 1.6 }}>
-            <strong>Read-Only API:</strong> The Balance API only supports retrieval (GET). All fields are <span style={{ display: 'inline-block', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '11px', fontWeight: 600 }}>OUTPUT</span> only.
+            <strong>Read-Only API:</strong> The Balance API only supports retrieval (GET).
           </div>
         </div>
 
@@ -125,12 +125,7 @@ export default function BalanceOverviewPage() {
           {balanceAttributes.map((attr: { name: string; type: string; desc: string; io?: string }) => (
             <div key={attr.name} className="attribute-row">
               <div>
-                <div className="attribute-name">
-                  {attr.name}
-                  {attr.io === 'output' && (
-                    <span style={{ marginLeft: '8px', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>OUTPUT</span>
-                  )}
-                </div>
+                <div className="attribute-name">{attr.name}</div>
                 <div className="attribute-meta">{attr.type}</div>
               </div>
               <div className="attribute-desc">{attr.desc}</div>

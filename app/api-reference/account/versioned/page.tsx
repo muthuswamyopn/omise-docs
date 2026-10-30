@@ -14,9 +14,6 @@ export default function VersionedAccountPage() {
   const versionInfo = API_VERSIONS.find(v => v.codename === currentVersion);
   const isDeimos = currentVersion === 'deimos';
 
-  const inputFields = fields.filter(f => f.io === 'input');
-  const outputFields = fields.filter(f => f.io === 'output');
-
   return (
     <div className="docs-layout">
       <SidebarNew />
@@ -45,7 +42,7 @@ export default function VersionedAccountPage() {
         {/* Version Stats */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateColumns: 'repeat(2, 1fr)',
           gap: '16px',
           marginBottom: '32px'
         }}>
@@ -55,24 +52,7 @@ export default function VersionedAccountPage() {
           </div>
           <div style={{ background: '#f6f9fc', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
             <div style={{ fontSize: '24px', fontWeight: 700, color: '#1A1F71' }}>{fields.length}</div>
-            <div style={{ fontSize: '13px', color: '#697386' }}>Total Fields</div>
-          </div>
-          <div style={{ background: '#dcfce7', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: 700, color: '#166534' }}>{inputFields.length}</div>
-            <div style={{ fontSize: '13px', color: '#166534' }}>Editable</div>
-          </div>
-          <div style={{ background: '#f3f4f6', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: 700, color: '#4b5563' }}>{outputFields.length}</div>
-            <div style={{ fontSize: '13px', color: '#4b5563' }}>Read-only</div>
-          </div>
-        </div>
-
-        {/* Field Types Info */}
-        <div style={{ background: '#eff6ff', border: '1px solid #3b82f6', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
-          <div style={{ fontSize: '14px', color: '#1e40af', lineHeight: 1.6 }}>
-            <strong>Field Types:</strong><br/>
-            <span style={{ display: 'inline-block', padding: '2px 6px', background: '#dcfce7', color: '#166534', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>INPUT</span> Can be updated via PATCH /account<br/>
-            <span style={{ display: 'inline-block', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '11px', fontWeight: 600, marginRight: '8px' }}>OUTPUT</span> Read-only, returned by API
+            <div style={{ fontSize: '13px', color: '#697386' }}>Fields</div>
           </div>
         </div>
 
@@ -169,14 +149,7 @@ export default function VersionedAccountPage() {
           {fields.map(field => (
             <div key={field.name} className="attribute-row">
               <div>
-                <div className="attribute-name">
-                  {field.name}
-                  {field.io === 'input' ? (
-                    <span style={{ marginLeft: '8px', padding: '2px 6px', background: '#dcfce7', color: '#166534', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>INPUT</span>
-                  ) : (
-                    <span style={{ marginLeft: '8px', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>OUTPUT</span>
-                  )}
-                </div>
+                <div className="attribute-name">{field.name}</div>
                 <div className="attribute-meta">{field.type}</div>
               </div>
               <div className="attribute-desc">{field.description}</div>

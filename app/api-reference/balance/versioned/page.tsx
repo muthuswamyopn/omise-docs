@@ -126,10 +126,7 @@ export default function VersionedBalancePage() {
           {fields.map(field => (
             <div key={field.name} className="attribute-row">
               <div>
-                <div className="attribute-name">
-                  {field.name}
-                  <span style={{ marginLeft: '8px', padding: '2px 6px', background: '#f3f4f6', color: '#4b5563', borderRadius: '4px', fontSize: '10px', fontWeight: 600 }}>OUTPUT</span>
-                </div>
+                <div className="attribute-name">{field.name}</div>
                 <div className="attribute-meta">{field.type}</div>
               </div>
               <div className="attribute-desc">{field.description}</div>

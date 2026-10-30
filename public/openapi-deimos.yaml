@@ -379,8 +379,6 @@ components:
           enum: [pending, successful, failed, expired, reversed]
         authorized:
           type: boolean
-        captured:
-          type: boolean
         capture:
           type: boolean
         capturable:
@@ -433,8 +431,6 @@ components:
           nullable: true
         refunds:
           $ref: '#/components/schemas/RefundList'
-        source_of_fund:
-          type: string
         disputable:
           type: boolean
         voided:

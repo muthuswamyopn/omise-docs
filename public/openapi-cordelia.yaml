@@ -359,9 +359,6 @@ components:
           nullable: true
         refunds:
           $ref: '#/components/schemas/RefundList'
-        source_of_fund:
-          type: string
-          enum: [card, offsite, offline]
         disputable:
           type: boolean
         voided:

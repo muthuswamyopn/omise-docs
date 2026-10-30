@@ -2,13 +2,21 @@
 
 import Link from 'next/link';
 import SidebarNew from '../../components/SidebarNew';
+import VersionSelector, { VersionDiff } from '../../components/VersionSelector';
+import { API_VERSIONS } from '../../lib/apiVersions';
 import {
   accountEndpoints,
-  accountAttributes,
+  getAccountFieldsForVersion,
   methodColors
 } from '../../lib/accountData';
+import { useVersion } from '../../context/VersionContext';
 
 export default function AccountOverviewPage() {
+  const { currentVersion } = useVersion();
+  const fields = getAccountFieldsForVersion(currentVersion);
+  const versionInfo = API_VERSIONS.find(v => v.codename === currentVersion);
+  const isDeimos = currentVersion === 'deimos';
+
   return (
     <div className="docs-layout">
       <SidebarNew />
@@ -25,6 +33,29 @@ export default function AccountOverviewPage() {
           and manage other account-level settings. Both test and live keys return the same account information.
         </p>
 
+        {/* Version Selector */}
+        <VersionSelector />
+
+        {/* Version Diff Warning */}
+        <VersionDiff />
+
+        {/* Version Stats */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '16px',
+          marginBottom: '32px'
+        }}>
+          <div style={{ background: '#f6f9fc', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#1A1F71' }}>2</div>
+            <div style={{ fontSize: '13px', color: '#697386' }}>Endpoints</div>
+          </div>
+          <div style={{ background: '#f6f9fc', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#1A1F71' }}>{fields.length}</div>
+            <div style={{ fontSize: '13px', color: '#697386' }}>Fields</div>
+          </div>
+        </div>
+
         {/* Related APIs */}
         <div style={{ background: '#f6f9fc', border: '1px solid #e3e8ee', borderRadius: '8px', padding: '20px', marginBottom: '32px' }}>
           <div style={{ fontWeight: 600, color: '#1a1a1a', marginBottom: '12px' }}>Related APIs</div>
@@ -35,53 +66,20 @@ export default function AccountOverviewPage() {
           </div>
         </div>
 
-        {/* Version Note */}
-        <div style={{ background: '#eff6ff', border: '1px solid #3b82f6', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
-          <div style={{ fontSize: '14px', color: '#1e40af', lineHeight: 1.6 }}>
-            <strong>Note:</strong> This shows all 22 fields from Deimos (2019-05-29). Older versions have fewer fields.
+        {/* Version-specific notes */}
+        {!isDeimos && (
+          <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
+            <div style={{ fontSize: '14px', color: '#78350f', lineHeight: 1.6 }}>
+              <strong>Version Differences ({versionInfo?.label}):</strong>
+              <ul style={{ margin: '8px 0 0 0', paddingLeft: '20px' }}>
+                <li>ID format: <code>acct_...</code> (Deimos uses <code>account_test_...</code>)</li>
+                <li>Currencies are lowercase (Deimos uses UPPERCASE)</li>
+                <li>Uses <code>created</code> instead of <code>created_at</code></li>
+                <li>No <code>team</code>, <code>paas_enabled</code>, <code>restricted_recipient_management</code> fields</li>
+              </ul>
+            </div>
           </div>
-        </div>
-
-        {/* Version Differences */}
-        <div style={{ background: '#faf5ff', border: '1px solid #a855f7', borderRadius: '8px', padding: '20px', marginBottom: '32px' }}>
-          <div style={{ fontWeight: 600, color: '#6b21a8', marginBottom: '12px' }}>API Version Differences</div>
-          <table style={{ width: '100%', fontSize: '13px', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid #e9d5ff' }}>
-                <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b21a8' }}>Deimos (2019-05-29)</th>
-                <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b21a8' }}>Older Versions</th>
-                <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b21a8' }}>Notes</th>
-              </tr>
-            </thead>
-            <tbody style={{ color: '#581c87' }}>
-              <tr style={{ borderBottom: '1px solid #f3e8ff' }}>
-                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>account_test_...</code></td>
-                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>acct_...</code></td>
-                <td style={{ padding: '8px 12px' }}>ID format changed</td>
-              </tr>
-              <tr style={{ borderBottom: '1px solid #f3e8ff' }}>
-                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>created_at</code></td>
-                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>created</code></td>
-                <td style={{ padding: '8px 12px' }}>Timestamp field renamed</td>
-              </tr>
-              <tr style={{ borderBottom: '1px solid #f3e8ff' }}>
-                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>team</code></td>
-                <td style={{ padding: '8px 12px', color: '#9ca3af', fontStyle: 'italic' }}>not available</td>
-                <td style={{ padding: '8px 12px' }}>Team identifier added in Deimos</td>
-              </tr>
-              <tr style={{ borderBottom: '1px solid #f3e8ff' }}>
-                <td style={{ padding: '8px 12px' }}>THB, USD (uppercase)</td>
-                <td style={{ padding: '8px 12px' }}>thb, usd (lowercase)</td>
-                <td style={{ padding: '8px 12px' }}>Currency codes case changed</td>
-              </tr>
-              <tr>
-                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>paas_enabled</code></td>
-                <td style={{ padding: '8px 12px', color: '#9ca3af', fontStyle: 'italic' }}>not available</td>
-                <td style={{ padding: '8px 12px' }}>Platform-as-a-Service flag (Deimos only)</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        )}
 
         {/* Error Handling Reference */}
         <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
@@ -138,25 +136,51 @@ export default function AccountOverviewPage() {
 
         {/* The Account Object */}
         <h2>The Account Object</h2>
+        <p style={{ fontSize: '14px', color: '#697386', marginBottom: '16px' }}>
+          {fields.length} fields in {versionInfo?.label}
+        </p>
         <div className="attributes-section">
-          {accountAttributes.map((attr: { name: string; type: string; desc: string; io?: string }) => (
+          {fields.map(attr => (
             <div key={attr.name} className="attribute-row">
               <div>
                 <div className="attribute-name">{attr.name}</div>
                 <div className="attribute-meta">{attr.type}</div>
               </div>
-              <div className="attribute-desc">{attr.desc}</div>
+              <div className="attribute-desc">{attr.description}</div>
             </div>
           ))}
         </div>
 
         <div style={{ marginTop: '48px', padding: '16px', background: '#f6f9fc', borderRadius: '6px', fontSize: '13px', color: '#697386' }}>
-          Full API schema available at <Link href="/openapi.yaml" style={{ color: '#1A1F71' }}>openapi.yaml</Link>
+          Full API schema available at <Link href={`/openapi-${currentVersion}.yaml`} style={{ color: '#1A1F71' }}>openapi-{currentVersion}.yaml</Link>
         </div>
       </main>
 
       {/* Right Panel - Example Account Object */}
       <aside className="code-panel">
+        <div style={{ marginBottom: '16px' }}>
+          <div style={{
+            fontSize: '11px',
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            color: '#b8c7d9',
+            marginBottom: '8px'
+          }}>
+            API Version
+          </div>
+          <div style={{
+            padding: '8px 12px',
+            background: 'rgba(255,255,255,0.1)',
+            borderRadius: '6px',
+            fontSize: '14px',
+            color: '#fff',
+          }}>
+            <span style={{ color: '#3ecf8e', fontWeight: 600 }}>{currentVersion}</span>
+            <span style={{ color: '#8792a2', marginLeft: '8px' }}>{versionInfo?.date}</span>
+          </div>
+        </div>
+
         <div style={{ marginBottom: '24px' }}>
           <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px' }}>
             Example Account Object
@@ -165,8 +189,8 @@ export default function AccountOverviewPage() {
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '12px', color: '#b8c7d9' }}>
               JSON
             </div>
-            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', maxHeight: '600px', fontFamily: "'SF Mono', Monaco, monospace" }}>
-{`{
+            <pre style={{ padding: '16px', margin: 0, fontSize: '11px', lineHeight: 1.5, color: '#67e8f9', overflow: 'auto', maxHeight: '500px', fontFamily: "'SF Mono', Monaco, monospace" }}>
+{isDeimos ? `{
   "object": "account",
   "id": "account_test_no1t4tnemucod0e51mo",
   "team": "acct_no1t4tnemucod0e51mo",
@@ -177,9 +201,9 @@ export default function AccountOverviewPage() {
   "email": "merchant@example.com",
   "created_at": "2024-01-15T10:30:00Z",
   "supported_currencies": [
-    "THB", "JPY", "USD", "EUR",
-    "GBP", "SGD", "AUD", "CHF",
-    "CNY", "DKK", "HKD", "NOK", "SEK"
+    "THB", "JPY", "USD", "EUR", "GBP",
+    "SGD", "AUD", "CHF", "CNY", "DKK",
+    "HKD", "NOK", "SEK"
   ],
   "api_version": "2019-05-29",
   "auto_activate_recipients": false,
@@ -203,7 +227,46 @@ export default function AccountOverviewPage() {
   },
   "restricted_recipient_management": false,
   "paas_enabled": false
+}` : `{
+  "object": "account",
+  "id": "acct_no1t4tnemucod0e51mo",
+  "livemode": false,
+  "location": "/account",
+  "country": "TH",
+  "currency": "thb",
+  "email": "merchant@example.com",
+  "created": "2024-01-15T10:30:00Z",
+  "supported_currencies": [
+    "thb", "jpy", "usd", "eur", "gbp",
+    "sgd", "aud", "chf", "cny", "dkk",
+    "hkd", "nok", "sek"
+  ],
+  "api_version": "${versionInfo?.date}",
+  "auto_activate_recipients": false,
+  "chain_enabled": true,
+  "chaining_allowed": true,
+  "zero_interest_installments": false,
+  "chain_return_uri": "https://example.com/chain",
+  "webhook_uri": "https://example.com/webhooks",
+  "metadata_export_keys": {},
+  "last_updated_api_version": "2024-01-15",
+  "transfer_config": {
+    "min_transfer_amount": "30.00",
+    "max_transfer_amount": "2000000000.00"
+  }
 }`}
+            </pre>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px' }}>
+            Request Header
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden' }}>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', fontFamily: "'SF Mono', Monaco, monospace" }}>
+{`Omise-Version: ${versionInfo?.date}
+Authorization: Basic {base64(skey_test_...)}`}
             </pre>
           </div>
         </div>

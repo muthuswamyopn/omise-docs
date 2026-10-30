@@ -2,12 +2,20 @@
 
 import Link from 'next/link';
 import SidebarNew from '../../components/SidebarNew';
+import VersionSelector, { VersionDiff } from '../../components/VersionSelector';
+import { API_VERSIONS } from '../../lib/apiVersions';
 import {
-  balanceAttributes,
+  getBalanceFieldsForVersion,
   methodColors
 } from '../../lib/accountData';
+import { useVersion } from '../../context/VersionContext';
 
 export default function BalanceOverviewPage() {
+  const { currentVersion } = useVersion();
+  const fields = getBalanceFieldsForVersion(currentVersion);
+  const versionInfo = API_VERSIONS.find(v => v.codename === currentVersion);
+  const isDeimos = currentVersion === 'deimos';
+
   return (
     <div className="docs-layout">
       <SidebarNew />
@@ -24,6 +32,33 @@ export default function BalanceOverviewPage() {
           and any funds held in reserve. All monetary values are returned in the smallest currency unit (e.g., satang for THB).
         </p>
 
+        {/* Version Selector */}
+        <VersionSelector />
+
+        {/* Version Diff Warning */}
+        <VersionDiff />
+
+        {/* Version Stats */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '16px',
+          marginBottom: '32px'
+        }}>
+          <div style={{ background: '#f6f9fc', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#1A1F71' }}>1</div>
+            <div style={{ fontSize: '13px', color: '#697386' }}>Endpoint</div>
+          </div>
+          <div style={{ background: '#f6f9fc', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#1A1F71' }}>{fields.length}</div>
+            <div style={{ fontSize: '13px', color: '#697386' }}>Fields</div>
+          </div>
+          <div style={{ background: '#f6f9fc', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#1A1F71' }}>GET</div>
+            <div style={{ fontSize: '13px', color: '#697386' }}>Read-only</div>
+          </div>
+        </div>
+
         {/* Related APIs */}
         <div style={{ background: '#f6f9fc', border: '1px solid #e3e8ee', borderRadius: '8px', padding: '20px', marginBottom: '32px' }}>
           <div style={{ fontWeight: 600, color: '#1a1a1a', marginBottom: '12px' }}>Related APIs</div>
@@ -34,43 +69,19 @@ export default function BalanceOverviewPage() {
           </div>
         </div>
 
-        {/* Read-only API Note */}
-        <div style={{ background: '#eff6ff', border: '1px solid #3b82f6', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
-          <div style={{ fontSize: '14px', color: '#1e40af', lineHeight: 1.6 }}>
-            <strong>Read-Only API:</strong> The Balance API only supports retrieval (GET).
+        {/* Version-specific notes */}
+        {!isDeimos && (
+          <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
+            <div style={{ fontSize: '14px', color: '#78350f', lineHeight: 1.6 }}>
+              <strong>Version Differences ({versionInfo?.label}):</strong>
+              <ul style={{ margin: '8px 0 0 0', paddingLeft: '20px' }}>
+                <li><code>available</code> instead of <code>transferable</code></li>
+                <li><code>reserve_amount</code> instead of <code>reserve</code></li>
+                <li>No <code>created_at</code> field</li>
+              </ul>
+            </div>
           </div>
-        </div>
-
-        {/* Version Differences */}
-        <div style={{ background: '#faf5ff', border: '1px solid #a855f7', borderRadius: '8px', padding: '20px', marginBottom: '32px' }}>
-          <div style={{ fontWeight: 600, color: '#6b21a8', marginBottom: '12px' }}>API Version Differences</div>
-          <table style={{ width: '100%', fontSize: '13px', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid #e9d5ff' }}>
-                <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b21a8' }}>Deimos (2019-05-29)</th>
-                <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b21a8' }}>Older Versions</th>
-                <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b21a8' }}>What it represents</th>
-              </tr>
-            </thead>
-            <tbody style={{ color: '#581c87' }}>
-              <tr style={{ borderBottom: '1px solid #f3e8ff' }}>
-                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>transferable</code></td>
-                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>available</code></td>
-                <td style={{ padding: '8px 12px' }}>Amount you can transfer to your bank account right now</td>
-              </tr>
-              <tr style={{ borderBottom: '1px solid #f3e8ff' }}>
-                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>reserve</code></td>
-                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>reserve_amount</code></td>
-                <td style={{ padding: '8px 12px' }}>Funds held back by Omise as a security buffer (not transferable)</td>
-              </tr>
-              <tr>
-                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>created_at</code></td>
-                <td style={{ padding: '8px 12px', color: '#9ca3af', fontStyle: 'italic' }}>not available</td>
-                <td style={{ padding: '8px 12px' }}>Timestamp when the balance record was created</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        )}
 
         {/* Error Handling Reference */}
         <div style={{ background: '#fef3c7', border: '1px solid #f59e0b', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
@@ -121,25 +132,51 @@ export default function BalanceOverviewPage() {
 
         {/* The Balance Object */}
         <h2>The Balance Object</h2>
+        <p style={{ fontSize: '14px', color: '#697386', marginBottom: '16px' }}>
+          {fields.length} fields in {versionInfo?.label}
+        </p>
         <div className="attributes-section">
-          {balanceAttributes.map((attr: { name: string; type: string; desc: string; io?: string }) => (
+          {fields.map(attr => (
             <div key={attr.name} className="attribute-row">
               <div>
                 <div className="attribute-name">{attr.name}</div>
                 <div className="attribute-meta">{attr.type}</div>
               </div>
-              <div className="attribute-desc">{attr.desc}</div>
+              <div className="attribute-desc">{attr.description}</div>
             </div>
           ))}
         </div>
 
         <div style={{ marginTop: '48px', padding: '16px', background: '#f6f9fc', borderRadius: '6px', fontSize: '13px', color: '#697386' }}>
-          Full API schema available at <Link href="/openapi.yaml" style={{ color: '#1A1F71' }}>openapi.yaml</Link>
+          Full API schema available at <Link href={`/openapi-${currentVersion}.yaml`} style={{ color: '#1A1F71' }}>openapi-{currentVersion}.yaml</Link>
         </div>
       </main>
 
       {/* Right Panel - Example Balance Object */}
       <aside className="code-panel">
+        <div style={{ marginBottom: '16px' }}>
+          <div style={{
+            fontSize: '11px',
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            color: '#b8c7d9',
+            marginBottom: '8px'
+          }}>
+            API Version
+          </div>
+          <div style={{
+            padding: '8px 12px',
+            background: 'rgba(255,255,255,0.1)',
+            borderRadius: '6px',
+            fontSize: '14px',
+            color: '#fff',
+          }}>
+            <span style={{ color: '#3ecf8e', fontWeight: 600 }}>{currentVersion}</span>
+            <span style={{ color: '#8792a2', marginLeft: '8px' }}>{versionInfo?.date}</span>
+          </div>
+        </div>
+
         <div style={{ marginBottom: '24px' }}>
           <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px' }}>
             Example Balance Object
@@ -148,8 +185,8 @@ export default function BalanceOverviewPage() {
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '12px', color: '#b8c7d9' }}>
               JSON
             </div>
-            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', maxHeight: '600px', fontFamily: "'SF Mono', Monaco, monospace" }}>
-{`{
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', maxHeight: '400px', fontFamily: "'SF Mono', Monaco, monospace" }}>
+{isDeimos ? `{
   "object": "balance",
   "livemode": false,
   "location": "/balance",
@@ -159,7 +196,28 @@ export default function BalanceOverviewPage() {
   "reserve": 0,
   "on_hold": 0,
   "created_at": "2024-01-15T10:30:00Z"
+}` : `{
+  "object": "balance",
+  "livemode": false,
+  "location": "/balance",
+  "currency": "thb",
+  "total": 1656795,
+  "available": 1656795,
+  "reserve_amount": 0,
+  "on_hold": 0
 }`}
+            </pre>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px' }}>
+            Request Header
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden' }}>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', fontFamily: "'SF Mono', Monaco, monospace" }}>
+{`Omise-Version: ${versionInfo?.date}
+Authorization: Basic {base64(skey_test_...)}`}
             </pre>
           </div>
         </div>

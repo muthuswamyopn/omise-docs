@@ -468,7 +468,45 @@ export default function ErrorsPage() {
 
         <div style={{ marginBottom: '24px' }}>
           <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px', padding: '0 16px' }}>
-            Payment Failed
+            Failed Capture
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden', margin: '0 8px' }}>
+            <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#ff6b6b' }}>400 Bad Request</span>
+            </div>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+{`{
+  "object": "error",
+  "location": "https://www.omise.co/api-errors#failed-capture",
+  "code": "failed_capture",
+  "message": "charge was already captured"
+}`}
+            </pre>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px', padding: '0 16px' }}>
+            Failed Reverse
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden', margin: '0 8px' }}>
+            <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#ff6b6b' }}>400 Bad Request</span>
+            </div>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+{`{
+  "object": "error",
+  "location": "https://www.omise.co/api-errors#failed-reverse",
+  "code": "failed_reverse",
+  "message": "only uncaptured authorized charges can be reversed"
+}`}
+            </pre>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px', padding: '0 16px' }}>
+            Insufficient Funds
           </div>
           <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden', margin: '0 8px' }}>
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
@@ -481,6 +519,66 @@ export default function ErrorsPage() {
   "status": "failed",
   "failure_code": "insufficient_fund",
   "failure_message": "insufficient funds in the account or the card has reached the credit limit"
+}`}
+            </pre>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px', padding: '0 16px' }}>
+            Stolen or Lost Card
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden', margin: '0 8px' }}>
+            <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#ff6b6b' }}>Charge Object (status: failed)</span>
+            </div>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+{`{
+  "object": "charge",
+  "id": "chrg_test_5x8gk2nmfqrwecxytjh",
+  "status": "failed",
+  "failure_code": "stolen_or_lost_card",
+  "failure_message": "card is stolen or lost"
+}`}
+            </pre>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px', padding: '0 16px' }}>
+            Payment Rejected
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden', margin: '0 8px' }}>
+            <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#ff6b6b' }}>Charge Object (status: failed)</span>
+            </div>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+{`{
+  "object": "charge",
+  "id": "chrg_test_7k3hf9wmxqpblnczyud",
+  "status": "failed",
+  "failure_code": "payment_rejected",
+  "failure_message": "payment rejected"
+}`}
+            </pre>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px', padding: '0 16px' }}>
+            Failed Fraud Check
+          </div>
+          <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden', margin: '0 8px' }}>
+            <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#ff6b6b' }}>Charge Object (status: failed)</span>
+            </div>
+            <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
+{`{
+  "object": "charge",
+  "id": "chrg_test_2m9jd4wnxqfhcketpyl",
+  "status": "failed",
+  "failure_code": "failed_fraud_check",
+  "failure_message": "failed fraud check"
 }`}
             </pre>
           </div>

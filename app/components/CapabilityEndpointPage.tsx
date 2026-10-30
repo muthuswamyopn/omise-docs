@@ -10,9 +10,9 @@ import { API_VERSIONS } from '../lib/apiVersions';
 import { useVersion } from '../context/VersionContext';
 
 // Try It Out form for Capability API
-// NOTE: Capability API only accepts PUBLIC keys (not secret keys)
+// Sends request directly to API without filtering - let API respond authentically
 function TryItForm() {
-  const [publicKey, setPublicKey] = useState('pkey_test_');
+  const [apiKey, setApiKey] = useState('pkey_test_');
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState<string | null>(null);
   const [rateLimit, setRateLimit] = useState<{ ip: string; used: number; remaining: number } | null>(null);
@@ -25,19 +25,13 @@ function TryItForm() {
   }, []);
 
   const handleSubmit = async () => {
-    // Reject secret keys - Capability API does NOT accept them
-    if (publicKey.startsWith('skey_')) {
-      setResponse(JSON.stringify({
-        error: 'Secret key not accepted',
-        message: 'The Capability API does NOT accept secret keys (skey_...). Use your public key (pkey_...) instead.'
-      }, null, 2));
-      return;
-    }
+    // Only validate that it's a test key (no live keys on docs site)
+    const isTestKey = apiKey.startsWith('pkey_test_') || apiKey.startsWith('skey_test_');
 
-    if (!publicKey.startsWith('pkey_test_')) {
+    if (!isTestKey) {
       setResponse(JSON.stringify({
         error: 'Invalid key type',
-        message: 'Please enter a valid test public key (pkey_test_...). Live keys are not allowed on this documentation site.'
+        message: 'Please enter a valid test key (pkey_test_... or skey_test_...). Live keys are not allowed on this documentation site.'
       }, null, 2));
       return;
     }
@@ -54,7 +48,7 @@ function TryItForm() {
         body: JSON.stringify({
           url: 'https://api.omise.co/capability',
           method: 'GET',
-          secretKey: publicKey, // The proxy will handle this as auth
+          secretKey: apiKey, // The proxy will handle this as auth
           params: {},
         }),
       });
@@ -67,7 +61,7 @@ function TryItForm() {
         setRateLimit({ ...rateLimit, used: 200 - parseInt(remaining), remaining: parseInt(remaining) });
       }
     } catch (error) {
-      setResponse(JSON.stringify({ error: 'Request failed. Check your public key.' }, null, 2));
+      setResponse(JSON.stringify({ error: 'Request failed. Check your API key.' }, null, 2));
     }
     setIsLoading(false);
   };
@@ -89,20 +83,20 @@ function TryItForm() {
         )}
       </div>
 
-      <div style={{ background: '#cbf4c9', border: '1px solid #0e6245', borderRadius: '6px', padding: '12px 16px', marginBottom: '20px', fontSize: '13px', color: '#0e6245' }}>
-        <strong>Public key only.</strong> This endpoint does NOT accept secret keys. Use your public key (pkey_...).
+      <div style={{ background: '#f6f9fc', border: '1px solid #e3e8ee', borderRadius: '6px', padding: '12px 16px', marginBottom: '20px', fontSize: '13px', color: '#697386' }}>
+        Test with your API key to see the actual response from the Omise API.
       </div>
 
       <div style={{ marginBottom: '20px' }}>
         <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#1a1a1a', marginBottom: '8px' }}>
-          Public Key
+          API Key
           <span style={{ fontWeight: 400, color: '#697386', marginLeft: '8px', fontSize: '13px' }}>required</span>
         </label>
         <input
           type="text"
-          value={publicKey}
-          onChange={(e) => setPublicKey(e.target.value)}
-          placeholder="pkey_test_..."
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+          placeholder="pkey_test_... or skey_test_..."
           style={{ width: '100%', padding: '12px 14px', background: '#fff', border: '2px solid #e3e8ee', borderRadius: '6px', fontSize: '14px', fontFamily: "'SF Mono', Monaco, monospace" }}
         />
       </div>

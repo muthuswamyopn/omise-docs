@@ -241,8 +241,7 @@ export function getParamsForVersion(params: EndpointParam[], codename: string): 
 
 // ============================================================================
 // CAPABILITY API
-// Verified 2026-10-30: Accepts BOTH public and secret keys
-// Public key recommended for client-side usage
+// NOTE: Requires PUBLIC KEY authentication (secret keys not accepted)
 // ============================================================================
 
 // Capability API endpoints
@@ -254,7 +253,8 @@ export const capabilityEndpoints: Record<string, EndpointConfig> = {
     description: 'Retrieves your account capabilities including payment methods and limits.',
     longDescription: `Returns information about what payment methods and features are available for your account.
 
-This endpoint accepts both public and secret keys, but **public key is recommended** since it can be safely used in client-side code.
+This endpoint requires **public key** authentication. Secret keys are not accepted.
+This allows safe client-side usage.
 
 The response includes:
 • Available payment methods with their supported currencies

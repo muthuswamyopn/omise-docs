@@ -58,15 +58,15 @@ export default function CapabilitiesPage() {
             <div style={{ fontSize: '13px', color: '#697386' }}>Fields</div>
           </div>
           <div style={{ background: '#f6f9fc', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: 700, color: '#0055bc' }}>BOTH</div>
-            <div style={{ fontSize: '13px', color: '#697386' }}>Key Types</div>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#0e6245' }}>PUBLIC</div>
+            <div style={{ fontSize: '13px', color: '#697386' }}>Key Type</div>
           </div>
         </div>
 
         {/* Authentication Notice */}
         <Notice type="note" title="Authentication">
-          The Capability API accepts both <strong>public keys</strong> and <strong>secret keys</strong>.
-          Public key is recommended for client-side code since it can be safely exposed.
+          The Capability API requires your <strong>public key</strong> (pkey_...) for authentication.
+          Secret keys are not accepted. This allows safe client-side usage.
         </Notice>
 
         {/* Related APIs */}
@@ -307,13 +307,13 @@ export default function CapabilitiesPage() {
         <div style={{ marginBottom: '16px' }}>
           <div style={{
             padding: '8px 12px',
-            background: 'rgba(0, 85, 188, 0.2)',
-            border: '1px solid rgba(103, 232, 249, 0.3)',
+            background: 'rgba(14, 98, 69, 0.3)',
+            border: '1px solid rgba(62, 207, 142, 0.3)',
             borderRadius: '6px',
             fontSize: '12px',
-            color: '#67e8f9',
+            color: '#3ecf8e',
           }}>
-            Accepts <strong>public</strong> or <strong>secret</strong> key
+            Requires <strong>public key</strong> authentication
           </div>
         </div>
 
@@ -337,11 +337,7 @@ export default function CapabilitiesPage() {
           </div>
           <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden' }}>
             <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', fontFamily: "'SF Mono', Monaco, monospace" }}>
-{`# Using public key (recommended)
-Authorization: Basic {base64(pkey_test_...)}
-
-# Or using secret key
-Authorization: Basic {base64(skey_test_...)}`}
+{`Authorization: Basic {base64(pkey_...)}`}
             </pre>
           </div>
         </div>

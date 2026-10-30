@@ -15,9 +15,9 @@ const apiErrors: ErrorCode[] = [
   {
     code: 'authentication_failure',
     httpStatus: 401,
-    description: 'The API key is invalid or missing.',
-    whenOccurs: 'The Authorization header is missing, malformed, or contains an invalid key. The Capability API accepts both public keys (pkey_...) and secret keys (skey_...). Public key is recommended for client-side usage.',
-    resolution: 'Verify your API key is correct and properly formatted. Use HTTP Basic Auth with your key as the username and an empty password.',
+    description: 'The public key is invalid or missing.',
+    whenOccurs: 'The Authorization header is missing, malformed, or contains an invalid key. The Capability API requires a public key (pkey_...). Secret keys are not accepted.',
+    resolution: 'Verify your public key is correct and properly formatted. Use HTTP Basic Auth with your public key as the username and an empty password.',
   },
   {
     code: 'not_found',
@@ -126,10 +126,10 @@ export default function CapabilityErrorsPage() {
         </p>
 
         {/* Authentication Notice */}
-        <div style={{ background: '#d6ecff', border: '1px solid #0055bc', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
-          <div style={{ fontSize: '14px', color: '#0055bc', lineHeight: 1.6 }}>
-            <strong>Note:</strong> The Capability API accepts both <strong>public keys</strong> and <strong>secret keys</strong>.
-            Public key is recommended for client-side code since it can be safely exposed.
+        <div style={{ background: '#cbf4c9', border: '1px solid #0e6245', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
+          <div style={{ fontSize: '14px', color: '#0e6245', lineHeight: 1.6 }}>
+            <strong>Note:</strong> The Capability API requires <strong>public key</strong> authentication.
+            Secret keys are not accepted. This allows safe client-side usage.
           </div>
         </div>
 
@@ -222,13 +222,13 @@ export default function CapabilityErrorsPage() {
         <div style={{ marginBottom: '16px' }}>
           <div style={{
             padding: '8px 12px',
-            background: 'rgba(0, 85, 188, 0.2)',
-            border: '1px solid rgba(103, 232, 249, 0.3)',
+            background: 'rgba(14, 98, 69, 0.3)',
+            border: '1px solid rgba(62, 207, 142, 0.3)',
             borderRadius: '6px',
             fontSize: '12px',
-            color: '#67e8f9',
+            color: '#3ecf8e',
           }}>
-            Accepts <strong>public</strong> or <strong>secret</strong> key
+            Requires <strong>public key</strong> authentication
           </div>
         </div>
 

@@ -46,7 +46,7 @@ const apiErrors: ErrorCode[] = [
   },
 ];
 
-// Charge Operation Errors - From Omise documentation
+// Charge Operation Errors - Verified via API testing 2026-10-30
 const chargeErrors: ErrorCode[] = [
   {
     code: 'failed_capture',
@@ -54,7 +54,7 @@ const chargeErrors: ErrorCode[] = [
     description: 'The system cannot capture this charge.',
     whenOccurs: 'You attempt to capture a charge that is already captured, not authorized, or expired.',
     resolution: 'Verify the charge status is "pending" with authorized=true. You must capture within 7 days of authorization.',
-    verified: false,
+    verified: true, // "charge is not authorized" / "charge was already captured"
   },
   {
     code: 'failed_reverse',
@@ -62,15 +62,7 @@ const chargeErrors: ErrorCode[] = [
     description: 'The system cannot reverse this charge.',
     whenOccurs: 'You attempt to reverse a charge that is already captured, failed, or expired.',
     resolution: 'You can only reverse uncaptured authorized charges. For captured charges, use a refund instead.',
-    verified: false,
-  },
-  {
-    code: 'failed_void',
-    httpStatus: 400,
-    description: 'The charge void operation failed.',
-    whenOccurs: 'You attempt to void a charge that cannot be voided.',
-    resolution: 'Check if can_perform_void is true before attempting to void.',
-    verified: false,
+    verified: true, // "only uncaptured authorized charges can be reversed"
   },
   {
     code: 'failed_refund',
@@ -78,15 +70,31 @@ const chargeErrors: ErrorCode[] = [
     description: 'The refund processing failed.',
     whenOccurs: 'You attempt to refund a charge that cannot be refunded or exceeds refundable amount.',
     resolution: 'Verify the charge is refundable and the amount does not exceed the available refundable amount.',
-    verified: false,
+    verified: true, // "charge can't be refunded" / "amount cannot be higher than the remaining charge amount"
   },
   {
-    code: 'expired_charge',
+    code: 'failed_expire',
     httpStatus: 400,
-    description: 'The charge cannot be captured because it has expired.',
-    whenOccurs: 'You attempt to capture a charge after the 7-day or 30-day hold period.',
-    resolution: 'Create a new charge. Authorization hold periods cannot be extended.',
-    verified: false,
+    description: 'The charge cannot be expired.',
+    whenOccurs: 'You attempt to expire a charge that is already completed, failed, or expired.',
+    resolution: 'You can only expire pending charges that have not been completed.',
+    verified: true, // "charge cannot be expired"
+  },
+  {
+    code: 'used_token',
+    httpStatus: 400,
+    description: 'The token has already been used.',
+    whenOccurs: 'You attempt to create a charge with a token that was already used for another charge.',
+    resolution: 'Tokens are single-use. Create a new token for each charge.',
+    verified: true, // "token was already used"
+  },
+  {
+    code: 'invalid_charge',
+    httpStatus: 400,
+    description: 'The charge parameters are invalid.',
+    whenOccurs: 'The charge amount is below the minimum or other parameters are invalid.',
+    resolution: 'Verify the amount meets the minimum (e.g., 100 satangs for THB) and all parameters are valid.',
+    verified: true, // "amount must be greater than or equal to ฿1 (100 satangs)"
   },
 ];
 

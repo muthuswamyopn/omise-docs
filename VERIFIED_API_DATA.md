@@ -100,12 +100,22 @@ source_of_fund, status, terminal, transaction, transaction_fees, voided
 
 ## Verified Error Codes
 
-### Tested and Confirmed:
+### API Errors (Tested and Confirmed):
 | Error Code | HTTP Status | Trigger | Actual Message |
 |------------|-------------|---------|----------------|
 | `authentication_failure` | 401 | Invalid API key | "authentication failed" |
 | `not_found` | 404 | Invalid charge/token ID | "charge {id} was not found" |
 | `bad_request` | 400 | Missing required params | "either source, card or customer parameter must be supplied" |
+
+### Charge Operation Errors (Tested 2026-10-30):
+| Error Code | HTTP Status | Actual Message |
+|------------|-------------|----------------|
+| `failed_capture` | 400 | "charge is not authorized" / "charge was already captured" |
+| `failed_reverse` | 400 | "only uncaptured authorized charges can be reversed" |
+| `failed_refund` | 400 | "charge can't be refunded" / "amount cannot be higher than the remaining charge amount" |
+| `failed_expire` | 400 | "charge cannot be expired" |
+| `used_token` | 400 | "token was already used" |
+| `invalid_charge` | 400 | "amount must be greater than or equal to ฿1 (100 satangs)" |
 
 ### Payment Failure Codes (Tested via 3DS flow):
 | Failure Code | Test Card | Actual Message |

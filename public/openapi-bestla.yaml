@@ -25,8 +25,36 @@ security:
 tags:
   - name: Charges
     description: Create, capture, and manage payment charges
+  - name: Balance
+    description: Retrieve your account balance
 
 paths:
+  /balance:
+    get:
+      summary: Retrieve balance
+      description: |
+        Retrieve the current balance of your Omise account.
+
+        This is a READ-ONLY endpoint. The balance includes:
+        - **total** - Total balance after fees deducted
+        - **available** - Amount you can transfer to your bank right now
+        - **reserve_amount** - Funds held by Omise as security buffer
+        - **on_hold** - Funds held for pending disputes/reviews
+
+        NOTE: In newer API versions (Deimos), `available` is renamed to `transferable`
+        and `reserve_amount` is renamed to `reserve`.
+      operationId: getBalance
+      tags: [Balance]
+      responses:
+        '200':
+          description: Current balance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Balance'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
+
   /charges:
     post:
       summary: Create a charge
@@ -388,6 +416,55 @@ components:
           type: integer
         limit:
           type: integer
+
+    Balance:
+      type: object
+      description: |
+        Represents the current balance of your Omise account.
+        This is a READ-ONLY API - all fields are output only.
+
+        VERSION NOTE (Bestla 2015-11-17):
+        - Uses `available` (renamed to `transferable` in Deimos)
+        - Uses `reserve_amount` (renamed to `reserve` in Deimos)
+        - Does NOT have `created_at` field (added in Deimos)
+      properties:
+        object:
+          type: string
+          enum: [balance]
+          description: Always "balance"
+          readOnly: true
+        livemode:
+          type: boolean
+          description: Whether this is a live mode balance
+          readOnly: true
+        location:
+          type: string
+          description: API path "/balance"
+          readOnly: true
+        currency:
+          type: string
+          description: ISO 4217 currency code (e.g., "THB")
+          readOnly: true
+        total:
+          type: integer
+          description: Total balance after fees deducted (in smallest currency unit)
+          readOnly: true
+        available:
+          type: integer
+          description: |
+            Amount you can transfer to your bank account right now (in smallest currency unit).
+            Renamed to "transferable" in Deimos (2019-05-29).
+          readOnly: true
+        reserve_amount:
+          type: integer
+          description: |
+            Funds held back by Omise as a security buffer - not transferable (in smallest currency unit).
+            Renamed to "reserve" in Deimos (2019-05-29).
+          readOnly: true
+        on_hold:
+          type: integer
+          description: Amount on hold for disputes or reviews (in smallest currency unit)
+          readOnly: true
 
     Error:
       type: object

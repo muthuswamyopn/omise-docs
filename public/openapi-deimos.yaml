@@ -27,8 +27,34 @@ security:
 tags:
   - name: Charges
     description: Create, capture, and manage payment charges
+  - name: Balance
+    description: Retrieve your account balance
 
 paths:
+  /balance:
+    get:
+      summary: Retrieve balance
+      description: |
+        Retrieve the current balance of your Omise account.
+
+        This is a READ-ONLY endpoint. The balance includes:
+        - **total** - Total balance after fees deducted
+        - **transferable** - Amount you can transfer to your bank right now
+        - **reserve** - Funds held by Omise as security buffer
+        - **on_hold** - Funds held for pending disputes/reviews
+      operationId: getBalance
+      tags: [Balance]
+      responses:
+        '200':
+          description: Current balance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Balance'
+        '401':
+          $ref: '#/components/responses/AuthenticationFailure'
+
+
   /charges:
     post:
       summary: Create a charge
@@ -733,6 +759,62 @@ components:
         limit:
           type: integer
 
+    Balance:
+      type: object
+      description: |
+        Represents the current balance of your Omise account.
+        This is a READ-ONLY API - all fields are output only.
+
+        VERSION DIFFERENCES (Deimos 2019-05-29):
+        - `transferable` (older versions use `available`)
+        - `reserve` (older versions use `reserve_amount`)
+        - `created_at` (not available in older versions)
+      properties:
+        object:
+          type: string
+          enum: [balance]
+          description: Always "balance"
+          readOnly: true
+        livemode:
+          type: boolean
+          description: Whether this is a live mode balance
+          readOnly: true
+        location:
+          type: string
+          description: API path "/balance"
+          readOnly: true
+        currency:
+          type: string
+          description: ISO 4217 currency code (e.g., "THB")
+          readOnly: true
+        total:
+          type: integer
+          description: Total balance after fees deducted (in smallest currency unit)
+          readOnly: true
+        transferable:
+          type: integer
+          description: |
+            Amount you can transfer to your bank account right now (in smallest currency unit).
+            Called "available" in older API versions (Cordelia, Bestla, Aegaeon).
+          readOnly: true
+        reserve:
+          type: integer
+          description: |
+            Funds held back by Omise as a security buffer - not transferable (in smallest currency unit).
+            Called "reserve_amount" in older API versions.
+          readOnly: true
+        on_hold:
+          type: integer
+          description: Amount on hold for disputes or reviews (in smallest currency unit)
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          description: |
+            Timestamp when the balance record was created.
+            NEW IN DEIMOS: This field is not available in older API versions.
+          readOnly: true
+
     Error:
       type: object
       properties:
@@ -865,6 +947,17 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+
+    BadRequest:
+      description: "Malformed request or missing required parameters"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            object: error
+            code: bad_request
+            message: either source, card or customer parameter must be supplied
 
     # Verified Payment Failure Codes (tested via 3DS flow on 2026-10-30)
     StolenOrLostCard:

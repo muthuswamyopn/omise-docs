@@ -482,12 +482,12 @@ components:
           readOnly: true
         transferable:
           type: integer
-          description: Amount available for immediate transfer (Deimos). Called "available" in older versions.
+          description: Amount you can transfer to your bank account right now. Called "available" in older API versions.
           example: 1656795
           readOnly: true
         reserve:
           type: integer
-          description: Funds held in reserve (Deimos). Called "reserve_amount" in older versions.
+          description: Funds held back by Omise as a security buffer (not transferable). Called "reserve_amount" in older API versions.
           example: 0
           readOnly: true
         on_hold:

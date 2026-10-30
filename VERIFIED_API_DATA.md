@@ -228,11 +228,16 @@ object, livemode, location, currency, total, available, reserve_amount, on_hold
 
 ### Key Differences Between Versions
 
-| Deimos | Older Versions | Description |
+| Deimos | Older Versions | What it represents |
 |--------|----------------|-------------|
-| `transferable` | `available` | Amount available for transfer |
-| `reserve` | `reserve_amount` | Amount held in reserve |
-| `created_at` | (not present) | Balance record timestamp |
+| `transferable` | `available` | Amount you can transfer to your bank account right now |
+| `reserve` | `reserve_amount` | Funds held back by Omise as a security buffer (not transferable) |
+| `created_at` | (not present) | Timestamp when the balance record was created |
+
+**Why the rename?** Deimos standardized field naming across all APIs:
+- `transferable` is clearer than `available` (available for what?)
+- `reserve` is consistent with other APIs that use short field names
+- `created_at` was added for consistency with other objects (Charge, Account, etc.)
 
 ### Balance API - Input/Output Fields
 

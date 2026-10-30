@@ -42,14 +42,34 @@ export default function BalanceOverviewPage() {
         </div>
 
         {/* Version Differences */}
-        <div style={{ background: '#faf5ff', border: '1px solid #a855f7', borderRadius: '8px', padding: '16px 20px', marginBottom: '32px' }}>
-          <div style={{ fontSize: '14px', color: '#6b21a8', lineHeight: 1.6 }}>
-            <strong>Version Differences:</strong><br/>
-            <span style={{ fontFamily: "'SF Mono', Monaco, monospace", fontSize: '12px' }}>
-              Deimos (2019-05-29): <code>transferable</code>, <code>reserve</code>, <code>created_at</code><br/>
-              Older versions: <code>available</code>, <code>reserve_amount</code>, no <code>created_at</code>
-            </span>
-          </div>
+        <div style={{ background: '#faf5ff', border: '1px solid #a855f7', borderRadius: '8px', padding: '20px', marginBottom: '32px' }}>
+          <div style={{ fontWeight: 600, color: '#6b21a8', marginBottom: '12px' }}>API Version Differences</div>
+          <table style={{ width: '100%', fontSize: '13px', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid #e9d5ff' }}>
+                <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b21a8' }}>Deimos (2019-05-29)</th>
+                <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b21a8' }}>Older Versions</th>
+                <th style={{ textAlign: 'left', padding: '8px 12px', color: '#6b21a8' }}>What it represents</th>
+              </tr>
+            </thead>
+            <tbody style={{ color: '#581c87' }}>
+              <tr style={{ borderBottom: '1px solid #f3e8ff' }}>
+                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>transferable</code></td>
+                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>available</code></td>
+                <td style={{ padding: '8px 12px' }}>Amount you can transfer to your bank account right now</td>
+              </tr>
+              <tr style={{ borderBottom: '1px solid #f3e8ff' }}>
+                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>reserve</code></td>
+                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>reserve_amount</code></td>
+                <td style={{ padding: '8px 12px' }}>Funds held back by Omise as a security buffer (not transferable)</td>
+              </tr>
+              <tr>
+                <td style={{ padding: '8px 12px' }}><code style={{ background: '#f3e8ff', padding: '2px 6px', borderRadius: '4px' }}>created_at</code></td>
+                <td style={{ padding: '8px 12px', color: '#9ca3af', fontStyle: 'italic' }}>not available</td>
+                <td style={{ padding: '8px 12px' }}>Timestamp when the balance record was created</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         {/* Error Handling Reference */}

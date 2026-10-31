@@ -50,11 +50,15 @@ function TryItForm({ endpoint, config }: TryItFormProps) {
 
       const bodyParams: Record<string, string> = {};
 
-      // Add form values for PATCH requests
-      if (config.method === 'PATCH') {
-        Object.entries(values).forEach(([key, value]) => {
-          if (value) bodyParams[key] = value;
-        });
+      // Add form values - for GET as query params, for PATCH as body
+      Object.entries(values).forEach(([key, value]) => {
+        if (value) bodyParams[key] = value;
+      });
+
+      // For GET requests, append query parameters to URL
+      if (config.method === 'GET' && Object.keys(bodyParams).length > 0) {
+        const queryString = new URLSearchParams(bodyParams).toString();
+        url = `${url}?${queryString}`;
       }
 
       const res = await fetch('/api/proxy', {
@@ -64,7 +68,7 @@ function TryItForm({ endpoint, config }: TryItFormProps) {
           url,
           method: config.method,
           secretKey,
-          params: bodyParams,
+          params: config.method === 'GET' ? {} : bodyParams,
         }),
       });
 
@@ -137,13 +141,14 @@ function TryItForm({ endpoint, config }: TryItFormProps) {
         </div>
       )}
 
-      {editableParams.length > 0 && endpoint === 'update' && (
+      {editableParams.length > 0 && (
         <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #e3e8ee' }}>
           <div style={{ fontSize: '13px', fontWeight: 600, color: '#697386', marginBottom: '12px' }}>Optional Parameters</div>
           {editableParams.map(param => (
             <div key={param.name} style={{ marginBottom: '12px' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: '#1a1a1a', marginBottom: '4px' }}>
                 {param.name}
+                <span style={{ fontWeight: 400, color: '#697386', marginLeft: '8px', fontSize: '12px' }}>{param.type}</span>
               </label>
               <input
                 type="text"
@@ -152,6 +157,7 @@ function TryItForm({ endpoint, config }: TryItFormProps) {
                 placeholder={param.desc}
                 style={{ width: '100%', padding: '10px 12px', background: '#fff', border: '1px solid #e3e8ee', borderRadius: '6px', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}
               />
+              <div style={{ fontSize: '12px', color: '#697386', marginTop: '4px' }}>{param.desc}</div>
             </div>
           ))}
         </div>

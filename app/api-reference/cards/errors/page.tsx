@@ -29,20 +29,14 @@ const apiErrors: ErrorCode[] = [
   },
 ];
 
+// Verified 2026-10-31 via direct API calls across all 4 versions
 const cardErrors: ErrorCode[] = [
   {
     code: 'invalid_card',
     httpStatus: 400,
     description: 'The card information is invalid.',
-    whenOccurs: 'When creating a token with invalid card details such as an expired card, invalid card number, or invalid security code.',
+    whenOccurs: 'When creating a token with invalid card details, or when updating a card with invalid values such as expiration_month > 12 or expiration date in the past.',
     resolution: 'Verify the card number, expiration date, and CVV are correct. Use test card numbers in test mode.',
-  },
-  {
-    code: 'expired_card',
-    httpStatus: 400,
-    description: 'The card has expired.',
-    whenOccurs: 'Attempting to charge or update a card that has passed its expiration date.',
-    resolution: 'Ask the customer to provide a card with a valid expiration date.',
   },
   {
     code: 'invalid_card_token',

@@ -358,6 +358,116 @@ export const customerDestroyResponseExample = `{
   "deleted": true
 }`;
 
+// Update scenarios - matching official docs structure
+export interface UpdateScenario {
+  id: string;
+  title: string;
+  description: string;
+  examples: Record<string, string>;
+}
+
+export const updateScenarios: UpdateScenario[] = [
+  {
+    id: 'attach-card',
+    title: 'Attach a card to customer',
+    description: 'Add a new payment card to an existing customer using a token.',
+    examples: {
+      curl: `curl https://api.omise.co/customers/cust_test_no1t4tnemucod0e51mo \\
+  -u $OMISE_SECRET_KEY: \\
+  -X PATCH \\
+  -d "card=tokn_test_..."`,
+      ruby: `customer = Omise::Customer.retrieve("cust_test_...")
+customer.update(card: "tokn_test_...")`,
+      python: `customer = omise.Customer.retrieve("cust_test_...")
+customer.update(card="tokn_test_...")`,
+      node: `const customer = await omise.customers.update('cust_test_...', {
+  card: 'tokn_test_...'
+});`,
+      php: `<?php
+$customer = OmiseCustomer::retrieve("cust_test_...");
+$customer->update(['card' => 'tokn_test_...']);`,
+      go: `customer, _ := client.Customer.Update("cust_test_...", &omise.UpdateCustomerParams{
+    Card: "tokn_test_...",
+})`,
+      java: `Customer customer = client.customers().update("cust_test_...",
+    new Customer.UpdateParams().card("tokn_test_..."));`,
+      csharp: `var customer = await client.Customers.Update("cust_test_...",
+    new UpdateCustomerRequest { Card = "tokn_test_..." });`,
+    }
+  },
+  {
+    id: 'update-default-card',
+    title: 'Update customer default card',
+    description: 'Change the default card used for charges.',
+    examples: {
+      curl: `curl https://api.omise.co/customers/cust_test_no1t4tnemucod0e51mo \\
+  -u $OMISE_SECRET_KEY: \\
+  -X PATCH \\
+  -d "default_card=card_test_..."`,
+      ruby: `customer = Omise::Customer.retrieve("cust_test_...")
+customer.update(default_card: "card_test_...")`,
+      python: `customer = omise.Customer.retrieve("cust_test_...")
+customer.update(default_card="card_test_...")`,
+      node: `const customer = await omise.customers.update('cust_test_...', {
+  default_card: 'card_test_...'
+});`,
+      php: `<?php
+$customer = OmiseCustomer::retrieve("cust_test_...");
+$customer->update(['default_card' => 'card_test_...']);`,
+      go: `customer, _ := client.Customer.Update("cust_test_...", &omise.UpdateCustomerParams{
+    DefaultCard: "card_test_...",
+})`,
+      java: `Customer customer = client.customers().update("cust_test_...",
+    new Customer.UpdateParams().defaultCard("card_test_..."));`,
+      csharp: `var customer = await client.Customers.Update("cust_test_...",
+    new UpdateCustomerRequest { DefaultCard = "card_test_..." });`,
+    }
+  },
+  {
+    id: 'update-email-description',
+    title: 'Update customer email and description',
+    description: 'Update customer contact information and metadata.',
+    examples: {
+      curl: `curl https://api.omise.co/customers/cust_test_no1t4tnemucod0e51mo \\
+  -u $OMISE_SECRET_KEY: \\
+  -X PATCH \\
+  -d "email=updated@example.com" \\
+  -d "description=Updated description"`,
+      ruby: `customer = Omise::Customer.retrieve("cust_test_...")
+customer.update(
+  email: "updated@example.com",
+  description: "Updated description"
+)`,
+      python: `customer = omise.Customer.retrieve("cust_test_...")
+customer.update(
+    email="updated@example.com",
+    description="Updated description"
+)`,
+      node: `const customer = await omise.customers.update('cust_test_...', {
+  email: 'updated@example.com',
+  description: 'Updated description'
+});`,
+      php: `<?php
+$customer = OmiseCustomer::retrieve("cust_test_...");
+$customer->update([
+    'email' => 'updated@example.com',
+    'description' => 'Updated description'
+]);`,
+      go: `customer, _ := client.Customer.Update("cust_test_...", &omise.UpdateCustomerParams{
+    Email: "updated@example.com",
+    Description: "Updated description",
+})`,
+      java: `Customer customer = client.customers().update("cust_test_...", new Customer.UpdateParams()
+    .email("updated@example.com")
+    .description("Updated description"));`,
+      csharp: `var customer = await client.Customers.Update("cust_test_...", new UpdateCustomerRequest {
+    Email = "updated@example.com",
+    Description = "Updated description"
+});`,
+    }
+  }
+];
+
 export const languages = [
   { id: 'curl', name: 'cURL' },
   { id: 'ruby', name: 'Ruby' },

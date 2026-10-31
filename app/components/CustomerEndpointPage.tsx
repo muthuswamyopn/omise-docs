@@ -6,7 +6,7 @@ import SidebarNew from './SidebarNew';
 import Notice from './Notice';
 import LinkifiedText from './LinkifiedText';
 import VersionSelector, { VersionDiff } from './VersionSelector';
-import { customerEndpoints, customerCodeExamples, customerResponseExample, customerListResponseExample, customerDestroyResponseExample, languages, methodColors, CustomerEndpointConfig } from '../lib/customerData';
+import { customerEndpoints, customerCodeExamples, customerResponseExample, customerListResponseExample, customerDestroyResponseExample, languages, methodColors, CustomerEndpointConfig, updateScenarios } from '../lib/customerData';
 import { API_VERSIONS } from '../lib/apiVersions';
 import { useVersion } from '../context/VersionContext';
 
@@ -204,11 +204,13 @@ interface CustomerEndpointPageProps {
 export default function CustomerEndpointPage({ endpointKey }: CustomerEndpointPageProps) {
   const [activeLang, setActiveLang] = useState('curl');
   const [showTryIt, setShowTryIt] = useState(false);
+  const [activeScenario, setActiveScenario] = useState(0);
   const { currentVersion } = useVersion();
 
   const config = customerEndpoints[endpointKey];
   const methodStyle = methodColors[config.method];
   const versionInfo = API_VERSIONS.find(v => v.codename === currentVersion);
+  const isUpdateEndpoint = endpointKey === 'update';
 
   // Select appropriate response example
   const getResponseExample = () => {
@@ -371,16 +373,54 @@ export default function CustomerEndpointPage({ endpointKey }: CustomerEndpointPa
           </select>
         </div>
 
+        {/* Scenario Tabs for Update Endpoint */}
+        {isUpdateEndpoint && (
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px' }}>
+              Scenarios
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              {updateScenarios.map((scenario, index) => (
+                <button
+                  key={scenario.id}
+                  onClick={() => setActiveScenario(index)}
+                  style={{
+                    padding: '10px 14px',
+                    background: activeScenario === index ? 'rgba(103, 232, 249, 0.15)' : 'rgba(255,255,255,0.05)',
+                    border: activeScenario === index ? '1px solid rgba(103, 232, 249, 0.4)' : '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '6px',
+                    color: activeScenario === index ? '#67e8f9' : '#b8c7d9',
+                    fontSize: '13px',
+                    fontWeight: activeScenario === index ? 600 : 400,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  {scenario.title}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div style={{ marginBottom: '24px' }}>
           <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px' }}>
             Request
           </div>
+          {isUpdateEndpoint && (
+            <div style={{ fontSize: '12px', color: '#8792a2', marginBottom: '8px', lineHeight: 1.5 }}>
+              {updateScenarios[activeScenario]?.description}
+            </div>
+          )}
           <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden' }}>
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '12px', color: '#b8c7d9' }}>
               {languages.find(l => l.id === activeLang)?.name}
             </div>
             <pre style={{ padding: '16px', margin: 0, fontSize: '13px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
-              {customerCodeExamples[endpointKey]?.[activeLang] || '// Example not available'}
+              {isUpdateEndpoint
+                ? (updateScenarios[activeScenario]?.examples[activeLang] || '// Example not available')
+                : (customerCodeExamples[endpointKey]?.[activeLang] || '// Example not available')}
             </pre>
           </div>
         </div>

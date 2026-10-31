@@ -29,21 +29,14 @@ const apiErrors: ErrorCode[] = [
   },
 ];
 
-// Verified 2026-10-31 via direct API calls
+// Verified 2026-10-31 via direct API calls across all 4 API versions
 const customerErrors: ErrorCode[] = [
-  {
-    code: 'invalid_card_token',
-    httpStatus: 400,
-    description: 'The card token is invalid or has already been used.',
-    whenOccurs: 'The token provided when creating or updating a customer is invalid, expired, or has already been used.',
-    resolution: 'Create a new token and try again. Tokens can only be used once.',
-  },
   {
     code: 'used_token',
     httpStatus: 400,
     description: 'The token has already been used.',
-    whenOccurs: 'Attempting to attach a token that was already used to create another card.',
-    resolution: 'Create a new token for each card you want to attach.',
+    whenOccurs: 'Attempting to attach a token that was already used to create another card or customer.',
+    resolution: 'Create a new token for each card you want to attach. Tokens can only be used once.',
   },
 ];
 
@@ -203,7 +196,7 @@ export default function CustomerErrorsPage() {
         </div>
 
         <ErrorSection title="Authentication & Resource Errors" errors={apiErrors} />
-        <ErrorSection title="Customer & Token Errors" errors={customerErrors} />
+        <ErrorSection title="Token Errors" errors={customerErrors} />
 
         <div style={{ marginTop: '40px', padding: '16px', background: '#f6f9fc', borderRadius: '6px', fontSize: '13px', color: '#697386' }}>
           Full API schema available at <Link href="/openapi.yaml" style={{ color: '#1A1F71' }}>openapi.yaml</Link>
@@ -265,18 +258,18 @@ export default function CustomerErrorsPage() {
 
         <div>
           <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', color: '#b8c7d9', marginBottom: '12px' }}>
-            Invalid Token
+            Used Token
           </div>
           <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px', overflow: 'hidden' }}>
             <div style={{ padding: '10px 16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: '#ff6b6b' }}>404 Not Found</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#ff6b6b' }}>400 Bad Request</span>
             </div>
             <pre style={{ padding: '16px', margin: 0, fontSize: '12px', lineHeight: 1.6, color: '#67e8f9', overflow: 'auto', fontFamily: "'SF Mono', Monaco, monospace" }}>
 {`{
   "object": "error",
   "location": "https://...",
-  "code": "not_found",
-  "message": "token tokn_test_invalid was not found"
+  "code": "used_token",
+  "message": "token was already used"
 }`}
             </pre>
           </div>

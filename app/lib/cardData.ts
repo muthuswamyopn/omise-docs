@@ -6,6 +6,7 @@ export interface CardEndpointParam {
   type: string;
   required: boolean;
   desc: string;
+  options?: string[];  // For dropdown fields
 }
 
 export interface CardEndpointConfig {
@@ -36,9 +37,9 @@ Cards are returned in chronological order by default. Use pagination parameters 
       { name: 'customer_id', type: 'string', required: true, desc: 'The customer ID (cust_test_...)' },
       { name: 'offset', type: 'integer', required: false, desc: 'Number of records to skip (default: 0)' },
       { name: 'limit', type: 'integer', required: false, desc: 'Number of records to return (default: 20, max: 100)' },
-      { name: 'from', type: 'datetime', required: false, desc: 'Start of date range (ISO 8601)' },
-      { name: 'to', type: 'datetime', required: false, desc: 'End of date range (ISO 8601)' },
-      { name: 'order', type: 'string', required: false, desc: 'Sort order: "chronological" or "reverse_chronological"' },
+      { name: 'from', type: 'datetime', required: false, desc: 'Start of date range. ISO 8601 format, e.g. 2026-01-01T00:00:00Z' },
+      { name: 'to', type: 'datetime', required: false, desc: 'End of date range. ISO 8601 format, e.g. 2026-12-31T23:59:59Z' },
+      { name: 'order', type: 'string', required: false, desc: 'Sort order for results', options: ['chronological', 'reverse_chronological'] },
     ]
   },
   retrieve: {

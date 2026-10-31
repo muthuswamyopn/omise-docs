@@ -150,13 +150,24 @@ function TryItForm({ endpoint, config }: TryItFormProps) {
                 {param.name}
                 <span style={{ fontWeight: 400, color: '#697386', marginLeft: '8px', fontSize: '12px' }}>{param.type}</span>
               </label>
-              <input
-                type="text"
-                value={values[param.name] || ''}
-                onChange={(e) => setValues({ ...values, [param.name]: e.target.value })}
-                placeholder={param.desc}
-                style={{ width: '100%', padding: '10px 12px', background: '#fff', border: '1px solid #e3e8ee', borderRadius: '6px', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}
-              />
+              {param.options ? (
+                <select
+                  value={values[param.name] || ''}
+                  onChange={(e) => setValues({ ...values, [param.name]: e.target.value })}
+                  style={{ width: '100%', padding: '10px 12px', background: '#fff', border: '1px solid #e3e8ee', borderRadius: '6px', fontSize: '13px', cursor: 'pointer' }}
+                >
+                  <option value="">Select...</option>
+                  {param.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  value={values[param.name] || ''}
+                  onChange={(e) => setValues({ ...values, [param.name]: e.target.value })}
+                  placeholder={param.desc}
+                  style={{ width: '100%', padding: '10px 12px', background: '#fff', border: '1px solid #e3e8ee', borderRadius: '6px', fontSize: '13px', fontFamily: "'SF Mono', Monaco, monospace" }}
+                />
+              )}
               <div style={{ fontSize: '12px', color: '#697386', marginTop: '4px' }}>{param.desc}</div>
             </div>
           ))}

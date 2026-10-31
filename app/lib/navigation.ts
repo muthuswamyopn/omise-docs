@@ -247,7 +247,18 @@ export const navigation: NavigationSection[] = [
           },
           { name: lc('Sources', 'Sources', 'Source'), href: '/api-reference/sources' },
           { name: lc('Tokens', 'Tokens', 'Token'), href: '/api-reference/tokens' },
-          { name: lc('Customers', 'Customers', 'Customer'), href: '/api-reference/customers' },
+          {
+            name: lc('Customers', 'Customers', 'Customer'),
+            href: '/api-reference/customers',
+            items: [
+              { name: lc('Create a Customer', 'สร้าง Customer', 'Customerを作成'), href: '/api-reference/customers/create', method: 'POST' as const },
+              { name: lc('List Customers', 'รายการ Customers', 'Customerの一覧'), href: '/api-reference/customers/list', method: 'GET' as const },
+              { name: lc('Retrieve a Customer', 'ดึงข้อมูล Customer', 'Customerを取得'), href: '/api-reference/customers/retrieve', method: 'GET' as const },
+              { name: lc('Update a Customer', 'อัปเดต Customer', 'Customerを更新'), href: '/api-reference/customers/update', method: 'PATCH' as const },
+              { name: lc('Delete a Customer', 'ลบ Customer', 'Customerを削除'), href: '/api-reference/customers/destroy', method: 'DELETE' as const },
+              { name: lc('Error Codes', 'รหัสข้อผิดพลาด', 'エラーコード'), href: '/api-reference/customers/errors' },
+            ],
+          },
           {
             name: lc('Cards', 'Cards', 'Card'),
             href: '/api-reference/cards',

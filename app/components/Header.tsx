@@ -39,7 +39,7 @@ export default function Header() {
 
       {/* Contact */}
       <a
-        href="https://www.omise.co/support"
+        href="https://omise.co/en/contact-us"
         target="_blank"
         rel="noopener noreferrer"
         style={{

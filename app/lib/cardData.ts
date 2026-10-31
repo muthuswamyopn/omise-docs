@@ -74,7 +74,7 @@ You can update the cardholder name, billing address fields, and expiration date.
       { name: 'state', type: 'string', required: false, desc: 'Billing state/province' },
       { name: 'street1', type: 'string', required: false, desc: 'Billing street address line 1' },
       { name: 'street2', type: 'string', required: false, desc: 'Billing street address line 2' },
-      { name: 'phone_number', type: 'string', required: false, desc: 'Cardholder phone number' },
+      { name: 'phone_number', type: 'string', required: false, desc: 'Cardholder phone number. Any format accepted, e.g. +66812345678, 081-234-5678' },
     ]
   },
   destroy: {
